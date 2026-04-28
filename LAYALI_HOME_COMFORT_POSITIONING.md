@@ -54,7 +54,7 @@ Profile:
 - Apartment or villa.
 - Owns abayas, dresses, suits, handbags, shoes, linens, and bedding she wants to protect.
 - Buys home fragrance, cleaning products, storage products, wardrobe organisers, bedding, and small appliances.
-- Uses Instagram, TikTok, WhatsApp, Noon, Amazon, Carrefour, and local pharmacies/supermarkets.
+- Uses Instagram, TikTok, Noon, Amazon, Carrefour, Google, and local supermarkets/home stores.
 
 Core emotional drivers:
 
@@ -108,7 +108,7 @@ Answers:
 - Use leak-lock pouch/box design and clear placement instructions.
 - Use calcium chloride for moisture, activated charcoal for odour adsorption, HEPA/UV/hot air/tapping for fabric cleaning.
 - Show visual proof: water collection, charcoal pods, dust cup, before/after hygrometer, customer videos.
-- COD accepted after WhatsApp confirmation.
+- COD accepted through a short website checkout popup. No WhatsApp, no SMS, no subscription, no quiz for launch.
 
 ## Brand positioning
 
@@ -160,7 +160,7 @@ Trust positioning:
 - Ingredient transparency.
 - UAE-specific use cases.
 - Arabic and English instructions.
-- COD with WhatsApp confirmation.
+- COD through a fast website popup checkout.
 - Real home demos.
 - Customer photos/videos.
 - Clear replacement timeline.
@@ -452,22 +452,45 @@ Cross-sell logic:
 - If customer buys Fresh Pods: "Your closet has the same closed-space problem."
 - If customer buys Vacuum: "Keep mattress clean, and keep the room dry/fresh."
 
-## Store structure for Next.js/React
+## Website structure for Next.js/React
 
-The store should feel like a premium DTC brand, not a catalog.
+The store should feel like a premium DTC brand, but the launch flow must stay simple: website only, no subscription, no WhatsApp, no SMS, no quiz, and no external checkout platform.
 
-Pages:
+Required pages:
 
-1. Homepage/landing.
-2. Product page: Wardrobe Dry Shield.
-3. Product page: Shoe & Bag Fresh Pods.
-4. Product page: Deep Fabric Dust Cleaner.
-5. Bundle page: Fresh Home System.
-6. Science page: "Why UAE homes smell humid."
-7. Reviews page.
-8. COD checkout.
-9. Thank-you + WhatsApp confirmation page.
-10. Simple admin dashboard.
+1. Homepage.
+2. Collection page: "Fresh Home Systems".
+3. Product page: Wardrobe Dry Shield.
+4. Product page: Shoe & Bag Fresh Pods.
+5. Product page: Deep Fabric Dust Cleaner.
+6. Cart page/drawer.
+7. Checkout popup form.
+8. Thank-you page.
+9. Contact page.
+10. Policies:
+   - Shipping Policy.
+   - Return & Refund Policy.
+   - Privacy Policy.
+   - Terms of Service.
+   - COD Policy.
+11. Simple admin/order log view if needed later.
+
+Header:
+
+- Logo: Layali.
+- Nav links: Home, Shop, How It Works, Reviews, Contact.
+- Cart icon with item count.
+- Sticky mobile CTA: "Shop Fresh Home System".
+- Trust mini-line: "COD in UAE | Dubai, Sharjah, Abu Dhabi first".
+
+Footer:
+
+- Brand statement.
+- Contact email/phone placeholder.
+- Policy links.
+- COD and delivery note.
+- Social links.
+- Short disclaimer: "Layali products help manage moisture, odour, and fabric dust. They are not mold remediation or medical products."
 
 Homepage sections:
 
@@ -502,7 +525,8 @@ Homepage sections:
    - "Transparent ingredients and replacement timelines."
 8. COD trust:
    - Cash on delivery.
-   - WhatsApp confirmation.
+   - Short website checkout.
+   - No card needed at launch.
    - UAE support.
    - Delivery to Dubai, Sharjah, Abu Dhabi first.
 9. FAQ:
@@ -523,42 +547,123 @@ Product page CRO formula:
 7. Visual proof block.
 8. Reviews.
 9. Bundle offer.
-10. COD + WhatsApp confirmation.
+10. COD + short website checkout.
 11. FAQ.
 
-Checkout fields:
+Collection page CRO formula:
 
-- Full name.
-- UAE phone number.
-- WhatsApp number if different.
-- Emirate.
-- Area.
-- Full address.
-- Landmark.
-- Preferred delivery time.
-- Product/bundle.
-- COD amount.
-- Checkbox: "I confirm I will answer WhatsApp to confirm my COD order."
+1. Headline: "Choose where freshness starts: closet, shoes, or mattress."
+2. Three product cards with problem-first naming:
+   - Closet smells humid?
+   - Shoes and bags smell closed?
+   - Mattress looks clean but hides dust?
+3. Default recommended bundle: Layali Closet & Shoe Fresh Set.
+4. Each product card has:
+   - Add to cart CTA.
+   - "Best with" cross-sell.
+   - 3 proof bullets.
+5. Sticky cart summary on mobile.
+
+Cart flow:
+
+- When a customer clicks CTA on product or collection page, add item to cart immediately.
+- After add-to-cart, show cart drawer or cart page with relevant cross-sells.
+- Product pages should also show bottom cross-sells before reviews/FAQ.
+- Cart should make the customer feel smart for bundling:
+  - "Most UAE homes need closet + shoe freshness together."
+  - "Add Fresh Pods for shoes, gym bags, car, and drawers."
+  - "Add refill pack so your closet stays protected next month."
+
+Cart cross-sells:
+
+- If cart has Wardrobe Dry Shield: show Shoe & Bag Fresh Pods and refill pack.
+- If cart has Shoe & Bag Fresh Pods: show Wardrobe Dry Shield.
+- If cart has Deep Fabric Dust Cleaner: show replacement HEPA filters and Wardrobe Dry Shield.
+- If cart total is below AED 199: show bundle upgrade.
+- If cart total is above AED 299: show "free delivery eligible" if economics allow.
+
+Checkout popup form:
+
+- Opens only after customer clicks "Complete COD Order" in cart.
+- Shows order summary at the top:
+  - products.
+  - quantities.
+  - subtotal.
+  - COD fee if used.
+  - total to pay on delivery.
+- Only two input fields at launch:
+  - Full name.
+  - UAE phone number starting with 0.
+- Phone validation:
+  - Must start with 0.
+  - Must be UAE mobile style, preferably `05XXXXXXXX`.
+  - Show helper text: "Example: 0501234567".
+- CTA:
+  - "Confirm COD Order"
+- Microcopy under CTA:
+  - "You will pay AED X in cash when your order arrives. Please keep your phone reachable for delivery."
+- After valid submission:
+  - Send order payload by webhook to Google Sheet / Sheet backend.
+  - Redirect to thank-you page.
+
+Webhook payload:
+
+- order_id.
+- created_at.
+- full_name.
+- phone.
+- products.
+- quantities.
+- subtotal.
+- cod_fee.
+- total.
+- landing_page/source if available.
+- user_agent/device if useful.
+- status: new_order.
 
 Order statuses:
 
-- pending_confirmation.
-- confirmed.
+- new_order.
+- contacted_by_delivery_team if used later.
 - packed.
 - shipped.
 - delivered.
-- cancelled_no_confirmation.
 - refused.
 - rto.
 
 COD rules:
 
-- No shipping before WhatsApp confirmation.
-- Auto-cancel after 24h without confirmation.
-- For vacuum bundle above AED 399, ask customer to reply:
-  - "I confirm Layali order AED X cash on delivery."
 - AED 10 COD fee.
 - Start Dubai, Sharjah, Abu Dhabi only.
+- Because there is no WhatsApp/SMS confirmation at launch, the website must improve delivery intent before submission:
+  - show exact COD total.
+  - show expected delivery window.
+  - ask phone number clearly.
+  - use thank-you page to remind customer to answer courier calls.
+  - avoid sending unclear or low-intent orders.
+- Add optional hidden fraud checks:
+  - block duplicate phone submissions in short time.
+  - flag repeated refused numbers manually.
+  - flag orders with very high cart value for manual call later only if needed.
+
+Thank-you page CRO:
+
+- Headline: "Your Layali COD order is received."
+- Subheadline: "Please keep your phone reachable so the courier can deliver your order smoothly."
+- Show order summary again.
+- Show total cash amount clearly.
+- Show delivery cities: Dubai, Sharjah, Abu Dhabi first.
+- Show preparation steps:
+  1. We prepare your Layali order.
+  2. Courier contacts you before delivery.
+  3. You pay cash on delivery.
+- Reinforce decision:
+  - "You chose a system made for UAE humidity, closed wardrobes, shoe odour, and hidden mattress dust."
+- Add post-purchase cross-sells:
+  - "Forgot another room?"
+  - "Add Fresh Pods for car/gym bag."
+  - "Add refill pack for next month."
+- Do not distract too much; primary job is to increase delivery acceptance.
 
 ## Social proof and authority system
 
@@ -585,11 +690,11 @@ Proof types:
    - Explain UAE humidity/AC problem.
 3. Social proof:
    - Customer reviews.
-   - WhatsApp screenshots after delivery.
+   - Website review screenshots after delivery.
    - UGC in real UAE apartments.
    - "Used in Dubai, Sharjah, Abu Dhabi homes."
 4. Operational proof:
-   - COD confirmation.
+   - Clear COD checkout summary.
    - Arabic/English support.
    - Clear return/warranty policy.
    - Replacement/refill reminders.
@@ -750,7 +855,7 @@ Layer 4: Safety and clarity
 Layer 5: Social proof
 
 - Real UAE apartments.
-- WhatsApp delivery reviews.
+- Website delivery reviews.
 - Before/after smell comments.
 - Customer photos.
 
@@ -764,7 +869,7 @@ Layer 6: Authority
 Layer 7: Risk reversal
 
 - COD.
-- WhatsApp support.
+- Contact-page support.
 - 7-day issue support.
 - Vacuum warranty.
 - Replacement policy for damaged/leaking product.
