@@ -137,6 +137,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 <button onClick={closeCart} className="rounded-full border border-white/20 p-2"><X /></button>
               </div>
               <div className="flex-1 space-y-4 overflow-y-auto p-5">
+                {crossSells.length > 0 && (
+                  <div className="space-y-3 rounded-3xl border border-[var(--border-gold)] bg-[var(--cream-50)] p-4">
+                    <div>
+                      <p className="text-xs font-bold text-[var(--gold-500)]">الأكثر إضافة مع الطلب</p>
+                      <p className="font-black text-[var(--emerald-950)]">أضيفي لمسة تكمل طلبك</p>
+                    </div>
+                    {crossSells.map((product) => <MiniProduct key={product.sku} product={product} onAdd={() => addItem(product)} />)}
+                  </div>
+                )}
                 {items.length === 0 ? (
                   <div className="rounded-3xl bg-[var(--cream-50)] p-8 text-center">
                     <ShoppingBag className="mx-auto mb-3 text-[var(--gold-500)]" />
@@ -158,12 +167,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                     </div>
                   </div>
                 ))}
-                {crossSells.length > 0 && (
-                  <div className="space-y-3">
-                    <p className="font-black text-[var(--emerald-950)]">أضيفي لمسة تكمل طلبك</p>
-                    {crossSells.map((product) => <MiniProduct key={product.sku} product={product} onAdd={() => addItem(product)} />)}
-                  </div>
-                )}
               </div>
               <div className="border-t border-[var(--border-gold)] bg-[var(--cream-50)] p-5">
                 <div className="mb-3 flex justify-between text-lg font-black">
