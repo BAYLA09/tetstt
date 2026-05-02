@@ -11,7 +11,7 @@ import { generateEventId, getTrackingContext, trackEvent } from "@/lib/events";
 
 function MiniProduct({ product, onAdd }: { product: Product; onAdd: () => void }) {
   return (
-    <div className="rounded-2xl border border-[var(--border-gold)] bg-[var(--cream-50)] p-3">
+    <div className="rounded-2xl border border-[var(--border-gold)] bg-white p-3 shadow-[0_10px_30px_rgba(1,63,42,0.08)]">
       <div className="flex items-center gap-3">
         <div className="grid size-14 shrink-0 place-items-center rounded-xl bg-[radial-gradient(circle_at_top,#d9ad63,#06472f_70%)] text-xl">
           ✦
@@ -19,7 +19,7 @@ function MiniProduct({ product, onAdd }: { product: Product; onAdd: () => void }
         <div className="min-w-0 flex-1">
           <p className="font-bold text-[var(--emerald-950)]">{product.name}</p>
           <p className="text-xs text-[var(--muted)]">{product.subheading}</p>
-          <p className="mt-1 font-bold text-[var(--gold-500)]">{money(product.price)}</p>
+          <p className="mt-1 font-bold text-[var(--gold-500)]">{money(product.price)} - يرفع قيمة الطلب بدون تردد</p>
         </div>
         <button onClick={onAdd} className="rounded-full bg-[var(--emerald-950)] px-3 py-2 text-xs font-bold text-[var(--gold-300)]">
           أضيفيه
@@ -62,7 +62,7 @@ function UpsellModal({ orderId, onDone }: { orderId: string; onDone: () => void 
         <p className="mx-auto mb-3 grid size-16 place-items-center rounded-full bg-[var(--gold-500)] text-3xl text-[var(--emerald-950)]">✦</p>
         <p className="text-sm font-bold text-[var(--gold-300)]">عرض خاص يظهر مرة واحدة فقط</p>
         <h3 className="mt-2 text-2xl font-black">أضيفي لمسة عود فاخرة بـ AED 39</h3>
-        <p className="mt-3 text-sm leading-7 text-white/75">هذا السعر خاص بطلبك الحالي فقط، وينتهي خلال {seconds} ثانية.</p>
+        <p className="mt-3 text-sm leading-7 text-white/75">أكثر إضافة تزيد إحساس الفخامة في الطلب، بسعر خاص فقط قبل تجهيز الشحنة. ينتهي خلال {seconds} ثانية.</p>
         <div className="mt-5 grid gap-3">
           <button disabled={busy} onClick={accept} className="rounded-full bg-[var(--gold-500)] px-5 py-4 font-black text-[var(--emerald-950)]">
             {busy ? "جاري الإضافة..." : "أضيفيه لطلبي بـ 39 درهم"}
@@ -137,11 +137,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 <button onClick={closeCart} className="rounded-full border border-white/20 p-2"><X /></button>
               </div>
               <div className="flex-1 space-y-4 overflow-y-auto p-5">
+                <div className="rounded-3xl bg-[var(--emerald-950)] p-4 text-white">
+                  <p className="text-xs font-bold text-[var(--gold-300)]">مهم قبل التأكيد</p>
+                  <p className="mt-1 text-sm leading-7">سنؤكد طلبك عبر الهاتف/واتساب قبل الشحن. الطلبات المؤكدة فقط تدخل التجهيز حتى توصلك التجربة مثل ما اخترتيها.</p>
+                </div>
                 {crossSells.length > 0 && (
                   <div className="space-y-3 rounded-3xl border border-[var(--border-gold)] bg-[var(--cream-50)] p-4">
                     <div>
-                      <p className="text-xs font-bold text-[var(--gold-500)]">الأكثر إضافة مع الطلب</p>
-                      <p className="font-black text-[var(--emerald-950)]">أضيفي لمسة تكمل طلبك</p>
+                      <p className="text-xs font-bold text-[var(--gold-500)]">لرفع قيمة الطلب اليوم</p>
+                      <p className="font-black text-[var(--emerald-950)]">أضيفي ثنائي السيروم قبل التأكيد</p>
+                      <p className="mt-1 text-xs leading-6 text-[var(--muted)]">بدل طلب سيروم واحد لاحقاً، خذي الإضافة الآن مع نفس التوصيل والتأكيد.</p>
                     </div>
                     {crossSells.map((product) => <MiniProduct key={product.sku} product={product} onAdd={() => addItem(product)} />)}
                   </div>
@@ -174,7 +179,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                   <span>{money(total)}</span>
                 </div>
                 <p className="mb-4 flex items-center gap-2 text-sm text-[var(--emerald-950)]"><CheckCircle2 size={16} /> الدفع عند الاستلام - لا تدفعين الآن</p>
-                <button disabled={!items.length} onClick={openCheckout} className="w-full rounded-full bg-[var(--gold-500)] px-6 py-4 font-black text-[var(--emerald-950)] disabled:opacity-50">إتمام الطلب</button>
+                <button disabled={!items.length} onClick={openCheckout} className="w-full rounded-full bg-[var(--gold-500)] px-6 py-4 font-black text-[var(--emerald-950)] disabled:opacity-50">ثبتي الطلب للتأكيد</button>
               </div>
             </motion.aside>
           </div>
@@ -183,34 +188,34 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
       <AnimatePresence>
         {checkoutState === "checkout" && (
-          <div className="fixed inset-0 z-[60] grid place-items-center bg-black/60 p-4">
-            <motion.form onSubmit={submitOrder} initial={{ y: 24, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 24, opacity: 0 }} className="w-full max-w-lg rounded-[2rem] bg-white p-6 shadow-2xl">
+          <div className="fixed inset-0 z-[60] grid place-items-center bg-black/45 p-4 lg:place-items-center">
+            <motion.form onSubmit={submitOrder} initial={{ y: 24, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 24, opacity: 0 }} className="w-full max-w-lg rounded-[2rem] border border-[var(--border-gold)] bg-white p-6 shadow-2xl">
               <div className="mb-5 flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-sm font-bold text-[var(--gold-500)]">الدفع عند الاستلام</p>
-                  <h2 className="text-2xl font-black text-[var(--emerald-950)]">أكملي الطلب الآن</h2>
-                  <p className="mt-2 text-sm text-[var(--muted)]">سنتواصل معك لتأكيد الطلب قبل الشحن.</p>
+                  <p className="text-sm font-bold text-[var(--gold-500)]">خطوة التأكيد - الدفع عند الاستلام</p>
+                  <h2 className="text-2xl font-black text-[var(--emerald-950)]">اكتبي بياناتك ونثبت لك الطلب</h2>
+                  <p className="mt-2 text-sm leading-7 text-[var(--muted)]">لا يوجد دفع الآن. سنراجع الرقم ونتواصل معك لتأكيد الشحنة قبل التجهيز حتى تقل الأخطاء والتأخير.</p>
                 </div>
                 <button type="button" onClick={closeCheckout} className="rounded-full border p-2"><X /></button>
               </div>
               <div className="mb-5 rounded-2xl bg-[var(--cream-50)] p-4">
                 <div className="flex justify-between font-black"><span>ملخص الطلب</span><span>{money(total)}</span></div>
-                <p className="mt-2 text-sm text-[var(--muted)]">★★★★★ نساء في الإمارات يفضلن الطلب بالدفع عند الاستلام.</p>
+                <p className="mt-2 text-sm leading-7 text-[var(--muted)]">طلبك محجوز مؤقتاً. إذا كان الرقم صحيحاً، فريق التأكيد يتواصل قبل الشحن.</p>
               </div>
               <div className="grid gap-3">
                 <label className="grid gap-2 text-sm font-bold text-[var(--emerald-950)]">الاسم الكامل
-                  <input value={name} onChange={(e) => setName(e.target.value)} className="rounded-2xl border border-[var(--border-gold)] px-4 py-3 outline-none focus:ring-2 focus:ring-[var(--gold-400)]" placeholder="مثال: فاطمة علي" />
+                  <input value={name} onChange={(e) => setName(e.target.value)} dir="rtl" className="rounded-2xl border border-[var(--border-gold)] px-4 py-3 text-right outline-none placeholder:text-right focus:ring-2 focus:ring-[var(--gold-400)]" placeholder="مثال: فاطمة علي" />
                 </label>
                 <label className="grid gap-2 text-sm font-bold text-[var(--emerald-950)]">رقم الهاتف الإماراتي
-                  <input value={phone} onChange={(e) => setPhone(e.target.value)} dir="ltr" className="rounded-2xl border border-[var(--border-gold)] px-4 py-3 text-right outline-none focus:ring-2 focus:ring-[var(--gold-400)]" placeholder="05XXXXXXXX" />
+                  <input value={phone} onChange={(e) => setPhone(e.target.value)} dir="rtl" inputMode="tel" className="rounded-2xl border border-[var(--border-gold)] px-4 py-3 text-right outline-none placeholder:text-right focus:ring-2 focus:ring-[var(--gold-400)]" placeholder="05XXXXXXXX" />
                 </label>
               </div>
               {phone && !normalizedPhone && <p className="mt-2 text-sm text-red-700">أدخلي رقم موبايل إماراتي صحيح.</p>}
               {error && <p className="mt-3 rounded-xl bg-red-50 p-3 text-sm text-red-700">{error}</p>}
               <button disabled={!canSubmit} className="mt-5 w-full rounded-full bg-[var(--emerald-950)] px-6 py-4 font-black text-[var(--gold-300)] disabled:opacity-50">
-                {submitting ? "جاري تأكيد الطلب..." : "تأكيد الطلب الآن"}
+                {submitting ? "جاري تثبيت الطلب..." : "ثبتي الطلب الآن"}
               </button>
-              <p className="mt-3 text-center text-xs text-[var(--muted)]">العرض الحالي محجوز لك أثناء تعبئة البيانات.</p>
+              <p className="mt-3 text-center text-xs leading-6 text-[var(--muted)]">الطلب لا يدخل الشحن إلا بعد تأكيدك. هذا يساعدنا نوصل الطلبات المؤكدة بسرعة ونقلل الإلغاءات.</p>
             </motion.form>
           </div>
         )}

@@ -68,8 +68,8 @@ export const useCartStore = create<CartStore>((set, get) => ({
             ),
     })),
   openCart: () => set({ isCartOpen: true }),
-  closeCart: () => set({ isCartOpen: false }),
-  openCheckout: () => set({ checkoutState: "checkout", isCartOpen: false }),
+  closeCart: () => set({ isCartOpen: false, checkoutState: "closed" }),
+  openCheckout: () => set({ checkoutState: "checkout", isCartOpen: true }),
   closeCheckout: () => set({ checkoutState: "closed" }),
   openUpsell: (orderId, total) =>
     set({ checkoutState: "upsell", lastOrderId: orderId, lastTotal: total }),
