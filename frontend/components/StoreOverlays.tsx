@@ -50,10 +50,14 @@ function CheckoutModal() {
     setServerError("");
     const initiateEvent = createEventId("evt_checkout");
     const purchaseEvent = createEventId("evt_purchase");
-    const response = await fetch(`${apiBase}/orders`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ customer_name: values.name.trim(), phone: normalizeUaePhone(values.phone), items, currency: "AED", source_url: window.location.href, landing_page: window.localStorage.getItem("layali_landing_page") || window.location.href, event_ids: { initiate_checkout: initiateEvent, purchase: purchaseEvent }, tracking: collectTracking(searchParams), utm: collectUtm(searchParams) }) });
-    if (!response.ok) { setServerError("تعذر حفظ الطلب. تأكدي من الرقم وحاولي مرة أخرى."); return; }
-    const data = await response.json();
-    setPendingOrder({ orderId: data.order_id, total: data.total });
+    try {
+      const response = await fetch(`${apiBase}/orders`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ customer_name: values.name.trim(), phone: normalizeUaePhone(values.phone), items, currency: "AED", source_url: window.location.href, landing_page: window.localStorage.getItem("layali_landing_page") || window.location.href, event_ids: { initiate_checkout: initiateEvent, purchase: purchaseEvent }, tracking: collectTracking(searchParams), utm: collectUtm(searchParams) }) });
+      if (!response.ok) { setServerError("تعذر حفظ الطلب. تأكدي من الرقم وحاولي مرة أخرى."); return; }
+      const data = await response.json();
+      setPendingOrder({ orderId: data.order_id, total: data.total });
+    } catch {
+      setServerError("تعذر الاتصال بخدمة الطلبات. حاولي مرة أخرى بعد لحظات.");
+    }
   }
   return <AnimatePresence>{isCheckoutOpen && <><motion.div className="modal-backdrop" onClick={closeCheckout} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} /><motion.div className="modal" initial={{ scale: .95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: .95, opacity: 0 }}>
     <button className="btn secondary" onClick={closeCheckout}>إغلاق</button><h2>أكملي الطلب بالدفع عند الاستلام</h2><p>نساء كثيرات يفضلن الدفع عند الاستلام لتجربة أوضح.</p><p className="badge">العرض الحالي محجوز لك أثناء تعبئة البيانات.</p>
