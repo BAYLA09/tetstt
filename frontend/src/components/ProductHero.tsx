@@ -15,33 +15,34 @@ export function ProductHero({ product }: { product: Product }) {
   }
 
   return (
-    <section className="hero-gradient px-4 py-12 text-white lg:py-20">
+    <section className="hero-gradient relative overflow-hidden px-4 py-12 text-white lg:py-20">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(201,150,69,0.2),transparent_32%)]" />
       <div className="container-grid grid items-center gap-10 lg:grid-cols-[0.9fr_1fr]">
         <div className="order-2 lg:order-1">
           <div className="placeholder-art min-h-[420px] rounded-[2.5rem]">
             <span>{product.shortName}</span>
           </div>
         </div>
-        <div className="order-1 lg:order-2">
+        <div className="relative z-10 order-1 rounded-[2rem] border border-gold-400/25 bg-emerald-950/72 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] backdrop-blur lg:order-2 lg:p-8">
           <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">
             {product.badge}
           </p>
-          <h1 className="mt-5 text-4xl font-black leading-tight md:text-6xl">
+          <h1 className="mt-5 text-4xl font-black leading-tight text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.75)] md:text-6xl">
             {product.name}
           </h1>
-          <p className="mt-5 text-xl leading-9 text-cream-100/90">
+          <p className="mt-5 text-xl font-semibold leading-9 text-cream-50 drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)]">
             {product.headline}
           </p>
           <div className="mt-5 flex items-center gap-2 text-gold-300">
             {Array.from({ length: 5 }).map((_, index) => (
               <Star key={index} className="h-5 w-5 fill-current" />
             ))}
-            <span className="text-sm text-cream-100">الأكثر اختياراً هذا الأسبوع</span>
+            <span className="text-sm font-bold text-cream-50">الأكثر اختياراً هذا الأسبوع</span>
           </div>
-          <div className="mt-8 rounded-[2rem] border border-gold-400/30 bg-white/10 p-5">
+          <div className="mt-8 rounded-[2rem] border border-gold-400/40 bg-black/22 p-5 shadow-inner">
             <p className="text-sm text-gold-300">العرض الحالي</p>
             <div className="mt-2 flex flex-wrap items-end gap-3">
-              <p className="text-4xl font-black">{money(product.price)}</p>
+            <p className="text-4xl font-black text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)]">{money(product.price)}</p>
               {product.compareAt && (
                 <p className="text-lg text-cream-100/60 line-through">
                   {money(product.compareAt)}

@@ -18,6 +18,15 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-emerald-950: var(--emerald-950);
+  --color-emerald-900: var(--emerald-900);
+  --color-emerald-800: var(--emerald-800);
+  --color-gold-500: var(--gold-500);
+  --color-gold-400: var(--gold-400);
+  --color-gold-300: var(--gold-300);
+  --color-cream-50: var(--cream-50);
+  --color-cream-100: var(--cream-100);
+  --color-muted: var(--muted);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -49,4 +58,154 @@ html {
 
 .gold-ring {
   box-shadow: 0 0 0 1px rgba(201, 150, 69, 0.35), 0 24px 70px rgba(1, 63, 42, 0.2);
+}
+
+.container-grid {
+  width: min(100% - 2rem, 1180px);
+  margin-inline: auto;
+}
+
+.hero-gradient {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 16% 18%, rgba(235, 201, 130, 0.26), transparent 28%),
+    radial-gradient(circle at 78% 8%, rgba(217, 173, 99, 0.18), transparent 24%),
+    linear-gradient(135deg, #002619 0%, #013f2a 42%, #06472f 72%, #001b12 100%);
+}
+
+.hero-gradient::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(to bottom, black, transparent 85%);
+}
+
+.section-padding {
+  padding-block: clamp(4rem, 7vw, 6.5rem);
+}
+
+.section-heading {
+  max-width: 760px;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.section-heading h2,
+.section-title {
+  color: var(--emerald-950);
+  font-size: clamp(2rem, 4vw, 3.6rem);
+  font-weight: 900;
+  line-height: 1.18;
+  letter-spacing: -0.03em;
+}
+
+.section-heading p:not(.badge),
+.section-heading > p:last-child {
+  margin-top: 1rem;
+  color: var(--muted);
+  font-size: 1.05rem;
+  line-height: 2;
+}
+
+.section-kicker,
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(201, 150, 69, 0.34);
+  border-radius: 999px;
+  background: rgba(201, 150, 69, 0.11);
+  color: var(--gold-500);
+  padding: 0.45rem 0.9rem;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.btn-primary,
+.btn-secondary {
+  display: inline-flex;
+  min-height: 3.25rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.85rem 1.45rem;
+  font-weight: 900;
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--gold-300), var(--gold-500));
+  color: var(--emerald-950);
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.22), inset 0 1px rgba(255, 255, 255, 0.34);
+}
+
+.btn-primary:hover,
+.btn-secondary:hover {
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  border: 1px solid rgba(201, 150, 69, 0.42);
+  background: rgba(1, 63, 42, 0.05);
+  color: var(--emerald-950);
+}
+
+.premium-card {
+  border: 1px solid rgba(201, 150, 69, 0.28);
+  border-radius: 2rem;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 248, 236, 0.92)),
+    var(--surface, #fff);
+  padding: 1.4rem;
+  box-shadow: 0 22px 70px rgba(1, 63, 42, 0.1);
+}
+
+.product-visual,
+.placeholder-art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(235, 201, 130, 0.34);
+  background:
+    radial-gradient(circle at 48% 18%, rgba(235, 201, 130, 0.4), transparent 23%),
+    radial-gradient(circle at 50% 64%, rgba(217, 173, 99, 0.22), transparent 30%),
+    linear-gradient(145deg, #002619 0%, #013f2a 52%, #001b12 100%);
+  color: var(--gold-300);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.08), 0 30px 80px rgba(1, 63, 42, 0.24);
+}
+
+.product-visual::before,
+.placeholder-art::before {
+  content: "☾ ✦";
+  position: absolute;
+  top: 1.2rem;
+  left: 1.6rem;
+  color: rgba(235, 201, 130, 0.8);
+  font-size: 2rem;
+  letter-spacing: 0.8rem;
+}
+
+.placeholder-art span {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  min-height: 12rem;
+  width: min(72%, 15rem);
+  place-items: center;
+  border: 1px solid rgba(235, 201, 130, 0.45);
+  border-radius: 999px 999px 2rem 2rem;
+  background: linear-gradient(180deg, rgba(235, 201, 130, 0.92), rgba(255, 248, 236, 0.88));
+  color: var(--emerald-950);
+  padding: 1.4rem;
+  text-align: center;
+  font-weight: 900;
+  box-shadow: 0 24px 55px rgba(0, 0, 0, 0.22);
 }
