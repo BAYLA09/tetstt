@@ -1,6 +1,6 @@
 "use client";
 
-import { Star } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { Product, money } from "@/lib/products";
 import { useCartStore } from "@/lib/cart-store";
 import { generateEventId, trackEvent } from "@/lib/events";
@@ -33,11 +33,13 @@ export function ProductHero({ product }: { product: Product }) {
           <p className="mt-5 text-xl font-semibold leading-9 text-cream-50 drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)]">
             {product.headline}
           </p>
-          <div className="mt-5 flex items-center gap-2 text-gold-300">
-            {Array.from({ length: 5 }).map((_, index) => (
-              <Star key={index} className="h-5 w-5 fill-current" />
+          <div className="mt-5 grid gap-2 rounded-2xl border border-gold-400/25 bg-white/8 p-4 text-sm font-bold text-cream-50 md:grid-cols-3">
+            {["تأكيد قبل الشحن", "الدفع عند الاستلام", "عرض محجوز اليوم"].map((item) => (
+              <span key={item} className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-gold-300" />
+                {item}
+              </span>
             ))}
-            <span className="text-sm font-bold text-cream-50">الأكثر اختياراً هذا الأسبوع</span>
           </div>
           <div className="mt-8 rounded-[2rem] border border-gold-400/40 bg-black/22 p-5 shadow-inner">
             <p className="text-sm text-gold-300">العرض الحالي</p>
@@ -49,8 +51,8 @@ export function ProductHero({ product }: { product: Product }) {
                 </p>
               )}
             </div>
-            <p className="mt-3 text-sm text-cream-100/75">
-              الدفع عند الاستلام داخل الإمارات، وتأكيد قبل الشحن.
+            <p className="mt-3 text-sm font-semibold leading-7 text-cream-100">
+              لا تدفعين الآن. نثبت طلبك ونتواصل معك للتأكيد قبل الشحن، باش توصلك التجربة كما شفتيها.
             </p>
           </div>
           <button onClick={addOffer} className="mt-6 w-full rounded-full bg-gold-500 px-8 py-5 text-lg font-black text-emerald-950 shadow-2xl transition hover:-translate-y-0.5 hover:bg-gold-400 md:w-auto">
@@ -60,7 +62,7 @@ export function ProductHero({ product }: { product: Product }) {
       </div>
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-gold-500/30 bg-emerald-950/95 p-3 backdrop-blur lg:hidden">
         <button onClick={addOffer} className="w-full rounded-full bg-gold-500 px-5 py-4 font-black text-emerald-950">
-          أضيفي العرض للسلة - {money(product.price)}
+          أضيفي العرض للسلة - 199 SAR
         </button>
       </div>
     </section>

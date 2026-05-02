@@ -13,6 +13,13 @@ const nav = [
   { href: "/contact", label: "تواصل" },
 ];
 
+const topBarMessages = [
+  "الدفع عند الاستلام داخل الإمارات - لا تدفعين الآن",
+  "تأكيد الطلب قبل الشحن لتقليل الإلغاء وضمان الجدية",
+  "عرض اليوم: الباقة على الموبايل بـ 199 SAR + إضافات ترفع قيمة الطلب",
+  "تجربة ليالي بيوتي: تغليف فاخر، رائحة راقية، ودعم واتساب",
+];
+
 export function SiteHeader() {
   const count = useCartStore((state) =>
     state.items.reduce((sum, item) => sum + item.quantity, 0),
@@ -20,7 +27,16 @@ export function SiteHeader() {
   const openCart = useCartStore((state) => state.openCart);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--border-gold)] bg-[rgba(1,63,42,0.94)] text-[var(--cream-50)] backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-[var(--border-gold)] bg-[rgba(1,63,42,0.96)] text-[var(--cream-50)] backdrop-blur">
+      <div className="overflow-hidden border-b border-[var(--border-gold)] bg-black/20 py-2">
+        <div className="topbar-track flex w-max gap-10 text-xs font-bold text-[var(--gold-300)] md:text-sm">
+          {[...topBarMessages, ...topBarMessages].map((message, index) => (
+            <span key={`${message}-${index}`} className="whitespace-nowrap">
+              ✦ {message}
+            </span>
+          ))}
+        </div>
+      </div>
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 lg:px-8">
         <Link href="/" aria-label="Layali Beauty">
           <BrandLogo compact />

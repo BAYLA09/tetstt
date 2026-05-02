@@ -2,10 +2,10 @@ import Link from "next/link";
 import { ProductCard } from "@/components/ProductCard";
 import { products } from "@/lib/products";
 
-const reviews = [
-  "ريحة المسك ناعمة ونظيفة، حسيت المنتج مرتب وفخم.",
-  "طلبت الباقة ووصلني التأكيد بسرعة. التغليف كان حلو.",
-  "العود يعطي إحساس خليجي راقٍ، مناسب للطلعات.",
+const proofCards = [
+  "تأكيد الطلب قبل الشحن يقلل النسيان ويلغي الطلبات غير الجادة.",
+  "الدفع عند الاستلام يخلي القرار أسهل بدون خوف من الدفع المسبق.",
+  "عرض السلة يقترح الإضافة المناسبة بدل ما يترك العميلة تطلع بطلب صغير.",
 ];
 
 export default function Home() {
@@ -58,19 +58,19 @@ export default function Home() {
       <section className="section-padding bg-cream-50">
         <div className="container-grid">
           <div className="section-heading">
-            <p className="badge">★★★★★ تقييمات أولية</p>
-            <h2>منتجات تبدو كعلامة تملكينها، لا كمنتج عشوائي</h2>
+            <p className="badge">ثقة قبل الشحن</p>
+            <h2>طلب واضح يقلل التردد ويزيد فرصة الاستلام</h2>
             <p>
-              ليالي بيوتي مبنية حول الثقة، التغليف، وضوح الطلب، واللغة التي
-              تفهمها المرأة في الإمارات.
+              العميلة لا تحتاج وعود كبيرة؛ تحتاج تجربة مفهومة: ماذا ستستلم،
+              لماذا السعر منطقي، ومتى سيتم تأكيد الطلب.
             </p>
           </div>
           <div className="mt-10 grid gap-5 md:grid-cols-3">
-            {reviews.map((review) => (
-              <div key={review} className="premium-card">
-                <p className="text-gold-500">★★★★★</p>
-                <p className="mt-4 leading-8 text-emerald-950">{review}</p>
-                <p className="mt-4 text-sm text-muted">عميلة من الإمارات</p>
+            {proofCards.map((proof) => (
+              <div key={proof} className="premium-card">
+                <p className="text-gold-500">✦</p>
+                <p className="mt-4 leading-8 text-emerald-950">{proof}</p>
+                <p className="mt-4 text-sm text-muted">مصمم لرفع التأكيد والتوصيل</p>
               </div>
             ))}
           </div>
