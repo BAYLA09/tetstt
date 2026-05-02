@@ -29,6 +29,7 @@ Frontend requirements:
 
 - Next.js App Router + React + TypeScript + Tailwind CSS.
 - Arabic RTL, mobile first, premium UAE beauty design.
+- Use the provided Layali Beauty logo direction: deep emerald green background with warm metallic gold logo/accent. This palette must drive the header, hero, CTA system, cards, checkout, cart drawer, footer, and placeholder imagery. Follow `docs/08-design-system.md`.
 - Pages: home, collection, product landing pages for all offers, about, contact, thank-you.
 - Cart drawer with cross-sells.
 - Checkout popup with only name and UAE phone.

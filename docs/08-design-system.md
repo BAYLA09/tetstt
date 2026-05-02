@@ -8,27 +8,49 @@ Keywords:
 
 - Soft luxury
 - UAE femininity
-- Cream/gold/rose warmth
+- Deep emerald and warm gold from the Layali Beauty logo
 - Clean product photography
 - Calm confidence
 
+## Logo-led brand direction
+
+The supplied Layali Beauty logo is the source of truth for the visual system:
+
+- Primary background: deep emerald green.
+- Primary accent: warm metallic gold.
+- Mood: premium night luxury, moon/stars, elegant Arabic beauty, high-price authority.
+- Use cream only as a soft content surface, not as the main brand color.
+- Avoid pink/rose-led layouts; they make the brand feel generic beauty instead of owned and premium.
+
 ## Colors
 
-Use CSS variables.
+Use CSS variables. The entire store should feel built from the logo palette.
 
 ```css
---background: #fffaf3;
+--emerald-950: #013f2a;
+--emerald-900: #06472f;
+--emerald-800: #0b5739;
+--gold-500: #c99645;
+--gold-400: #d9ad63;
+--gold-300: #ebc982;
+--cream-50: #fff8ec;
+--cream-100: #f7ead7;
+--ink: #18130d;
+--muted: #7b705f;
 --surface: #ffffff;
---surface-warm: #f8efe3;
---text: #1f1712;
---muted: #7a6a5f;
---gold: #b88a44;
---gold-dark: #8a642e;
---rose: #d8a7a0;
---oud: #2b1c16;
+--surface-dark: #063824;
+--border-gold: rgba(201, 150, 69, 0.34);
 --success: #2f7d50;
 --danger: #b42318;
 ```
+
+Usage rules:
+
+- Header, footer, hero, announcement bar, cart CTA area, and major authority sections should use emerald.
+- Primary CTAs should use gold on emerald or emerald text on gold.
+- Product cards can use cream/white surfaces with gold borders and emerald headings.
+- Scarcity and premium badges should use emerald fill with gold text/border.
+- Never introduce a competing primary color.
 
 ## Typography
 
@@ -72,9 +94,9 @@ Secondary:
 Product cards:
 
 - soft shadow
-- cream/white surface
+- cream/white surface with emerald headings
 - rounded 24px
-- image area with warm gradient
+- image area with emerald-to-gold or cream-to-gold gradient
 - badge top corner
 
 ### Badges
@@ -100,7 +122,7 @@ Use for:
 Until real images arrive:
 
 - Use generated premium mockup blocks or static placeholder assets.
-- Show bottle silhouettes, cream background, Arabic label placeholder.
+- Show bottle silhouettes, emerald/gold backgrounds, Arabic label placeholder.
 - Never use random low-quality stock images.
 
 Suggested alt text:

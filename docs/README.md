@@ -40,6 +40,7 @@ backend/    # Python FastAPI API, Postgres models, migrations, CAPI, webhook dis
 ## Non-negotiables
 
 - Arabic first, RTL everywhere.
+- Use the provided Layali Beauty logo direction everywhere: deep emerald green base with warm metallic gold accents.
 - Mobile first; Snapchat and TikTok traffic will be mostly mobile.
 - COD only: no payment gateway.
 - Checkout collects only `name` and valid UAE phone.

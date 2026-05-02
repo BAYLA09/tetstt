@@ -12,6 +12,7 @@
 
 - Arabic RTL first.
 - Mobile first; TikTok/Snapchat traffic will be mostly mobile.
+- Use the uploaded Layali Beauty logo as the visual source of truth: deep emerald green background, warm metallic gold accents, and luxury night/moon cues.
 - COD only.
 - Product CTA adds selected offer to cart and opens cart drawer.
 - Cart CTA opens checkout popup.
@@ -25,8 +26,8 @@
 Sections:
 
 1. Announcement bar: `الدفع عند الاستلام داخل الإمارات | عروض محدودة اليوم`.
-2. Header: logo, menu, cart, WhatsApp/contact.
-3. Hero: text right and image left on desktop; CTA to bundle.
+2. Header: logo, menu, cart, WhatsApp/contact, with emerald background and gold details.
+3. Hero: text right and image left on desktop; CTA to bundle; use emerald/gold as the hero identity.
 4. Trust row: COD, UAE delivery, confirmation before shipping, elegant packaging.
 5. Social proof strip with stars and UAE city cues.
 6. Featured bundle card.
@@ -150,7 +151,7 @@ Add replaceable premium placeholders:
 - `public/images/placeholders/oud-serum.webp`
 - `public/images/placeholders/ritual-1.webp`
 
-Use cream/gold backgrounds, bottle silhouettes, and Arabic label placeholders.
+Use deep emerald/gold backgrounds, bottle silhouettes, moon/star accents, and Arabic label placeholders that match the Layali Beauty logo.
 
 ## SEO
 
