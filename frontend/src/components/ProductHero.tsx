@@ -62,7 +62,7 @@ export function ProductHero({ product }: { product: Product }) {
       </div>
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-gold-500/30 bg-emerald-950/95 p-3 backdrop-blur lg:hidden">
         <button onClick={addOffer} className="w-full rounded-full bg-gold-500 px-5 py-4 font-black text-emerald-950">
-          أضيفي العرض للسلة - 199 SAR
+          أضيفي العرض للسلة - {money(product.price)}
         </button>
       </div>
     </section>
