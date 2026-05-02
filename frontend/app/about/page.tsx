@@ -1,0 +1,2 @@
+export const metadata = { title: "عن ليالي بيوتي" };
+export default function AboutPage() { return <main className="section"><div className="container card" style={{ padding: 28 }}><h1>عن ليالي بيوتي</h1><p>ليالي بيوتي علامة عربية للعناية الفاخرة اليومية. نختار تفاصيل ناعمة تناسب المرأة في الإمارات وتمنح يومها فخامة هادئة.</p><h2>قيمنا</h2><p>فخامة هادئة، وضوح، عناية، ثقة.</p><p>الدفع عند الاستلام والتأكيد قبل الشحن جزء أساسي من تجربة الطلب.</p></div></main>; }

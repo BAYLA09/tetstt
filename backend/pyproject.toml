@@ -1,0 +1,28 @@
+[project]
+name = "layali-backend"
+version = "0.1.0"
+description = "Layali Beauty COD order API"
+requires-python = ">=3.11"
+dependencies = [
+  "alembic",
+  "asyncpg",
+  "aiosqlite",
+  "fastapi",
+  "httpx",
+  "pydantic-settings",
+  "sqlalchemy[asyncio]",
+  "uvicorn[standard]",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-asyncio", "ruff"]
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 120
