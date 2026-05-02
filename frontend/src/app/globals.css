@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fff8ec;
+  --foreground: #18130d;
+  --emerald-950: #013f2a;
+  --emerald-900: #06472f;
+  --emerald-800: #0b5739;
+  --gold-500: #c99645;
+  --gold-400: #d9ad63;
+  --gold-300: #ebc982;
+  --cream-50: #fff8ec;
+  --cream-100: #f7ead7;
+  --ink: #18130d;
+  --muted: #7b705f;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-arabic), Arial, Helvetica, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background: var(--gold-400);
+  color: var(--emerald-950);
+}
+
+.luxury-panel {
+  background:
+    radial-gradient(circle at 20% 15%, rgba(235, 201, 130, 0.22), transparent 28%),
+    linear-gradient(135deg, #013f2a 0%, #06472f 48%, #022d1f 100%);
+}
+
+.gold-text {
+  color: var(--gold-400);
+}
+
+.gold-ring {
+  box-shadow: 0 0 0 1px rgba(201, 150, 69, 0.35), 0 24px 70px rgba(1, 63, 42, 0.2);
+}

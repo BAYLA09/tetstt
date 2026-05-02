@@ -1,0 +1,95 @@
+"use client";
+
+import Link from "next/link";
+import { Menu, ShoppingBag } from "lucide-react";
+import { useCartStore } from "@/lib/cart-store";
+import { BrandLogo } from "./BrandLogo";
+
+const nav = [
+  { href: "/", label: "الرئيسية" },
+  { href: "/collections", label: "المجموعة" },
+  { href: "/products/luxury-bundle", label: "الباقة" },
+  { href: "/about", label: "عن ليالي" },
+  { href: "/contact", label: "تواصل" },
+];
+
+export function SiteHeader() {
+  const count = useCartStore((state) =>
+    state.items.reduce((sum, item) => sum + item.quantity, 0),
+  );
+  const openCart = useCartStore((state) => state.openCart);
+
+  return (
+    <header className="sticky top-0 z-40 border-b border-[var(--border-gold)] bg-[rgba(1,63,42,0.94)] text-[var(--cream-50)] backdrop-blur">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 lg:px-8">
+        <Link href="/" aria-label="Layali Beauty">
+          <BrandLogo compact />
+        </Link>
+        <nav className="hidden items-center gap-7 text-sm font-semibold lg:flex">
+          {nav.map((item) => (
+            <Link key={item.href} href={item.href} className="transition hover:text-[var(--gold-300)]">
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+        <div className="flex items-center gap-3">
+          <a
+            href="https://wa.me/"
+            className="hidden rounded-full border border-[var(--border-gold)] px-4 py-2 text-sm font-bold text-[var(--gold-300)] lg:inline-flex"
+          >
+            واتساب
+          </a>
+          <button
+            onClick={openCart}
+            className="relative rounded-full bg-[var(--gold-500)] p-3 text-[var(--emerald-950)] shadow-lg shadow-black/20"
+            aria-label="افتحي السلة"
+          >
+            <ShoppingBag size={20} />
+            {count > 0 && (
+              <span className="absolute -left-1 -top-1 grid h-5 w-5 place-items-center rounded-full bg-white text-xs font-bold text-[var(--emerald-950)]">
+                {count}
+              </span>
+            )}
+          </button>
+          <button className="rounded-full border border-[var(--border-gold)] p-3 lg:hidden" aria-label="القائمة">
+            <Menu size={20} />
+          </button>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+export function Footer() {
+  return (
+    <footer className="bg-[var(--emerald-950)] text-[var(--cream-50)]">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 md:grid-cols-[1.3fr_1fr_1fr] lg:px-8">
+        <div>
+          <BrandLogo />
+          <p className="mt-5 max-w-md text-sm leading-7 text-[var(--cream-100)]">
+            ليالي بيوتي تجربة عناية عربية فاخرة للمرأة التي تحب الرائحة الراقية، الوضوح، والدفع عند الاستلام داخل الإمارات.
+          </p>
+        </div>
+        <div>
+          <h3 className="font-bold text-[var(--gold-300)]">روابط مهمة</h3>
+          <div className="mt-4 grid gap-3 text-sm">
+            {nav.map((item) => (
+              <Link key={item.href} href={item.href} className="hover:text-[var(--gold-300)]">
+                {item.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+        <div>
+          <h3 className="font-bold text-[var(--gold-300)]">الثقة والطلب</h3>
+          <ul className="mt-4 grid gap-3 text-sm text-[var(--cream-100)]">
+            <li>الدفع عند الاستلام</li>
+            <li>تأكيد الطلب قبل الشحن</li>
+            <li>توصيل داخل الإمارات</li>
+            <li>دعم عبر واتساب</li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+  );
+}
