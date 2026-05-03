@@ -1,21 +1,7 @@
 import type { CartItem } from "./products";
 
-function resolveApiBaseUrl() {
-  if (process.env.NEXT_PUBLIC_API_BASE_URL) {
-    return process.env.NEXT_PUBLIC_API_BASE_URL;
-  }
-
-  if (typeof window !== "undefined") {
-    const hostname = window.location.hostname;
-    if (hostname === "localhost" || hostname === "127.0.0.1") {
-      return "http://localhost:8000";
-    }
-  }
-
-  return "https://api.layalibeauty.shop";
-}
-
-const API_BASE_URL = resolveApiBaseUrl();
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.layalibeauty.shop";
 
 export type OrderPayload = {
   customer_name: string;
