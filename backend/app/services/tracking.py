@@ -35,11 +35,11 @@ async def send_capi_events(order: dict[str, Any], user_agent: str | None, ip: st
         ],
     }
     tasks = []
-    if settings.meta_access_token and settings.meta_pixel_id:
+    if settings.enable_capt and settings.enable_meta_capt and settings.meta_access_token and settings.meta_pixel_id:
         tasks.append(_send_meta(payload_order, user_agent, ip))
-    if settings.tiktok_access_token and settings.tiktok_pixel_id:
+    if settings.enable_capt and settings.enable_tiktok_capt and settings.tiktok_access_token and settings.tiktok_pixel_id:
         tasks.append(_send_tiktok(payload_order, user_agent, ip))
-    if settings.snap_access_token and settings.snap_pixel_id:
+    if settings.enable_capt and settings.enable_snap_capt and settings.snap_access_token and settings.snap_pixel_id:
         tasks.append(_send_snap(payload_order, user_agent, ip))
     for task in tasks:
         try:
@@ -82,7 +82,7 @@ async def _send_tiktok(order: dict[str, Any], user_agent: str | None, ip: str | 
     hashes = provider_hashes(order["phone_e164"])
     payload = {
         "event_source": "web",
-        "event_source_id": settings.tiktok_pixel_id,
+                "event_source_id": settings.tiktok_pixel_id,
         "data": [
             {
                 "event": "CompletePayment",

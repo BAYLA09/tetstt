@@ -5,11 +5,9 @@ from app.config import settings
 from app.db import init_db
 from app.routers import health, orders
 
-app = FastAPI(title="Layali Beauty API", version="0.1.0")
+app = FastAPI(title=settings.app_name, version="0.1.0")
 
-origins = [settings.frontend_origin, "http://localhost:3000", "http://127.0.0.1:3000"]
-if settings.cors_allow_www:
-    origins.append("https://www.layalibeauty.shop")
+origins = settings.allowed_origins
 
 app.add_middleware(
     CORSMiddleware,
