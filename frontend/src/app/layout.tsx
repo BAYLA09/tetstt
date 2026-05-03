@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans_Arabic, Inter } from "next/font/google";
 import { CartProvider } from "@/components/CartProvider";
+import { Footer, SiteHeader } from "@/components/SiteChrome";
 import "./globals.css";
 
 const arabic = IBM_Plex_Sans_Arabic({
@@ -33,7 +34,11 @@ export default function RootLayout({
       className={`${arabic.variable} ${inter.variable} h-full scroll-smooth antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <CartProvider>{children}</CartProvider>
+        <CartProvider>
+          <SiteHeader />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </CartProvider>
       </body>
     </html>
   );

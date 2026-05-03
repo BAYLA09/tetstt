@@ -60,6 +60,19 @@ html {
   box-shadow: 0 0 0 1px rgba(201, 150, 69, 0.35), 0 24px 70px rgba(1, 63, 42, 0.2);
 }
 
+.topbar-track {
+  animation: topbar-scroll 28s linear infinite;
+}
+
+@keyframes topbar-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(50%);
+  }
+}
+
 .container-grid {
   width: min(100% - 2rem, 1180px);
   margin-inline: auto;
