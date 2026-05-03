@@ -28,9 +28,11 @@ class Settings(BaseSettings):
     enable_meta_capt: bool = True
     enable_tiktok_capt: bool = True
     enable_snap_capt: bool = True
+    maxmind_api_url: str = "https://geoip.maxmind.com/geoip/v2.1/insights"
     maxmind_account_id: str | None = None
     maxmind_license_key: str | None = None
     enable_ip_fraud_check: bool = False
+    order_allowed_country: str = "SA"
     whitelisted_phones: str = ""
     log_level: str = "INFO"
     cors_allow_www: bool = True
@@ -91,6 +93,10 @@ class Settings(BaseSettings):
     @property
     def effective_tiktok_pixel_id(self) -> str | None:
         return self.tiktok_pixel_code or self.tiktok_pixel_id
+
+    @property
+    def whitelisted_phone_values(self) -> set[str]:
+        return {phone.strip() for phone in self.whitelisted_phones.split(",") if phone.strip()}
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

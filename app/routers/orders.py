@@ -12,6 +12,7 @@ from app.db import get_session
 from app.models import Order, OrderItem
 from app.products import PRODUCTS
 from app.schemas import OrderCreate, OrderResponse, UpsellCreate
+from app.services.fraud import verify_order_ip
 from app.services.phone import normalize_uae_phone, phone_hash
 from app.services.sheet_webhook import send_order_to_sheet
 from app.services.tracking import send_capi_events
@@ -64,6 +65,8 @@ async def create_order(
     session: AsyncSession = Depends(get_session),
 ) -> OrderResponse:
     normalized_phone = normalize_uae_phone(payload.phone)
+    client_ip = get_client_ip(request)
+    await verify_order_ip(client_ip=client_ip, phone_e164=normalized_phone)
     subtotal = Decimal("0")
     order_items: list[OrderItem] = []
     order_items_payload: list[dict] = []
@@ -122,7 +125,7 @@ async def create_order(
 
     sheet_payload = order_to_sheet_payload(order, order_items_payload)
     await send_order_to_sheet(sheet_payload)
-    await send_capi_events(sheet_payload, user_agent, get_client_ip(request))
+    await send_capi_events(sheet_payload, user_agent, client_ip)
 
     return OrderResponse(
         order_id=order.public_order_id,
