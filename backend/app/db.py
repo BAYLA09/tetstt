@@ -20,9 +20,7 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
 
 
 async def init_db() -> None:
-    # Local development creates SQLite tables directly. Production should run Alembic.
     import app.models  # noqa: F401
 
-    if settings.database_url.startswith("sqlite"):
-        async with engine.begin() as conn:
-            await conn.run_sync(Base.metadata.create_all)
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)

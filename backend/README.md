@@ -12,6 +12,9 @@ cp .env.example .env
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
+The app creates missing database tables on startup; Alembic migrations are not
+run automatically in the Docker command.
+
 For local testing without Postgres, set:
 
 ```text
