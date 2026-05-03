@@ -3,16 +3,34 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     app_env: str = "development"
+    app_name: str = "Layali Beauty API"
+    api_base_url: str | None = None
     database_url: str = "sqlite+aiosqlite:///./layali_dev.db"
     frontend_origin: str = "http://localhost:3000"
+    frontend_url: str | None = None
+    cors_origins: str | None = None
     sheet_webhook_url: str | None = None
+    google_sheets_webhook_url: str | None = None
     sheet_webhook_secret: str | None = None
+    sheets_webhook_secret: str | None = None
     meta_pixel_id: str | None = None
     meta_access_token: str | None = None
+    meta_api_version: str = "v20.0"
     tiktok_pixel_id: str | None = None
+    tiktok_pixel_code: str | None = None
     tiktok_access_token: str | None = None
+    tiktok_api_version: str = "v1.3"
     snap_pixel_id: str | None = None
     snap_access_token: str | None = None
+    enable_capt: bool = True
+    enable_meta_capt: bool = True
+    enable_tiktok_capt: bool = True
+    enable_snap_capt: bool = True
+    maxmind_account_id: str | None = None
+    maxmind_license_key: str | None = None
+    enable_ip_fraud_check: bool = False
+    whitelisted_phones: str = ""
+    log_level: str = "INFO"
     cors_allow_www: bool = True
 
     @staticmethod
@@ -35,6 +53,36 @@ class Settings(BaseSettings):
     @property
     def sync_database_url(self) -> str:
         return self._normalize_postgres_url(self.database_url, async_driver=False)
+
+    @property
+    def effective_frontend_origin(self) -> str:
+        return self.frontend_url or self.frontend_origin
+
+    @property
+    def allowed_origins(self) -> list[str]:
+        if self.cors_origins:
+            return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
+
+        origins = [
+            self.effective_frontend_origin,
+            "http://localhost:3000",
+            "http://127.0.0.1:3000",
+        ]
+        if self.cors_allow_www:
+            origins.append("https://www.layalibeauty.shop")
+        return origins
+
+    @property
+    def effective_sheet_webhook_url(self) -> str | None:
+        return self.google_sheets_webhook_url or self.sheet_webhook_url
+
+    @property
+    def effective_sheet_webhook_secret(self) -> str | None:
+        return self.sheets_webhook_secret or self.sheet_webhook_secret
+
+    @property
+    def effective_tiktok_pixel_id(self) -> str | None:
+        return self.tiktok_pixel_code or self.tiktok_pixel_id
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
