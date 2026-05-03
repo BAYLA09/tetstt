@@ -15,6 +15,27 @@ class Settings(BaseSettings):
     snap_access_token: str | None = None
     cors_allow_www: bool = True
 
+    @staticmethod
+    def _normalize_postgres_url(url: str, *, async_driver: bool) -> str:
+        if not async_driver and url.startswith("sqlite+aiosqlite://"):
+            return url.replace("sqlite+aiosqlite://", "sqlite://", 1)
+        if url.startswith("postgres://"):
+            url = url.replace("postgres://", "postgresql://", 1)
+        if url.startswith("postgresql+"):
+            base = url.split("://", 1)[1]
+            return f"postgresql+{'asyncpg' if async_driver else 'psycopg'}://{base}"
+        if url.startswith("postgresql://"):
+            return url.replace("postgresql://", f"postgresql+{'asyncpg' if async_driver else 'psycopg'}://", 1)
+        return url
+
+    @property
+    def async_database_url(self) -> str:
+        return self._normalize_postgres_url(self.database_url, async_driver=True)
+
+    @property
+    def sync_database_url(self) -> str:
+        return self._normalize_postgres_url(self.database_url, async_driver=False)
+
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
 
