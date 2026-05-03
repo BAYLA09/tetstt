@@ -3,7 +3,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { products } from "@/lib/products";
 
 const pillars = [
-  ["علامة عناية، مو متجر عشوائي", "تجربة Layali مبنية على عرض واضح، تغليف أنيق، ورسائل تأكيد تقلل التردد قبل الشحن."],
+  ["علامة عناية، مو متجر عشوائي", "تجربة ليالي مبنية على عرض واضح، تغليف أنيق، ورسائل تأكيد تقلل التردد قبل الشحن."],
   ["دفع عند الاستلام", "لا تدفعين الآن. نثبت الطلب أولاً ونتواصل معك قبل التجهيز."],
   ["اختيار مناسب للذوق الخليجي", "مسك ناعم وعود فخم بلغة راقية تناسب المرأة في الإمارات."],
   ["إضافات ترفع التجربة", "السلة تقترح الإضافة المناسبة حتى تطلعي بطلب كامل بدل طلب ناقص."],
@@ -16,7 +16,7 @@ const reviews = [
 ];
 
 const steps = [
-  ["١", "اختاري روتينك", "ابدئي بالباقة أو اختاري السيروم المناسب لك. كل المنتجات تبقى بنفس عروض Layali الحالية."],
+  ["١", "اختاري روتينك", "ابدئي بالباقة أو اختاري السيروم المناسب لك. كل المنتجات تبقى بنفس عروض ليالي الحالية."],
   ["٢", "ثبتي الطلب بدون دفع", "اكتبي الاسم ورقم الموبايل فقط. الدفع عند الاستلام، وفريق التأكيد يراجع الطلب قبل الشحن."],
   ["٣", "استلمي وادفعي", "بعد التأكيد، يتم تجهيز الطلب وتوصيله داخل الإمارات. الدفع يكون عند الاستلام."],
 ];
@@ -37,7 +37,7 @@ export default function Home() {
             <div className="product-visual min-h-[420px]">
               <span className="absolute left-10 top-8 text-5xl text-gold-300">☾</span>
               <div className="relative z-10 rounded-[2rem] border border-gold-400/40 bg-emerald-900/80 p-8 text-center shadow-2xl">
-                <p className="text-sm text-gold-300">Layali Beauty</p>
+                <p className="text-sm text-gold-300">ليالي بيوتي</p>
                 <div className="mx-auto mt-6 h-52 w-40 rounded-t-full border border-gold-400/50 bg-gradient-to-b from-gold-300/70 to-cream-100/90 shadow-xl" />
                 <p className="mt-6 text-2xl font-semibold text-gold-300">
                   باقة ليالي بيوتي
@@ -47,13 +47,13 @@ export default function Home() {
           </div>
           <div className="order-1 text-white lg:order-2">
             <p className="badge border-gold-400/50 bg-gold-400/10 text-gold-300">
-              Layali Beauty · UAE COD
+              ليالي بيوتي · UAE COD
             </p>
             <h1 className="mt-6 max-w-3xl text-4xl font-bold leading-tight md:text-6xl">
               طقوس عناية فاخرة تشعرين أنها صُممت لك
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-9 text-cream-100/90">
-              Layali ليست صفحة منتجات عشوائية. هي تجربة طلب راقية: عرض واضح،
+              ليالي ليست صفحة منتجات عشوائية. هي تجربة طلب راقية: عرض واضح،
               تفاصيل مقنعة، إضافات تكمّل الطلب، وتأكيد قبل الشحن حتى توصلك
               التجربة كما اخترتيها.
             </p>
@@ -80,7 +80,7 @@ export default function Home() {
         <div className="container-grid">
           <div className="section-heading">
             <p className="badge">Our Rituals</p>
-            <h2>ثلاث اختيارات. تجربة Layali واحدة.</h2>
+            <h2>ثلاث اختيارات. تجربة ليالي واحدة.</h2>
             <p>
               اختاري الباقة أو السيروم الذي يناسب يومك. المنتجات نفسها باقية،
               لكن طريقة العرض تخليك تفهمين القيمة قبل ما تثبتين الطلب.
@@ -97,7 +97,7 @@ export default function Home() {
       <section className="section-padding">
         <div className="container-grid">
           <div className="section-heading">
-            <p className="badge">Why Layali</p>
+            <p className="badge">Why ليالي</p>
             <h2>علامة عناية، مو متجر يبيع أي شيء</h2>
             <p>أربع نقاط تخلي العميلة تفهم لماذا الطلب يستحق التأكيد والاستلام.</p>
           </div>
@@ -133,7 +133,7 @@ export default function Home() {
                 <p className="text-gold-300">★★★★★</p>
                 <p className="mt-5 leading-8 text-cream-100">{text}</p>
                 <p className="mt-5 font-bold text-gold-300">{name}</p>
-                <p className="text-sm text-cream-100/70">{city} · تجربة Layali</p>
+                <p className="text-sm text-cream-100/70">{city} · تجربة ليالي</p>
               </div>
             ))}
           </div>
@@ -172,7 +172,7 @@ export default function Home() {
             </h2>
             <p className="mt-5 leading-9 text-cream-100">
               ثبتي طلبك الآن بالدفع عند الاستلام. إذا كان الرقم صحيحاً،
-              فريقنا يتواصل للتأكيد قبل الشحن حتى توصلك Layali كتجربة مرتبة.
+              فريقنا يتواصل للتأكيد قبل الشحن حتى توصلك ليالي كتجربة مرتبة.
             </p>
             <Link href="/products/luxury-bundle" className="btn-primary mt-8 inline-flex">
               ابدئي بالباقة الفاخرة

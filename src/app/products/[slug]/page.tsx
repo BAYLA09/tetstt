@@ -35,8 +35,8 @@ export async function generateMetadata({ params }: ProductPageProps) {
   const product = products.find((item) => item.slug === slug);
   return {
     title: product
-      ? `${product.name} | Layali Beauty`
-      : "Layali Beauty",
+      ? `${product.name} | ليالي بيوتي`
+      : "ليالي بيوتي",
     description: product?.subheading,
   };
 }
@@ -58,7 +58,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <section className="bg-[var(--cream-50)] px-4 py-16">
         <div className="container-grid">
           <div className="section-heading">
-            <p className="badge">Layali Method</p>
+            <p className="badge">طريقة ليالي</p>
             <h2>من أول نظرة تعرفين أنها تجربة مرتبة، مو صفحة بيع عشوائية</h2>
             <p>
               بنينا صفحة المنتج باش تجاوب على أسئلة الثقة قبل ما تطلبين: شنو
