@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     maxmind_account_id: str | None = None
     maxmind_license_key: str | None = None
     enable_ip_fraud_check: bool = False
-    order_allowed_country: str = "SA"
+    order_allowed_country: str = "AE"
     whitelisted_phones: str = ""
     log_level: str = "INFO"
     cors_allow_www: bool = True
