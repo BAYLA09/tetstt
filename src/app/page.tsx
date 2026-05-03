@@ -47,7 +47,7 @@ export default function Home() {
           </div>
           <div className="order-1 text-white lg:order-2">
             <p className="badge border-gold-400/50 bg-gold-400/10 text-gold-300">
-              ليالي بيوتي · UAE COD
+              ليالي بيوتي · الدفع عند الاستلام
             </p>
             <h1 className="mt-6 max-w-3xl text-4xl font-bold leading-tight md:text-6xl">
               طقوس عناية فاخرة تشعرين أنها صُممت لك
@@ -66,7 +66,7 @@ export default function Home() {
               </Link>
             </div>
             <div className="mt-8 grid grid-cols-2 gap-3 text-sm md:grid-cols-4">
-              {["COD", "تأكيد قبل الشحن", "تغليف أنيق", "إضافات ذكية"].map((item) => (
+              {["الدفع عند الاستلام", "تأكيد قبل الشحن", "تغليف أنيق", "إضافات ذكية"].map((item) => (
                 <div key={item} className="rounded-2xl border border-gold-400/25 bg-white/5 p-3 text-center text-cream-50">
                   {item}
                 </div>
@@ -79,7 +79,7 @@ export default function Home() {
       <section className="section-padding bg-cream-50">
         <div className="container-grid">
           <div className="section-heading">
-            <p className="badge">Our Rituals</p>
+            <p className="badge">طقوس ليالي</p>
             <h2>ثلاث اختيارات. تجربة ليالي واحدة.</h2>
             <p>
               اختاري الباقة أو السيروم الذي يناسب يومك. المنتجات نفسها باقية،
@@ -97,7 +97,7 @@ export default function Home() {
       <section className="section-padding">
         <div className="container-grid">
           <div className="section-heading">
-            <p className="badge">Why ليالي</p>
+            <p className="badge">لماذا ليالي</p>
             <h2>علامة عناية، مو متجر يبيع أي شيء</h2>
             <p>أربع نقاط تخلي العميلة تفهم لماذا الطلب يستحق التأكيد والاستلام.</p>
           </div>
@@ -117,7 +117,7 @@ export default function Home() {
         <div className="container-grid">
           <div className="mx-auto max-w-3xl text-center">
             <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">
-              Verified Feelings
+              تجارب واضحة
             </p>
             <h2 className="mt-5 text-3xl font-bold md:text-5xl">
               عميلات يطلبن لأن التجربة واضحة، مو لأن الإعلان صرخ عليهن
@@ -143,7 +143,7 @@ export default function Home() {
       <section className="section-padding bg-cream-50">
         <div className="container-grid">
           <div className="section-heading">
-            <p className="badge">How It Works</p>
+            <p className="badge">طريقة الطلب</p>
             <h2>من السلة لباب بيتك في 3 خطوات</h2>
             <p>بدون دفع أونلاين. بدون تعقيد. طلب واضح يقلل الإلغاء ويرفع فرصة الاستلام.</p>
           </div>
@@ -165,7 +165,7 @@ export default function Home() {
         <div className="container-grid grid gap-10 lg:grid-cols-2 lg:items-center">
           <div>
             <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">
-              Begin Your Ritual
+              ابدئي طقسك
             </p>
             <h2 className="mt-5 text-3xl font-bold md:text-5xl">
               طلبك يستحق وضوح وفخامة، مو وعود كثيرة
@@ -191,7 +191,7 @@ export default function Home() {
       <section className="section-padding bg-cream-50">
         <div className="container-grid">
           <div className="section-heading">
-            <p className="badge">FAQ</p>
+            <p className="badge">أسئلة شائعة</p>
             <h2>أسئلة قبل الطلب</h2>
             <p>كل شيء تحتاجينه قبل تثبيت الطلب بالدفع عند الاستلام.</p>
           </div>

@@ -11,8 +11,8 @@ const objections = [
 ];
 
 const flowSteps = [
-  ["اختاري العرض", "اختاري الباقة أو السيروم المناسب. CTA يضيف العرض للسلة مباشرة."],
-  ["راجعي الإضافة", "السلة تقترح cross-sell مناسب يرفع قيمة الطلب مع نفس التوصيل."],
+  ["اختاري العرض", "اختاري الباقة أو السيروم المناسب. زر الطلب يضيف العرض للسلة مباشرة."],
+  ["راجعي الإضافة", "السلة تقترح إضافة مناسبة ترفع قيمة الطلب مع نفس التوصيل."],
   ["ثبتي الطلب", "اكتبي الاسم ورقم الإمارات فقط. الدفع عند الاستلام والتأكيد قبل الشحن."],
 ];
 
@@ -100,7 +100,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <p className="section-kicker">تفاصيل تزيد التأكيد</p>
             <h2 className="section-title">العميلة تحتاج وضوح أكثر من وعود كبيرة.</h2>
             <p className="mt-5 text-lg leading-9 text-[var(--muted)]">
-              لذلك نخلي CTA يضيف العرض للسلة، والسلة توري الإضافة المناسبة،
+              لذلك نخلي زر الطلب يضيف العرض للسلة، والسلة توري الإضافة المناسبة،
               والفورم يطلب فقط الاسم والرقم. كل خطوة تقلل التردد وتزيد فرصة
               تأكيد الطلب واستلامه.
             </p>
@@ -108,8 +108,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
               {[
                 "لا دفع أونلاين: القرار أسهل وأقل خوف.",
                 "التأكيد قبل الشحن: يقلل نسيان الطلب والرفض عند التوصيل.",
-                "Cross-sell داخل السلة: ترفع AOV بدون تشتيت صفحة المنتج.",
-                "Thank-you واضح: يذكرها أن فريق التأكيد سيتواصل معها.",
+                "الإضافة داخل السلة: ترفع قيمة الطلب بدون تشتيت صفحة المنتج.",
+                "صفحة الشكر واضحة: تذكرها أن فريق التأكيد سيتواصل معها.",
               ].map((item) => (
                 <div key={item} className="rounded-2xl border border-[var(--border-gold)] p-4 text-[var(--muted)]">
                   {item}
@@ -126,7 +126,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <p className="section-kicker text-[var(--gold-300)]">تجارب عميلات</p>
             <h2 className="text-4xl font-bold">نساء يطلبون لما يحسون أن كل شيء واضح</h2>
             <p className="mt-4 leading-8 text-white/75">
-              هذه نصوص placeholder حتى تجمعين reviews حقيقية. لا نعرض ادعاءات علاجية
+              هذه نصوص مؤقتة حتى تجمعين مراجعات حقيقية. لا نعرض ادعاءات علاجية
               أو شهادات غير مثبتة.
             </p>
           </div>
@@ -164,7 +164,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <section className="bg-white px-4 py-16">
         <div className="container-grid">
           <div className="mx-auto max-w-3xl text-center">
-            <p className="section-kicker">FAQ</p>
+            <p className="section-kicker">أسئلة شائعة</p>
             <h2 className="section-title">أسئلة قبل تثبيت الطلب</h2>
           </div>
           <div className="mx-auto mt-10 grid max-w-4xl gap-4">

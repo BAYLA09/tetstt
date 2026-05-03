@@ -61,7 +61,7 @@ function UpsellModal({ orderId, onDone }: { orderId: string; onDone: () => void 
       <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="max-w-md rounded-[2rem] border border-[var(--border-gold)] bg-[var(--emerald-950)] p-6 text-center text-white shadow-2xl">
         <p className="mx-auto mb-3 grid size-16 place-items-center rounded-full bg-[var(--gold-500)] text-3xl text-[var(--emerald-950)]">✦</p>
         <p className="text-sm font-bold text-[var(--gold-300)]">عرض خاص يظهر مرة واحدة فقط</p>
-        <h3 className="mt-2 text-2xl font-black">أضيفي لمسة عود فاخرة بـ AED 39</h3>
+        <h3 className="mt-2 text-2xl font-black">أضيفي لمسة عود فاخرة بـ 39 درهم</h3>
         <p className="mt-3 text-sm leading-7 text-white/75">أكثر إضافة تزيد إحساس الفخامة في الطلب، بسعر خاص فقط قبل تجهيز الشحنة. ينتهي خلال {seconds} ثانية.</p>
         <div className="mt-5 grid gap-3">
           <button disabled={busy} onClick={accept} className="rounded-full bg-[var(--gold-500)] px-5 py-4 font-black text-[var(--emerald-950)]">
