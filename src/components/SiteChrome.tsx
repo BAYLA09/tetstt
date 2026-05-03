@@ -37,18 +37,18 @@ export function SiteHeader() {
           ))}
         </div>
       </div>
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 lg:px-8">
-        <Link href="/" aria-label="Layali Beauty">
-          <BrandLogo compact />
-        </Link>
-        <nav className="hidden items-center gap-7 text-sm font-semibold lg:flex">
+      <div className="mx-auto grid max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-4 px-4 py-3 lg:px-8">
+        <div className="justify-self-start lg:order-3 lg:justify-self-end">
+          <BrandLogo />
+        </div>
+        <nav className="hidden items-center justify-center gap-7 text-sm font-semibold lg:order-2 lg:flex">
           {nav.map((item) => (
             <Link key={item.href} href={item.href} className="transition hover:text-[var(--gold-300)]">
               {item.label}
             </Link>
           ))}
         </nav>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center justify-self-end gap-3 lg:order-1 lg:justify-self-start">
           <a
             href="https://wa.me/"
             className="hidden rounded-full border border-[var(--border-gold)] px-4 py-2 text-sm font-bold text-[var(--gold-300)] lg:inline-flex"
