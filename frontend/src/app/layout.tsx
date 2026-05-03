@@ -16,7 +16,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Layali Beauty | فخامة هادئة تليق بيومك",
+  title: "ليالي بيوتي | فخامة هادئة تليق بيومك",
   description:
     "متجر ليالي بيوتي لباقة عناية عربية فاخرة مع الدفع عند الاستلام داخل الإمارات.",
   metadataBase: new URL("https://layalibeauty.shop"),
