@@ -1,0 +1,10 @@
+.git
+docs
+frontend/node_modules
+frontend/.next
+frontend/out
+backend/.venv
+backend/__pycache__
+backend/**/*.pyc
+backend/*.db
+**/.DS_Store
