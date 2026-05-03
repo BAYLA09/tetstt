@@ -38,11 +38,11 @@ export function ProductCard({ product }: { product: Product }) {
           <div>
             {product.compareAt && (
               <p className="text-sm text-[var(--muted)] line-through">
-                AED {product.compareAt}
+                {product.compareAt} درهم
               </p>
             )}
             <p className="text-2xl font-black text-[var(--emerald-950)]">
-              AED {product.price}
+              {product.price} درهم
             </p>
           </div>
           <button
