@@ -1,3 +1,5 @@
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -41,9 +43,15 @@ class Settings(BaseSettings):
             url = url.replace("postgres://", "postgresql://", 1)
         if url.startswith("postgresql+"):
             base = url.split("://", 1)[1]
-            return f"postgresql+{'asyncpg' if async_driver else 'psycopg'}://{base}"
+            url = f"postgresql+{'asyncpg' if async_driver else 'psycopg'}://{base}"
         if url.startswith("postgresql://"):
-            return url.replace("postgresql://", f"postgresql+{'asyncpg' if async_driver else 'psycopg'}://", 1)
+            url = url.replace("postgresql://", f"postgresql+{'asyncpg' if async_driver else 'psycopg'}://", 1)
+        if url.startswith("postgresql+asyncpg://"):
+            # EasyPanel/Postgres URLs often include sslmode=disable, but asyncpg
+            # does not accept that libpq-style parameter.
+            parts = urlsplit(url)
+            query = [(key, value) for key, value in parse_qsl(parts.query) if key != "sslmode"]
+            return urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query), parts.fragment))
         return url
 
     @property
