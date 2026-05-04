@@ -12,6 +12,14 @@ npm run dev -- --host 0.0.0.0
 ## Environment
 
 Copy `.env.example` to `.env.local` and adjust values.
+
+## Sheet template
+
+The order sheet CSV template is available at:
+
+```text
+public/sheet-template/orders_layali_beauty_store.csv
+```
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
