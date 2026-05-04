@@ -2,31 +2,17 @@ const SHEET_NAME = 'Orders';
 const SHARED_SECRET = PropertiesService.getScriptProperties().getProperty('LAYALI_WEBHOOK_SECRET');
 
 const HEADERS = [
-  'created_at',
-  'public_order_id',
-  'status',
-  'customer_name',
-  'phone_e164',
+  'date',
+  'orderid',
+  'country',
+  'name',
+  'phone',
+  'product',
+  'sku',
+  'quantity',
+  'totalprice',
   'currency',
-  'subtotal',
-  'upsell_total',
-  'total',
-  'items_json',
-  'utm_source',
-  'utm_medium',
-  'utm_campaign',
-  'utm_content',
-  'utm_term',
-  'source_url',
-  'landing_page',
-  'fbp',
-  'fbc',
-  'ttclid',
-  'ttp',
-  'sc_click_id',
-  'sc_cookie1',
-  'event_ids_json',
-  'notes'
+  'status'
 ];
 
 function doPost(e) {
@@ -69,29 +55,7 @@ function ensureHeaders_(sheet) {
 }
 
 function valueForHeader_(body, header) {
-  switch (header) {
-    case 'items_json':
-      return JSON.stringify(body.items || []);
-    case 'event_ids_json':
-      return JSON.stringify(body.event_ids || {});
-    case 'fbp':
-    case 'fbc':
-    case 'ttclid':
-    case 'ttp':
-    case 'sc_click_id':
-    case 'sc_cookie1':
-      return (body.tracking && body.tracking[header]) || '';
-    case 'utm_source':
-    case 'utm_medium':
-    case 'utm_campaign':
-    case 'utm_content':
-    case 'utm_term': {
-      const key = header.replace('utm_', '');
-      return (body.utm && body.utm[key]) || body[header] || '';
-    }
-    default:
-      return body[header] == null ? '' : body[header];
-  }
+  return body[header] == null ? '' : body[header];
 }
 
 function jsonResponse(payload) {

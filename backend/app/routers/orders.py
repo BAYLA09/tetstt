@@ -20,6 +20,12 @@ from app.services.tracking import send_capi_events
 router = APIRouter(prefix="/orders", tags=["orders"])
 
 
+def format_sheet_phone(phone_e164: str) -> str:
+    if phone_e164.startswith("+971") and len(phone_e164) == 13:
+        return f"+971 {phone_e164[4:6]} {phone_e164[6:9]} {phone_e164[9:]}"
+    return phone_e164
+
+
 def line_total(price: Decimal, quantity: int) -> Decimal:
     return price * Decimal(quantity)
 
@@ -33,16 +39,23 @@ def get_client_ip(request: Request) -> str | None:
 
 def order_to_sheet_payload(order: Order, items: list[dict]) -> dict:
     return {
+        "date": datetime.now(UTC).strftime("%d/%m/%Y"),
+        "orderid": order.public_order_id,
+        "country": "AED",
+        "name": order.customer_name,
+        "phone": format_sheet_phone(order.phone_e164),
+        "product": "/".join(str(item["name"]) for item in items),
+        "sku": "/".join(str(item["sku"]) for item in items),
+        "quantity": "/".join(str(item["quantity"]) for item in items),
+        "totalprice": float(order.total),
+        "currency": order.currency,
+        "status": "",
+        "items": items,
         "created_at": order.created_at.isoformat() if order.created_at else datetime.now(UTC).isoformat(),
         "public_order_id": order.public_order_id,
-        "status": order.status,
         "customer_name": order.customer_name,
         "phone_e164": order.phone_e164,
-        "currency": order.currency,
-        "subtotal": float(order.subtotal),
-        "upsell_total": float(order.upsell_total),
         "total": float(order.total),
-        "items": items,
         "utm": {
             "source": order.utm_source,
             "medium": order.utm_medium,
@@ -80,7 +93,7 @@ async def create_order(
         subtotal += line_total(price, quantity)
         order_items_payload.append(
             {
-                "sku": item.sku,
+                "sku": product["sheet_sku"],
                 "name": product["name"],
                 "price": float(price),
                 "quantity": quantity,
@@ -119,7 +132,7 @@ async def create_order(
         sheet_sync_status="pending",
     )
     order.items = order_items
-    order.public_order_id = f"LB-{datetime.now(UTC):%Y%m%d}-{uuid4().hex[:8].upper()}"
+    order.public_order_id = f"nama-{datetime.now(UTC):%Y%m%d}-{uuid4().hex[:8].upper()}"
     session.add(order)
     await session.commit()
 
