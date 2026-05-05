@@ -72,23 +72,6 @@ export const products: Product[] = [
     afterImage: "/products/after-vanilla.jpg",
   },
   {
-    sku: "LB-SERUM-OUD-199",
-    slug: "dubai-palace-oud-serum",
-    name: "سيروم عود قصر دبي",
-    shortName: "عود قصر دبي",
-    price: 199,
-    compareAt: 299,
-    badge: "حضور خليجي فاخر",
-    headline: "عود دافئ مستوحى من قصور دبي — حضور يُلاحَظ ويدوم طول اليوم.",
-    subheading: "عود خليجي أصيل لمحبات الفخامة الهادئة. يترطب في البشرة ويعطي رائحة شخصية فريدة.",
-    story: "العود يحمل قيمة عالية في الإمارات — صُمّم ليكون راقياً وليس ثقيلاً.",
-    notes: ["عود أصيل خليجي", "رائحة تدوم 8-12 ساعة", "مثبّت طبيعي بالعنبر", "مناسب للمناسبات"],
-    image: "/products/img-sandalwood-hero.jpg",
-    cardImage: "/products/img-sandalwood-card.jpg",
-    beforeImage: "/products/before-sandalwood.jpg",
-    afterImage: "/products/after-sandalwood.jpg",
-  },
-  {
     sku: "LB-LAMP-189",
     slug: "aroma-flame-lamp",
     name: "موقد اللهب الفاخر",
@@ -122,20 +105,6 @@ export const upsells: Product[] = [
     notes: ["سعر خاص", "مرة واحدة"],
     image: "/products/img-vanilla-hero.jpg",
     cardImage: "/products/img-vanilla-card.jpg",
-  },
-  {
-    sku: "LB-UPSELL-OUD-49",
-    slug: "dubai-palace-oud-serum",
-    name: "سيروم عود قصر دبي - عرض خاص",
-    shortName: "عود قصر دبي",
-    price: 49,
-    badge: "يظهر مرة واحدة",
-    headline: "أضيفي لمسة عود فاخرة بـ 49 درهم فقط.",
-    subheading: "عرض خاص بعد تأكيد الطلب.",
-    story: "خصم خاص مع طلبك الحالي فقط.",
-    notes: ["سعر خاص", "مرة واحدة"],
-    image: "/products/img-sandalwood-hero.jpg",
-    cardImage: "/products/img-sandalwood-card.jpg",
   },
 ];
 
@@ -181,34 +150,6 @@ export const offerTiers: Record<string, OfferTier[]> = {
       sku: "LB-SERUM-DUO-279",
       label: "مسك + عود — الثنائي الفاخر",
       sublabel: "مسك المطر الأبيض + عود قصر دبي · 200mL",
-      price: 279,
-      compareAt: 398,
-      badge: "الأكثر اختياراً",
-      highlight: true,
-      savings: "وفري 119 درهم",
-    },
-    {
-      sku: "LB-BUNDLE-379",
-      label: "الثنائي + الموقد الفاخر",
-      sublabel: "السيرومان + موقد اللهب الفاخر",
-      price: 349,
-      compareAt: 697,
-      badge: "الأكثر توفيراً",
-      savings: "وفري 348 درهم",
-    },
-  ],
-  "dubai-palace-oud-serum": [
-    {
-      sku: "LB-SERUM-OUD-199",
-      label: "زجاجة واحدة",
-      sublabel: "100mL · نتيجة من أول استخدام",
-      price: 199,
-      badge: "جربي واحدة",
-    },
-    {
-      sku: "LB-SERUM-DUO-279",
-      label: "عود + مسك — الثنائي الفاخر",
-      sublabel: "عود قصر دبي + مسك المطر الأبيض · 200mL",
       price: 279,
       compareAt: 398,
       badge: "الأكثر اختياراً",
@@ -274,15 +215,11 @@ export function getCrossSells(skus: string[]) {
   const suggestions: Product[] = [];
   const hasBundle = inCart.has("LB-BUNDLE-299") || inCart.has("LB-BUNDLE-379") || inCart.has("LB-BUNDLE-449");
   const hasMusk = inCart.has("LB-SERUM-MUSK-199") || inCart.has("LB-SERUM-DUO-279");
-  const hasOud = inCart.has("LB-SERUM-OUD-199") || inCart.has("LB-SERUM-DUO-279");
   const hasLamp = inCart.has("LB-LAMP-189");
 
-  if (hasBundle) {
-    if (!hasMusk && !hasOud) suggestions.push(getProductBySku("LB-SERUM-MUSK-199")!);
-  }
-  if (hasMusk && !hasOud && !hasBundle) suggestions.push(getProductBySku("LB-SERUM-OUD-199")!);
-  if (hasOud && !hasMusk && !hasBundle) suggestions.push(getProductBySku("LB-SERUM-MUSK-199")!);
-  if (!hasBundle && !hasLamp) suggestions.push(getProductBySku("LB-BUNDLE-299")!);
+  if (!hasBundle && !hasMusk) suggestions.push(getProductBySku("LB-SERUM-MUSK-199")!);
+  if (!hasBundle && !hasLamp) suggestions.push(getProductBySku("LB-LAMP-189")!);
+  if (!hasBundle && (hasMusk || hasLamp)) suggestions.push(getProductBySku("LB-BUNDLE-299")!);
 
   return suggestions.filter(Boolean).slice(0, 2);
 }

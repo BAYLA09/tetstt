@@ -39,7 +39,7 @@ function MiniProduct({ product, onAdd }: { product: Product; onAdd: () => void }
 function UpsellModal({ orderId, onDone }: { orderId: string; onDone: () => void }) {
   const [seconds, setSeconds] = useState(15);
   const [busy, setBusy] = useState(false);
-  const upsell = getProductBySku("LB-UPSELL-OUD-49")!;
+  const upsell = getProductBySku("LB-UPSELL-MUSK-49")!;
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -70,8 +70,8 @@ function UpsellModal({ orderId, onDone }: { orderId: string; onDone: () => void 
           <Image src={upsell.cardImage} alt={upsell.name} fill sizes="80px" className="object-cover" />
         </div>
         <p className="text-sm font-bold text-[var(--gold-300)]">عرض خاص يظهر مرة واحدة فقط</p>
-        <h3 className="mt-2 text-2xl font-black">أضيفي لمسة عود فاخرة بـ 49 درهم</h3>
-        <p className="mt-3 text-sm leading-7 text-white/75">أكثر إضافة تزيد إحساس الفخامة في الطلب، بسعر خاص فقط قبل تجهيز الشحنة. ينتهي خلال {seconds} ثانية.</p>
+        <h3 className="mt-2 text-2xl font-black">أضيفي مسك المطر الأبيض بـ 49 درهم</h3>
+        <p className="mt-3 text-sm leading-7 text-white/75">رائحة ناعمة نظيفة تكمل طلبك، بسعر خاص فقط قبل تجهيز الشحنة. ينتهي خلال {seconds} ثانية.</p>
         <div className="mt-5 grid gap-3">
           <button disabled={busy} onClick={accept} className="rounded-full bg-[var(--gold-500)] px-5 py-4 font-black text-[var(--emerald-950)]">
             {busy ? "جاري الإضافة..." : "أضيفيه لطلبي بـ 49 درهم"}
