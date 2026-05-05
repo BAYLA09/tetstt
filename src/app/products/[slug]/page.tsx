@@ -66,6 +66,45 @@ export default async function ProductPage({ params }: Props) {
         </div>
       </section>
 
+      {content?.stat && (
+        /* ②·⁵  STAT CARD — shown between trust strip and before/after */
+        <section className="bg-[var(--emerald-950)] px-4 py-14">
+          <div className="container-grid">
+            <div className="mx-auto max-w-2xl overflow-hidden rounded-[2rem] shadow-2xl">
+              {/* Woman image */}
+              <div className="relative aspect-[4/5] w-full overflow-hidden">
+                <Image
+                  src={content.stat.image}
+                  alt="إحصائية"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 672px"
+                  className="object-cover object-top"
+                  priority={false}
+                />
+                {/* Gradient overlay bottom */}
+                <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-[var(--emerald-950)] to-transparent" />
+              </div>
+              {/* Stat bar */}
+              <div className="relative -mt-1 bg-[var(--emerald-950)] px-6 pb-6 pt-3">
+                <div className="flex items-start gap-5">
+                  <div className="flex-1">
+                    <p className="text-lg font-bold leading-8 text-white md:text-xl">
+                      {content.stat.text}
+                    </p>
+                    <p className="mt-2 text-xs text-white/40">{content.stat.source}</p>
+                  </div>
+                  <div className="shrink-0 rounded-2xl bg-[var(--gold-500)] px-5 py-3 text-center shadow-lg">
+                    <p className="text-2xl font-bold text-[var(--emerald-950)] md:text-3xl">
+                      {content.stat.number}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {content && (<>
 
         {/* ③  BEFORE / AFTER  ← أول سكشن */}

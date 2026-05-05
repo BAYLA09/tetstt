@@ -33,12 +33,20 @@ export type Review = {
   verified: boolean;
 };
 
+export type StatCard = {
+  number: string;
+  text: string;
+  source: string;
+  image: string;
+};
+
 export type ProductContent = {
   slug: string;
   problemHeadline: string;
   problemSub: string;
   beforeLabel: string;
   afterLabel: string;
+  stat?: StatCard;
   ingredients: Ingredient[];
   problems: Problem[];
   timeline: TimelineWeek[];
@@ -458,6 +466,12 @@ const productContent: ProductContent[] = [
       "الهواء الجاف، الإضاءة الباردة، والغرفة بدون روح تخليك ما تحبين الجلوس في بيتك. المشكلة مو في الأثاث — في الجو.",
     beforeLabel: "غرفة باردة بدون روح",
     afterLabel: "دفء + رائحة + جو راقٍ",
+    stat: {
+      number: "٨ من كل ١٠",
+      text: "نساء في الإمارات يحسن أن بيتهن يفتقر للدفء والجو الراقي — حتى بعد الاهتمام بالديكور.",
+      source: "استطلاع ليالي بيوتي، الإمارات ٢٠٢٤",
+      image: "/products/aroma-stat-woman.jpg",
+    },
     ingredients: [
       {
         name: "Ultrasonic Flame Technology",
