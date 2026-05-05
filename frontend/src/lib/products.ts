@@ -10,6 +10,8 @@ export type Product = {
   subheading: string;
   story: string;
   notes: string[];
+  image: string;
+  cardImage: string;
 };
 
 export type CartItem = {
@@ -33,6 +35,8 @@ export const products: Product[] = [
     story:
       "هذه ليست منتجات عادية تُضاف للسلة؛ إنها طقوس عناية صغيرة تمنح يومك لمسة فخامة هادئة وتقلل ترددك بوضوح الطلب والتأكيد قبل الشحن.",
     notes: ["الدفع عند الاستلام", "تأكيد قبل الشحن", "تجهيز أنيق للطلب"],
+    image: "/products/product-bundle-hero.jpg",
+    cardImage: "/products/product-bundle-card.jpg",
   },
   {
     sku: "LB-SERUM-MUSK-59",
@@ -46,6 +50,8 @@ export const products: Product[] = [
     story:
       "اختيار خفيف وراقي يضيف إحساساً مرتباً لروتينك اليومي حسب طريقة الاستعمال.",
     notes: ["رائحة نظيفة", "مناسب للروتين اليومي", "إحساس أنثوي هادئ"],
+    image: "/products/product-vanilla-hero.jpg",
+    cardImage: "/products/product-vanilla-card.jpg",
   },
   {
     sku: "LB-SERUM-OUD-69",
@@ -59,6 +65,8 @@ export const products: Product[] = [
     story:
       "العود يحمل قيمة عالية في الإمارات، لذلك صُمم هذا الاختيار ليبدو كإضافة راقية للطلب.",
     notes: ["طابع فاخر", "ذوق خليجي", "مناسب للطلعات"],
+    image: "/products/product-sandalwood-hero.jpg",
+    cardImage: "/products/product-sandalwood-card.jpg",
   },
   {
     sku: "LB-SERUM-SET-99",
@@ -73,6 +81,8 @@ export const products: Product[] = [
     story:
       "اختيار عملي لزيادة قيمة طلبك وتجربة رائحتين مختلفتين تناسبان يومك ومناسباتك.",
     notes: ["وفر 29 درهم", "الأكثر إضافة مع الباقة", "رائحتان في طلب واحد"],
+    image: "/products/product-bundle-hero.jpg",
+    cardImage: "/products/product-bundle-card.jpg",
   },
 ];
 
@@ -88,6 +98,8 @@ export const upsells: Product[] = [
     subheading: "عرض خاص بعد تأكيد الطلب، ولا يظهر داخل المتجر.",
     story: "خصم خاص مع طلبك الحالي فقط.",
     notes: ["سعر خاص", "مرة واحدة", "مع طلبك الحالي"],
+    image: "/products/product-vanilla-hero.jpg",
+    cardImage: "/products/product-vanilla-card.jpg",
   },
   {
     sku: "LB-UPSELL-OUD-39",
@@ -100,6 +112,8 @@ export const upsells: Product[] = [
     subheading: "عرض خاص بعد تأكيد الطلب، ولا يظهر داخل المتجر.",
     story: "خصم خاص مع طلبك الحالي فقط.",
     notes: ["سعر خاص", "مرة واحدة", "مع طلبك الحالي"],
+    image: "/products/product-sandalwood-hero.jpg",
+    cardImage: "/products/product-sandalwood-card.jpg",
   },
 ];
 

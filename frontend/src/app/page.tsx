@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { CheckCircle2, Package, RefreshCcw, Shield, Star, Truck } from "lucide-react";
 import { ProductCard } from "@/components/ProductCard";
 import { products } from "@/lib/products";
@@ -42,16 +43,22 @@ export default function Home() {
       {/* Hero */}
       <section className="hero-gradient overflow-hidden">
         <div className="container-grid grid gap-10 py-16 lg:grid-cols-[1fr_0.85fr] lg:items-center lg:py-24">
-          {/* Product visual */}
+          {/* Hero product image */}
           <div className="order-2 lg:order-1">
-            <div className="product-visual min-h-[420px] rounded-[2.5rem]">
-              <span className="absolute left-10 top-8 text-5xl text-gold-300">☾</span>
-              <div className="relative z-10 rounded-[2rem] border border-gold-400/40 bg-emerald-900/80 p-8 text-center shadow-2xl">
-                <p className="text-sm font-bold text-[var(--gold-300)]">ليالي بيوتي</p>
-                <div className="mx-auto mt-6 h-52 w-40 rounded-t-full border border-gold-400/50 bg-gradient-to-b from-gold-300/70 to-cream-100/90 shadow-xl" />
-                <p className="mt-6 text-2xl font-semibold text-[var(--gold-300)]">
-                  باقة ليالي بيوتي
-                </p>
+            <div className="relative min-h-[420px] overflow-hidden rounded-[2.5rem] border border-[rgba(201,150,69,0.3)] shadow-[0_40px_100px_rgba(0,0,0,0.5)]">
+              <Image
+                src="/products/product-bundle-hero.jpg"
+                alt="باقة ليالي بيوتي الفاخرة"
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover"
+                priority
+              />
+              <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[rgba(1,30,20,0.75)] to-transparent" />
+              <div className="absolute bottom-6 right-6">
+                <span className="rounded-full bg-[rgba(201,150,69,0.9)] px-4 py-2 text-sm font-bold text-[var(--emerald-950)] backdrop-blur-sm">
+                  الأكثر طلباً اليوم
+                </span>
               </div>
             </div>
           </div>

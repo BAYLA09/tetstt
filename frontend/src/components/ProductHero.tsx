@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { CheckCircle2, ShoppingBag } from "lucide-react";
 import { Product, money } from "@/lib/products";
 import { useCartStore } from "@/lib/cart-store";
@@ -17,11 +18,22 @@ export function ProductHero({ product }: { product: Product }) {
   return (
     <section className="hero-gradient relative overflow-hidden px-4 py-12 text-white lg:py-20">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(201,150,69,0.2),transparent_32%)]" />
+
       <div className="container-grid grid items-center gap-10 lg:grid-cols-[0.9fr_1fr]">
-        {/* Product visual / image slot */}
+
+        {/* Product image */}
         <div className="order-2 lg:order-1">
-          <div className="placeholder-art min-h-[420px] rounded-[2.5rem]">
-            <span>{product.shortName}</span>
+          <div className="relative min-h-[420px] overflow-hidden rounded-[2.5rem] border border-[rgba(201,150,69,0.3)] shadow-[0_40px_100px_rgba(0,0,0,0.45)]">
+            <Image
+              src={product.image}
+              alt={product.name}
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover"
+              priority
+            />
+            {/* Subtle gradient overlay at bottom for text readability */}
+            <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[rgba(1,30,20,0.6)] to-transparent" />
           </div>
         </div>
 
