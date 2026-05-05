@@ -6,17 +6,17 @@ from typing import Any
 import httpx
 
 from app.config import settings
-from app.services.hashing import sha256_hex
 from app.services.phone import normalize_uae_phone
+from app.services.hashing import sha256_hex
 
 
 def provider_hashes(phone: str) -> dict[str, str]:
-    normalized = normalize_uae_phone(phone)
-    numeric = normalized.e164.replace("+", "")
+    e164 = normalize_uae_phone(phone)
+    numeric = e164.replace("+", "")
     return {
         "meta_ph": sha256_hex(numeric),
         "snap_ph": sha256_hex(numeric),
-        "tiktok_phone": sha256_hex(normalized.e164),
+        "tiktok_phone": sha256_hex(e164),
     }
 
 

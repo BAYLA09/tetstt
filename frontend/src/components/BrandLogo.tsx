@@ -5,7 +5,7 @@ export function BrandLogo({ compact = false }: { compact?: boolean }) {
         <span className="absolute right-2 top-2 text-xs">✦</span>
         <span className="text-xl">☾</span>
       </span>
-      {(!compact || true) && (
+      {!compact && (
         <span className="leading-none">
           <span className="block font-serif text-3xl italic tracking-wide text-[var(--gold-300)]">
             Layali

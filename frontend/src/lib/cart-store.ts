@@ -1,7 +1,7 @@
 "use client";
 
 import { create } from "zustand";
-import { CartItem, Product, getProductBySku } from "./products";
+import { CartItem, Product } from "./products";
 
 type CheckoutState = "closed" | "checkout" | "upsell";
 
@@ -78,26 +78,3 @@ export const useCartStore = create<CartStore>((set, get) => ({
     get().items.reduce((total, item) => total + item.price * item.quantity, 0),
 }));
 
-export function getCrossSells(items: CartItem[]): Product[] {
-  const skus = new Set(items.map((item) => item.sku));
-  const suggestions: Product[] = [];
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
-  if (skus.has("LB-BUNDLE-299") && !skus.has("LB-SERUM-SET-99")) {
-    suggestions.push(getProductBySku("LB-SERUM-SET-99")!);
-  }
-
-  if (skus.has("LB-SERUM-MUSK-59") && !skus.has("LB-SERUM-OUD-69")) {
-    suggestions.push(getProductBySku("LB-SERUM-OUD-69")!);
-  }
-
-  if (skus.has("LB-SERUM-OUD-69") && !skus.has("LB-SERUM-MUSK-59")) {
-    suggestions.push(getProductBySku("LB-SERUM-MUSK-59")!);
-  }
-
-  if (subtotal < 299 && !skus.has("LB-BUNDLE-299")) {
-    suggestions.push(getProductBySku("LB-BUNDLE-299")!);
-  }
-
-  return suggestions.slice(0, 2);
-}

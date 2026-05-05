@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CheckCircle2, Package, RefreshCcw, Shield, Star, Truck } from "lucide-react";
 import { ProductCard } from "@/components/ProductCard";
 import { products } from "@/lib/products";
 
@@ -28,27 +29,38 @@ const faqs = [
   ["متى يتم التأكيد؟", "بعد إرسال الطلب، يتم التواصل معك لتأكيد البيانات قبل تجهيز الشحنة."],
 ];
 
+const trustStrip = [
+  { icon: Shield, label: "دفع عند الاستلام" },
+  { icon: RefreshCcw, label: "تأكيد قبل الشحن" },
+  { icon: Truck, label: "توصيل الإمارات" },
+  { icon: Package, label: "تغليف فاخر" },
+];
+
 export default function Home() {
   return (
     <>
+      {/* Hero */}
       <section className="hero-gradient overflow-hidden">
         <div className="container-grid grid gap-10 py-16 lg:grid-cols-[1fr_0.85fr] lg:items-center lg:py-24">
+          {/* Product visual */}
           <div className="order-2 lg:order-1">
-            <div className="product-visual min-h-[420px]">
+            <div className="product-visual min-h-[420px] rounded-[2.5rem]">
               <span className="absolute left-10 top-8 text-5xl text-gold-300">☾</span>
               <div className="relative z-10 rounded-[2rem] border border-gold-400/40 bg-emerald-900/80 p-8 text-center shadow-2xl">
-                <p className="text-sm text-gold-300">ليالي بيوتي</p>
+                <p className="text-sm font-bold text-[var(--gold-300)]">ليالي بيوتي</p>
                 <div className="mx-auto mt-6 h-52 w-40 rounded-t-full border border-gold-400/50 bg-gradient-to-b from-gold-300/70 to-cream-100/90 shadow-xl" />
-                <p className="mt-6 text-2xl font-semibold text-gold-300">
+                <p className="mt-6 text-2xl font-semibold text-[var(--gold-300)]">
                   باقة ليالي بيوتي
                 </p>
               </div>
             </div>
           </div>
+
+          {/* Copy */}
           <div className="order-1 text-white lg:order-2">
-            <p className="badge border-gold-400/50 bg-gold-400/10 text-gold-300">
+            <span className="badge border-gold-400/50 bg-gold-400/10 text-gold-300">
               ليالي بيوتي · الدفع عند الاستلام
-            </p>
+            </span>
             <h1 className="mt-6 max-w-3xl text-4xl font-bold leading-tight md:text-6xl">
               طقوس عناية فاخرة تشعرين أنها صُممت لك
             </h1>
@@ -61,14 +73,21 @@ export default function Home() {
               <Link href="/products/luxury-bundle" className="btn-primary">
                 اطلبي الباقة الآن
               </Link>
-              <Link href="/collections" className="btn-secondary border-gold-400/50 text-gold-300">
+              <Link
+                href="/collections"
+                className="btn-secondary border-[rgba(201,150,69,0.4)] text-[var(--gold-300)]"
+              >
                 شاهدي المنتجات
               </Link>
             </div>
             <div className="mt-8 grid grid-cols-2 gap-3 text-sm md:grid-cols-4">
-              {["الدفع عند الاستلام", "تأكيد قبل الشحن", "تغليف أنيق", "إضافات ذكية"].map((item) => (
-                <div key={item} className="rounded-2xl border border-gold-400/25 bg-white/5 p-3 text-center text-cream-50">
-                  {item}
+              {trustStrip.map(({ icon: Icon, label }) => (
+                <div
+                  key={label}
+                  className="flex items-center gap-2 rounded-2xl border border-[rgba(201,150,69,0.25)] bg-white/5 p-3 text-[var(--cream-50)]"
+                >
+                  <Icon size={14} className="shrink-0 text-[var(--gold-300)]" />
+                  {label}
                 </div>
               ))}
             </div>
@@ -76,17 +95,18 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section-padding bg-cream-50">
+      {/* Products grid */}
+      <section className="bg-[var(--cream-50)] px-4 py-20">
         <div className="container-grid">
           <div className="section-heading">
-            <p className="badge">طقوس ليالي</p>
-            <h2>ثلاث اختيارات. تجربة ليالي واحدة.</h2>
-            <p>
+            <span className="badge">طقوس ليالي</span>
+            <h2 className="mt-4">اختاري ما يناسب يومك</h2>
+            <p className="mt-3">
               اختاري الباقة أو السيروم الذي يناسب يومك. المنتجات نفسها باقية،
               لكن طريقة العرض تخليك تفهمين القيمة قبل ما تثبتين الطلب.
             </p>
           </div>
-          <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {products.map((product) => (
               <ProductCard key={product.sku} product={product} />
             ))}
@@ -94,83 +114,97 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section-padding">
+      {/* Why Layali */}
+      <section className="bg-white px-4 py-20">
         <div className="container-grid">
           <div className="section-heading">
-            <p className="badge">لماذا ليالي</p>
-            <h2>علامة عناية، مو متجر يبيع أي شيء</h2>
-            <p>أربع نقاط تخلي العميلة تفهم لماذا الطلب يستحق التأكيد والاستلام.</p>
+            <span className="badge">لماذا ليالي</span>
+            <h2 className="mt-4">علامة عناية، مو متجر يبيع أي شيء</h2>
+            <p className="mt-3">أربع نقاط تخلي العميلة تفهم لماذا الطلب يستحق التأكيد والاستلام.</p>
           </div>
           <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {pillars.map(([title, text]) => (
               <div key={title} className="premium-card">
-                <p className="text-2xl text-gold-500">✦</p>
-                <h3 className="mt-4 text-xl font-black text-emerald-950">{title}</h3>
-                <p className="mt-3 leading-8 text-muted">{text}</p>
+                <CheckCircle2 className="h-8 w-8 text-[var(--gold-500)]" />
+                <h3 className="mt-4 text-xl font-bold text-[var(--emerald-950)]">{title}</h3>
+                <p className="mt-3 leading-8 text-[var(--muted)]">{text}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="section-padding bg-emerald-950 text-white">
+      {/* Reviews */}
+      <section className="bg-[var(--emerald-950)] px-4 py-20 text-white">
         <div className="container-grid">
-          <div className="mx-auto max-w-3xl text-center">
-            <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">
+          <div className="section-heading mx-auto max-w-3xl text-center">
+            <span className="badge border-[rgba(201,150,69,0.4)] bg-[rgba(201,150,69,0.1)] text-[var(--gold-300)]">
               تجارب واضحة
-            </p>
-            <h2 className="mt-5 text-3xl font-bold md:text-5xl">
+            </span>
+            <h2 className="mt-5 text-3xl font-bold text-white md:text-5xl">
               عميلات يطلبن لأن التجربة واضحة، مو لأن الإعلان صرخ عليهن
             </h2>
-            <p className="mt-5 leading-9 text-cream-100">
-              مراجعات صياغية جاهزة للاستبدال بمراجعات حقيقية بعد أول دفعات.
-              لا نستخدم وعود طبية أو شهادات غير موجودة.
-            </p>
           </div>
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             {reviews.map(([name, city, text]) => (
-              <div key={`${name}-${city}`} className="rounded-[2rem] border border-gold-400/30 bg-white/5 p-6">
-                <p className="text-gold-300">★★★★★</p>
-                <p className="mt-5 leading-8 text-cream-100">{text}</p>
-                <p className="mt-5 font-bold text-gold-300">{name}</p>
-                <p className="text-sm text-cream-100/70">{city} · تجربة ليالي</p>
+              <div
+                key={`${name}-${city}`}
+                className="rounded-[2rem] border border-[rgba(201,150,69,0.3)] bg-white/5 p-6"
+              >
+                <div className="flex text-[var(--gold-300)]">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-current" />
+                  ))}
+                </div>
+                <p className="mt-5 leading-8 text-[var(--cream-100)]">{text}</p>
+                <div className="mt-5 flex items-center gap-3">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--gold-500)] text-sm font-bold text-[var(--emerald-950)]">
+                    {name[0]}
+                  </span>
+                  <div>
+                    <p className="font-bold text-[var(--gold-300)]">{name}</p>
+                    <p className="text-sm text-[var(--cream-100)]/70">{city} · تجربة ليالي</p>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="section-padding bg-cream-50">
+      {/* How to order */}
+      <section className="bg-[var(--cream-50)] px-4 py-20">
         <div className="container-grid">
           <div className="section-heading">
-            <p className="badge">طريقة الطلب</p>
-            <h2>من السلة لباب بيتك في 3 خطوات</h2>
-            <p>بدون دفع أونلاين. بدون تعقيد. طلب واضح يقلل الإلغاء ويرفع فرصة الاستلام.</p>
+            <span className="badge">طريقة الطلب</span>
+            <h2 className="mt-4">من السلة لباب بيتك في 3 خطوات</h2>
+            <p className="mt-3">بدون دفع أونلاين. بدون تعقيد. طلب واضح يقلل الإلغاء ويرفع فرصة الاستلام.</p>
           </div>
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             {steps.map(([number, title, text]) => (
-              <div key={number} className="premium-card">
-                <span className="grid size-12 place-items-center rounded-full bg-emerald-950 text-xl font-black text-gold-300">
+              <div key={number} className="premium-card text-center">
+                <span className="mx-auto grid size-14 place-items-center rounded-full bg-[var(--emerald-950)] text-2xl font-bold text-[var(--gold-300)]">
                   {number}
                 </span>
-                <h3 className="mt-5 text-2xl font-black text-emerald-950">{title}</h3>
-                <p className="mt-3 leading-8 text-muted">{text}</p>
+                <h3 className="mt-5 text-2xl font-bold text-[var(--emerald-950)]">{title}</h3>
+                <p className="mt-3 leading-8 text-[var(--muted)]">{text}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="section-padding bg-emerald-950 text-white">
+      {/* CTA banner */}
+      <section className="bg-[var(--emerald-950)] px-4 py-20 text-white">
         <div className="container-grid grid gap-10 lg:grid-cols-2 lg:items-center">
           <div>
-            <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">
+            <span className="badge border-[rgba(201,150,69,0.4)] bg-[rgba(201,150,69,0.1)] text-[var(--gold-300)]">
               ابدئي طقسك
-            </p>
+            </span>
             <h2 className="mt-5 text-3xl font-bold md:text-5xl">
               طلبك يستحق وضوح وفخامة، مو وعود كثيرة
             </h2>
-            <p className="mt-5 leading-9 text-cream-100">
+            <p className="mt-5 leading-9 text-[var(--cream-100)]">
               ثبتي طلبك الآن بالدفع عند الاستلام. إذا كان الرقم صحيحاً،
               فريقنا يتواصل للتأكيد قبل الشحن حتى توصلك ليالي كتجربة مرتبة.
             </p>
@@ -179,28 +213,44 @@ export default function Home() {
             </Link>
           </div>
           <div className="grid gap-4">
-            {["الدفع عند الاستلام", "تأكيد الطلب قبل الشحن", "إضافات ذكية في السلة", "تغليف وتجربة راقية"].map((item) => (
-              <div key={item} className="rounded-3xl border border-gold-400/30 bg-white/5 p-5 text-gold-300">
-                {item}
+            {[
+              ["✓", "الدفع عند الاستلام"],
+              ["✓", "تأكيد الطلب قبل الشحن"],
+              ["✓", "إضافات ذكية في السلة"],
+              ["✓", "تغليف وتجربة راقية"],
+            ].map(([icon, item]) => (
+              <div
+                key={item}
+                className="flex items-center gap-3 rounded-3xl border border-[rgba(201,150,69,0.3)] bg-white/5 p-5 text-[var(--gold-300)]"
+              >
+                <span className="text-lg font-bold">{icon}</span>
+                <span className="font-semibold">{item}</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="section-padding bg-cream-50">
+      {/* FAQ */}
+      <section className="bg-[var(--cream-50)] px-4 py-20">
         <div className="container-grid">
           <div className="section-heading">
-            <p className="badge">أسئلة شائعة</p>
-            <h2>أسئلة قبل الطلب</h2>
-            <p>كل شيء تحتاجينه قبل تثبيت الطلب بالدفع عند الاستلام.</p>
+            <span className="badge">أسئلة شائعة</span>
+            <h2 className="mt-4">أسئلة قبل الطلب</h2>
+            <p className="mt-3">كل شيء تحتاجينه قبل تثبيت الطلب بالدفع عند الاستلام.</p>
           </div>
           <div className="mx-auto mt-10 grid max-w-4xl gap-4">
             {faqs.map(([question, answer]) => (
-              <div key={question} className="rounded-3xl border border-[var(--border-gold)] bg-white p-6">
-                <h3 className="text-xl font-black text-emerald-950">{question}</h3>
-                <p className="mt-3 leading-8 text-muted">{answer}</p>
-              </div>
+              <details
+                key={question}
+                className="group rounded-3xl border border-[var(--border-gold)] bg-white p-6 open:bg-[var(--cream-50)]"
+              >
+                <summary className="cursor-pointer list-none flex items-center justify-between gap-4 font-bold text-[var(--emerald-950)]">
+                  {question}
+                  <span className="shrink-0 text-[var(--gold-500)] transition-transform group-open:rotate-45">+</span>
+                </summary>
+                <p className="mt-3 leading-8 text-[var(--muted)]">{answer}</p>
+              </details>
             ))}
           </div>
         </div>
