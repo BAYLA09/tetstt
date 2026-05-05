@@ -55,12 +55,12 @@ export const products: Product[] = [
     afterImage: "/products/after-diffuser.jpg",
   },
   {
-    sku: "LB-SERUM-MUSK-99",
+    sku: "LB-SERUM-MUSK-199",
     slug: "white-rain-musk-serum",
     name: "سيروم مسك المطر الأبيض",
     shortName: "مسك المطر الأبيض",
-    price: 99,
-    compareAt: 139,
+    price: 199,
+    compareAt: 299,
     badge: "نعومة يومية",
     headline: "رائحة مطر أبيض ناعمة تلازمك طول اليوم — تترطب وتعطّر في نفس الوقت.",
     subheading: "مسك هادئ نظيف لمحبات الرائحة الأنثوية الراقية. يرطب البشرة ويدوم ساعات.",
@@ -72,12 +72,12 @@ export const products: Product[] = [
     afterImage: "/products/after-vanilla.jpg",
   },
   {
-    sku: "LB-SERUM-OUD-99",
+    sku: "LB-SERUM-OUD-199",
     slug: "dubai-palace-oud-serum",
     name: "سيروم عود قصر دبي",
     shortName: "عود قصر دبي",
-    price: 99,
-    compareAt: 139,
+    price: 199,
+    compareAt: 299,
     badge: "حضور خليجي فاخر",
     headline: "عود دافئ مستوحى من قصور دبي — حضور يُلاحَظ ويدوم طول اليوم.",
     subheading: "عود خليجي أصيل لمحبات الفخامة الهادئة. يترطب في البشرة ويعطي رائحة شخصية فريدة.",
@@ -93,8 +93,8 @@ export const products: Product[] = [
     slug: "aroma-flame-lamp",
     name: "موقد اللهب الفاخر",
     shortName: "الموقد الفاخر",
-    price: 189,
-    compareAt: 249,
+    price: 299,
+    compareAt: 449,
     badge: "يحوّل جو البيت",
     headline: "لهب واقعي + ضباب بارد + رائحة تملأ الغرفة — بدون نار حقيقية.",
     subheading: "موقد إلكتروني فاخر يعطي دفء وجو راقٍ لأي غرفة. يعمل مع أي زيت عطري.",
@@ -154,75 +154,75 @@ export const offerTiers: Record<string, OfferTier[]> = {
       label: "الموقد + سيرومان",
       sublabel: "موقد اللهب + مسك المطر + عود قصر دبي",
       price: 379,
-      compareAt: 427,
+      compareAt: 448,
       badge: "الأكثر اختياراً",
       highlight: true,
-      savings: "وفري 48 درهم",
+      savings: "وفري 69 درهم",
     },
     {
       sku: "LB-BUNDLE-449",
       label: "الباقة الكاملة الفاخرة",
       sublabel: "الموقد + 3 سيروم + تغليف هدية فاخر",
       price: 449,
-      compareAt: 537,
+      compareAt: 597,
       badge: "الأكثر توفيراً",
-      savings: "وفري 88 درهم",
+      savings: "وفري 148 درهم",
     },
   ],
   "white-rain-musk-serum": [
     {
-      sku: "LB-SERUM-MUSK-99",
+      sku: "LB-SERUM-MUSK-199",
       label: "زجاجة واحدة",
       sublabel: "100mL · نتيجة من أول استخدام",
-      price: 99,
+      price: 199,
       badge: "جربي واحدة",
     },
     {
-      sku: "LB-SERUM-DUO-169",
+      sku: "LB-SERUM-DUO-279",
       label: "مسك + عود — الثنائي الفاخر",
       sublabel: "مسك المطر الأبيض + عود قصر دبي · 200mL",
-      price: 169,
-      compareAt: 198,
+      price: 279,
+      compareAt: 398,
       badge: "الأكثر اختياراً",
       highlight: true,
-      savings: "وفري 29 درهم",
+      savings: "وفري 119 درهم",
     },
     {
-      sku: "LB-BUNDLE-299",
+      sku: "LB-BUNDLE-379",
       label: "الثنائي + الموقد الفاخر",
       sublabel: "السيرومان + موقد اللهب الفاخر",
-      price: 299,
-      compareAt: 387,
+      price: 349,
+      compareAt: 697,
       badge: "الأكثر توفيراً",
-      savings: "وفري 88 درهم",
+      savings: "وفري 348 درهم",
     },
   ],
   "dubai-palace-oud-serum": [
     {
-      sku: "LB-SERUM-OUD-99",
+      sku: "LB-SERUM-OUD-199",
       label: "زجاجة واحدة",
       sublabel: "100mL · نتيجة من أول استخدام",
-      price: 99,
+      price: 199,
       badge: "جربي واحدة",
     },
     {
-      sku: "LB-SERUM-DUO-169",
+      sku: "LB-SERUM-DUO-279",
       label: "عود + مسك — الثنائي الفاخر",
       sublabel: "عود قصر دبي + مسك المطر الأبيض · 200mL",
-      price: 169,
-      compareAt: 198,
+      price: 279,
+      compareAt: 398,
       badge: "الأكثر اختياراً",
       highlight: true,
-      savings: "وفري 29 درهم",
+      savings: "وفري 119 درهم",
     },
     {
-      sku: "LB-BUNDLE-299",
+      sku: "LB-BUNDLE-379",
       label: "الثنائي + الموقد الفاخر",
       sublabel: "السيرومان + موقد اللهب الفاخر",
-      price: 299,
-      compareAt: 387,
+      price: 349,
+      compareAt: 697,
       badge: "الأكثر توفيراً",
-      savings: "وفري 88 درهم",
+      savings: "وفري 348 درهم",
     },
   ],
   "aroma-flame-lamp": [
@@ -230,28 +230,27 @@ export const offerTiers: Record<string, OfferTier[]> = {
       sku: "LB-LAMP-189",
       label: "الموقد فقط",
       sublabel: "جهاز الموقد الفاخر بدون سيروم",
-      price: 189,
-      compareAt: 249,
-      badge: "جربي بنفسك",
+      price: 299,
+      badge: "نتيجة من أول طلبة",
     },
     {
       sku: "LB-BUNDLE-299",
       label: "الموقد + سيروم مختار",
       sublabel: "الموقد + مسك أو عود — أفضل تجربة",
-      price: 299,
-      compareAt: 388,
+      price: 379,
+      compareAt: 498,
       badge: "الأكثر اختياراً",
       highlight: true,
-      savings: "وفري 89 درهم",
+      savings: "وفري 119 درهم",
     },
     {
-      sku: "LB-BUNDLE-379",
+      sku: "LB-BUNDLE-449",
       label: "الموقد + السيرومان",
-      sublabel: "الموقد الكامل + مسك + عود",
-      price: 379,
-      compareAt: 477,
+      sublabel: "الموقد الكامل + مسك المطر + عود قصر دبي",
+      price: 449,
+      compareAt: 697,
       badge: "الأكثر توفيراً",
-      savings: "وفري 98 درهم",
+      savings: "وفري 248 درهم",
     },
   ],
 };
@@ -274,15 +273,15 @@ export function getCrossSells(skus: string[]) {
   const inCart = new Set(skus);
   const suggestions: Product[] = [];
   const hasBundle = inCart.has("LB-BUNDLE-299") || inCart.has("LB-BUNDLE-379") || inCart.has("LB-BUNDLE-449");
-  const hasMusk = inCart.has("LB-SERUM-MUSK-99") || inCart.has("LB-SERUM-DUO-169");
-  const hasOud = inCart.has("LB-SERUM-OUD-99") || inCart.has("LB-SERUM-DUO-169");
+  const hasMusk = inCart.has("LB-SERUM-MUSK-199") || inCart.has("LB-SERUM-DUO-279");
+  const hasOud = inCart.has("LB-SERUM-OUD-199") || inCart.has("LB-SERUM-DUO-279");
   const hasLamp = inCart.has("LB-LAMP-189");
 
   if (hasBundle) {
-    if (!hasMusk && !hasOud) suggestions.push(getProductBySku("LB-SERUM-MUSK-99")!);
+    if (!hasMusk && !hasOud) suggestions.push(getProductBySku("LB-SERUM-MUSK-199")!);
   }
-  if (hasMusk && !hasOud && !hasBundle) suggestions.push(getProductBySku("LB-SERUM-OUD-99")!);
-  if (hasOud && !hasMusk && !hasBundle) suggestions.push(getProductBySku("LB-SERUM-MUSK-99")!);
+  if (hasMusk && !hasOud && !hasBundle) suggestions.push(getProductBySku("LB-SERUM-OUD-199")!);
+  if (hasOud && !hasMusk && !hasBundle) suggestions.push(getProductBySku("LB-SERUM-MUSK-199")!);
   if (!hasBundle && !hasLamp) suggestions.push(getProductBySku("LB-BUNDLE-299")!);
 
   return suggestions.filter(Boolean).slice(0, 2);
