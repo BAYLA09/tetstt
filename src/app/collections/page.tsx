@@ -7,8 +7,8 @@ export const metadata = {
 
 export default function CollectionsPage() {
   return (
-    <section className="section bg-[var(--cream-50)]">
-      <div className="container-layali">
+    <section className="bg-[var(--cream-50)] px-4 py-20">
+      <div className="container-grid">
         <div className="mx-auto max-w-3xl text-center">
           <span className="eyebrow">مجموعة ليالي</span>
           <h1 className="mt-4 text-4xl font-bold text-[var(--emerald-950)] md:text-6xl">
@@ -19,7 +19,7 @@ export default function CollectionsPage() {
             الواضحة داخل الإمارات.
           </p>
         </div>
-        <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {products.map((product) => (
             <ProductCard key={product.sku} product={product} />
           ))}
