@@ -49,7 +49,7 @@ export const products: Product[] = [
     story:
       "مرأة مشغولة بكل شيء وتنسى نفسها — هذه الباقة هي دقائقها اليومية التي تعيدها لنفسها.",
     notes: ["مسك أبيض ناعم", "عود خليجي فاخر", "تغليف هدية أنيق", "دفع عند الاستلام"],
-    image: "/products/bundle-hero-serums.jpg",
+    image: "/products/aroma-bundle-hero-final.jpg",
     cardImage: "/products/bundle-card-serums.jpg",
     beforeImage: "/products/before-bundle-tired.jpg",
     afterImage: "/products/after-bundle-happy.jpg",
