@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, Minus, Plus, ShoppingBag, X } from "lucide-react";
 import { FormEvent, useEffect, useMemo, useState } from "react";
@@ -13,13 +14,19 @@ function MiniProduct({ product, onAdd }: { product: Product; onAdd: () => void }
   return (
     <div className="rounded-2xl border border-[var(--border-gold)] bg-white p-3 shadow-[0_10px_30px_rgba(1,63,42,0.08)]">
       <div className="flex items-center gap-3">
-        <div className="grid size-14 shrink-0 place-items-center rounded-xl bg-[radial-gradient(circle_at_top,#d9ad63,#06472f_70%)] text-xl">
-          ✦
+        <div className="relative size-14 shrink-0 overflow-hidden rounded-xl">
+          <Image
+            src={product.cardImage}
+            alt={product.name}
+            fill
+            sizes="56px"
+            className="object-cover"
+          />
         </div>
         <div className="min-w-0 flex-1">
           <p className="font-bold text-[var(--emerald-950)]">{product.name}</p>
-          <p className="text-xs text-[var(--muted)]">{product.subheading}</p>
-          <p className="mt-1 font-bold text-[var(--gold-500)]">{money(product.price)} - يرفع قيمة الطلب بدون تردد</p>
+          <p className="text-xs text-[var(--muted)] line-clamp-1">{product.subheading}</p>
+          <p className="mt-1 font-bold text-[var(--gold-500)]">{money(product.price)}</p>
         </div>
         <button onClick={onAdd} className="rounded-full bg-[var(--emerald-950)] px-3 py-2 text-xs font-bold text-[var(--gold-300)]">
           أضيفيه
@@ -59,7 +66,9 @@ function UpsellModal({ orderId, onDone }: { orderId: string; onDone: () => void 
   return (
     <div className="fixed inset-0 z-[70] grid place-items-center bg-black/60 p-4">
       <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="max-w-md rounded-[2rem] border border-[var(--border-gold)] bg-[var(--emerald-950)] p-6 text-center text-white shadow-2xl">
-        <p className="mx-auto mb-3 grid size-16 place-items-center rounded-full bg-[var(--gold-500)] text-3xl text-[var(--emerald-950)]">✦</p>
+        <div className="mx-auto mb-3 relative size-20 overflow-hidden rounded-2xl border border-[rgba(201,150,69,0.4)]">
+          <Image src={upsell.cardImage} alt={upsell.name} fill sizes="80px" className="object-cover" />
+        </div>
         <p className="text-sm font-bold text-[var(--gold-300)]">عرض خاص يظهر مرة واحدة فقط</p>
         <h3 className="mt-2 text-2xl font-black">أضيفي لمسة عود فاخرة بـ 39 درهم</h3>
         <p className="mt-3 text-sm leading-7 text-white/75">أكثر إضافة تزيد إحساس الفخامة في الطلب، بسعر خاص فقط قبل تجهيز الشحنة. ينتهي خلال {seconds} ثانية.</p>
@@ -156,22 +165,38 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                     <ShoppingBag className="mx-auto mb-3 text-[var(--gold-500)]" />
                     <p className="font-bold">السلة فارغة حالياً</p>
                   </div>
-                ) : items.map((item) => (
-                  <div key={item.sku} className="rounded-2xl border border-[var(--border-gold)] p-4">
-                    <div className="flex justify-between gap-3">
-                      <div>
-                        <p className="font-black text-[var(--emerald-950)]">{item.name}</p>
-                        <p className="mt-1 text-sm text-[var(--muted)]">{money(item.price)}</p>
+                ) : items.map((item) => {
+                  const productData = getProductBySku(item.sku);
+                  return (
+                    <div key={item.sku} className="rounded-2xl border border-[var(--border-gold)] p-3">
+                      <div className="flex gap-3">
+                        {productData && (
+                          <div className="relative size-16 shrink-0 overflow-hidden rounded-xl">
+                            <Image
+                              src={productData.cardImage}
+                              alt={item.name}
+                              fill
+                              sizes="64px"
+                              className="object-cover"
+                            />
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex justify-between gap-2">
+                            <p className="font-bold text-[var(--emerald-950)] leading-snug">{item.name}</p>
+                            <button onClick={() => removeItem(item.sku)} className="shrink-0 text-xs text-red-600 hover:text-red-800">حذف</button>
+                          </div>
+                          <p className="mt-1 text-sm font-bold text-[var(--gold-500)]">{money(item.price)}</p>
+                          <div className="mt-2 flex items-center gap-2">
+                            <button onClick={() => updateQuantity(item.sku, item.quantity - 1)} className="rounded-full border border-[var(--border-gold)] p-1.5"><Minus size={12} /></button>
+                            <span className="min-w-6 text-center text-sm font-bold">{item.quantity}</span>
+                            <button onClick={() => updateQuantity(item.sku, item.quantity + 1)} className="rounded-full border border-[var(--border-gold)] p-1.5"><Plus size={12} /></button>
+                          </div>
+                        </div>
                       </div>
-                      <button onClick={() => removeItem(item.sku)} className="text-sm text-red-700">حذف</button>
                     </div>
-                    <div className="mt-3 flex items-center gap-2">
-                      <button onClick={() => updateQuantity(item.sku, item.quantity - 1)} className="rounded-full border p-2"><Minus size={14} /></button>
-                      <span className="min-w-8 text-center font-bold">{item.quantity}</span>
-                      <button onClick={() => updateQuantity(item.sku, item.quantity + 1)} className="rounded-full border p-2"><Plus size={14} /></button>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
               <div className="border-t border-[var(--border-gold)] bg-[var(--cream-50)] p-5">
                 <div className="mb-3 flex justify-between text-lg font-black">

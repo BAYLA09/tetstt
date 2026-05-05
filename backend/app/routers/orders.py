@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.db import get_session
 from app.models import Order, OrderItem
 from app.products import PRODUCTS
-from app.schemas import OrderCreate, OrderResponse, UpsellCreate
+from app.schemas import OrderCreate, OrderResponse, UpsellCreate, UpsellResponse
 from app.services.fraud import verify_order_ip
 from app.services.phone import normalize_uae_phone, phone_hash
 from app.services.sheet_webhook import send_order_to_sheet
@@ -132,7 +132,7 @@ async def create_order(
         sheet_sync_status="pending",
     )
     order.items = order_items
-    order.public_order_id = f"nama-{datetime.now(UTC):%Y%m%d}-{uuid4().hex[:8].upper()}"
+    order.public_order_id = f"LB-{datetime.now(UTC):%Y%m%d}-{uuid4().hex[:8].upper()}"
     session.add(order)
     await session.commit()
 

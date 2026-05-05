@@ -65,7 +65,7 @@ async def evaluate_order_ip(ip: str | None, phone_e164: str) -> FraudDecision:
         payload.get("country", {}).get("iso_code")
         or payload.get("registered_country", {}).get("iso_code")
     )
-    if country_code != settings.allowed_order_country:
+    if country_code != settings.order_allowed_country:
         return FraudDecision(False, f"country_not_allowed:{country_code}", payload)
 
     traits = payload.get("traits", {})
@@ -83,7 +83,7 @@ async def evaluate_order_ip(ip: str | None, phone_e164: str) -> FraudDecision:
             return FraudDecision(False, f"blocked_trait:{trait}", payload)
 
     risk_score = traits.get("ip_risk")
-    if isinstance(risk_score, (int, float)) and risk_score >= settings.maxmind_max_ip_risk:
+    if isinstance(risk_score, (int, float)) and risk_score >= 75:
         return FraudDecision(False, f"ip_risk_too_high:{risk_score}", payload)
 
     return FraudDecision(True, "maxmind_allowed", payload)
