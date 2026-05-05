@@ -48,28 +48,28 @@ export const products: Product[] = [
       "ثنائي السيرومات الأنثوية: مسك المطر الأبيض لنظافة الروح، وعود قصر دبي لحضور راقٍ. للمرأة التي تحب تفاصيل مرتبة.",
     story:
       "مرأة مشغولة بكل شيء وتنسى نفسها — هذه الباقة هي دقائقها اليومية التي تعيدها لنفسها.",
-    notes: ["مسك أبيض ناعم", "عود خليجي فاخر", "تغليف هدية أنيق", "دفع عند الاستلام"],
+    notes: ["عود قصر دبي الفاخر", "مسك المطر الأبيض", "تغليف هدية أنيق", "دفع عند الاستلام"],
     image: "/products/aroma-bundle-v2.jpg",
     cardImage: "/products/bundle-card-serums.jpg",
     beforeImage: "/products/before-bundle-tired.jpg",
     afterImage: "/products/after-bundle-happy.jpg",
   },
   {
-    sku: "LB-SERUM-MUSK-199",
-    slug: "white-rain-musk-serum",
-    name: "سيروم مسك المطر الأبيض",
-    shortName: "مسك المطر الأبيض",
+    sku: "LB-SERUM-OUD-199",
+    slug: "dubai-palace-oud-serum",
+    name: "سيروم عود قصر دبي",
+    shortName: "عود قصر دبي",
     price: 199,
     compareAt: 299,
-    badge: "نعومة يومية",
-    headline: "رائحة مطر أبيض ناعمة تلازمك طول اليوم — تترطب وتعطّر في نفس الوقت.",
-    subheading: "مسك هادئ نظيف لمحبات الرائحة الأنثوية الراقية. يرطب البشرة ويدوم ساعات.",
-    story: "اختيار راقٍ يضيف إحساساً مرتباً لروتينك اليومي.",
-    notes: ["مسك أبيض نقي", "رائحة تدوم 6-8 ساعات", "ترطيب عميق", "مناسب للاستخدام اليومي"],
-    image: "/products/img-vanilla-hero.jpg",
-    cardImage: "/products/img-vanilla-card.jpg",
-    beforeImage: "/products/before-vanilla.jpg",
-    afterImage: "/products/after-vanilla.jpg",
+    badge: "حضور خليجي فاخر",
+    headline: "عود دافئ مستوحى من قصور دبي — حضور يُلاحَظ ويدوم طول اليوم.",
+    subheading: "عود خليجي أصيل لمحبات الفخامة الهادئة. يترطب في البشرة ويعطي رائحة شخصية فريدة تُذكَرين بها.",
+    story: "العود يحمل قيمة عالية في الإمارات — صُمّم ليكون راقياً وليس ثقيلاً.",
+    notes: ["عود أصيل خليجي", "رائحة تدوم 8-12 ساعة", "مثبّت طبيعي بالعنبر", "مناسب للمناسبات"],
+    image: "/products/img-sandalwood-hero.jpg",
+    cardImage: "/products/img-sandalwood-card.jpg",
+    beforeImage: "/products/before-sandalwood.jpg",
+    afterImage: "/products/after-sandalwood.jpg",
   },
   {
     sku: "LB-LAMP-189",
@@ -93,18 +93,18 @@ export const products: Product[] = [
 // ── Upsell products (post-order) ──────────────────────────────────────
 export const upsells: Product[] = [
   {
-    sku: "LB-UPSELL-MUSK-49",
-    slug: "white-rain-musk-serum",
-    name: "سيروم مسك المطر الأبيض - عرض خاص",
-    shortName: "مسك المطر الأبيض",
+    sku: "LB-UPSELL-OUD-49",
+    slug: "dubai-palace-oud-serum",
+    name: "سيروم عود قصر دبي - عرض خاص",
+    shortName: "عود قصر دبي",
     price: 49,
     badge: "يظهر مرة واحدة",
-    headline: "أضيفي سيروم مسك إضافي بـ 49 درهم فقط.",
+    headline: "أضيفي لمسة عود فاخرة بـ 49 درهم فقط.",
     subheading: "عرض خاص بعد تأكيد الطلب.",
     story: "خصم خاص مع طلبك الحالي فقط.",
     notes: ["سعر خاص", "مرة واحدة"],
-    image: "/products/img-vanilla-hero.jpg",
-    cardImage: "/products/img-vanilla-card.jpg",
+    image: "/products/img-sandalwood-hero.jpg",
+    cardImage: "/products/img-sandalwood-card.jpg",
   },
 ];
 
@@ -138,9 +138,9 @@ export const offerTiers: Record<string, OfferTier[]> = {
       savings: "وفري 148 درهم",
     },
   ],
-  "white-rain-musk-serum": [
+  "dubai-palace-oud-serum": [
     {
-      sku: "LB-SERUM-MUSK-199",
+      sku: "LB-SERUM-OUD-199",
       label: "زجاجة واحدة",
       sublabel: "100mL · نتيجة من أول استخدام",
       price: 199,
@@ -148,8 +148,8 @@ export const offerTiers: Record<string, OfferTier[]> = {
     },
     {
       sku: "LB-SERUM-DUO-279",
-      label: "مسك + عود — الثنائي الفاخر",
-      sublabel: "مسك المطر الأبيض + عود قصر دبي · 200mL",
+      label: "عود + مسك — الثنائي الفاخر",
+      sublabel: "عود قصر دبي + مسك المطر الأبيض · 200mL",
       price: 279,
       compareAt: 398,
       badge: "الأكثر اختياراً",
@@ -214,12 +214,12 @@ export function getCrossSells(skus: string[]) {
   const inCart = new Set(skus);
   const suggestions: Product[] = [];
   const hasBundle = inCart.has("LB-BUNDLE-299") || inCart.has("LB-BUNDLE-379") || inCart.has("LB-BUNDLE-449");
-  const hasMusk = inCart.has("LB-SERUM-MUSK-199") || inCart.has("LB-SERUM-DUO-279");
+  const hasOud = inCart.has("LB-SERUM-OUD-199") || inCart.has("LB-SERUM-DUO-279");
   const hasLamp = inCart.has("LB-LAMP-189");
 
-  if (!hasBundle && !hasMusk) suggestions.push(getProductBySku("LB-SERUM-MUSK-199")!);
+  if (!hasBundle && !hasOud) suggestions.push(getProductBySku("LB-SERUM-OUD-199")!);
   if (!hasBundle && !hasLamp) suggestions.push(getProductBySku("LB-LAMP-189")!);
-  if (!hasBundle && (hasMusk || hasLamp)) suggestions.push(getProductBySku("LB-BUNDLE-299")!);
+  if (!hasBundle && (hasOud || hasLamp)) suggestions.push(getProductBySku("LB-BUNDLE-299")!);
 
   return suggestions.filter(Boolean).slice(0, 2);
 }
