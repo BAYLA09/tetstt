@@ -12,6 +12,8 @@ export type Product = {
   notes: string[];
   image: string;
   cardImage: string;
+  beforeImage?: string;
+  afterImage?: string;
 };
 
 export type CartItem = {
@@ -35,8 +37,10 @@ export const products: Product[] = [
     story:
       "هذه ليست منتجات عادية تُضاف للسلة؛ إنها طقوس عناية صغيرة تمنح يومك لمسة فخامة هادئة وتقلل ترددك بوضوح الطلب والتأكيد قبل الشحن.",
     notes: ["الدفع عند الاستلام", "تأكيد قبل الشحن", "تجهيز أنيق للطلب"],
-    image: "/products/product-bundle-hero.jpg",
+    image: "/products/hero-diffuser-final.jpg",
     cardImage: "/products/product-bundle-card.jpg",
+    beforeImage: "/products/before-diffuser.jpg",
+    afterImage: "/products/after-diffuser.jpg",
   },
   {
     sku: "LB-SERUM-MUSK-59",
@@ -50,8 +54,10 @@ export const products: Product[] = [
     story:
       "اختيار خفيف وراقي يضيف إحساساً مرتباً لروتينك اليومي حسب طريقة الاستعمال.",
     notes: ["رائحة نظيفة", "مناسب للروتين اليومي", "إحساس أنثوي هادئ"],
-    image: "/products/product-vanilla-hero.jpg",
+    image: "/products/hero-vanilla-final.jpg",
     cardImage: "/products/product-vanilla-card.jpg",
+    beforeImage: "/products/before-vanilla.jpg",
+    afterImage: "/products/after-vanilla.jpg",
   },
   {
     sku: "LB-SERUM-OUD-69",
@@ -65,8 +71,10 @@ export const products: Product[] = [
     story:
       "العود يحمل قيمة عالية في الإمارات، لذلك صُمم هذا الاختيار ليبدو كإضافة راقية للطلب.",
     notes: ["طابع فاخر", "ذوق خليجي", "مناسب للطلعات"],
-    image: "/products/product-sandalwood-hero.jpg",
+    image: "/products/hero-sandalwood-final.jpg",
     cardImage: "/products/product-sandalwood-card.jpg",
+    beforeImage: "/products/before-sandalwood.jpg",
+    afterImage: "/products/after-sandalwood.jpg",
   },
   {
     sku: "LB-SERUM-SET-99",
@@ -83,6 +91,8 @@ export const products: Product[] = [
     notes: ["وفر 29 درهم", "الأكثر إضافة مع الباقة", "رائحتان في طلب واحد"],
     image: "/products/product-bundle-hero.jpg",
     cardImage: "/products/product-bundle-card.jpg",
+    beforeImage: "/products/before-vanilla.jpg",
+    afterImage: "/products/after-vanilla.jpg",
   },
 ];
 
