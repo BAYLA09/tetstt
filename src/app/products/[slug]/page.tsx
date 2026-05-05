@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { CheckCircle2, Package, RefreshCcw, Shield, Star, Truck, X } from "lucide-react";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductHero } from "@/components/ProductHero";
-import { products } from "@/lib/products";
+import { products, offerTiers } from "@/lib/products";
 import { getProductContent } from "@/lib/product-content";
 
 export function generateStaticParams() {
@@ -37,12 +37,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
   if (!product) notFound();
 
   const content = getProductContent(slug);
+  const tiers = offerTiers[slug];
   const related = products.filter((item) => item.sku !== product.sku).slice(0, 3);
 
   return (
     <div dir="rtl">
       {/* ── HERO ── */}
-      <ProductHero product={product} />
+      <ProductHero product={product} tiers={tiers} />
 
       {/* ── TRUST STRIP ── */}
       <section className="border-b border-[var(--border-gold)] bg-white px-4 py-4">

@@ -11,7 +11,7 @@ type CartStore = {
   checkoutState: CheckoutState;
   lastOrderId?: string;
   lastTotal?: number;
-  addItem: (product: Product, quantity?: number) => void;
+  addItem: (product: Product | CartItem, quantity?: number) => void;
   removeItem: (sku: string) => void;
   updateQuantity: (sku: string, quantity: number) => void;
   openCart: () => void;

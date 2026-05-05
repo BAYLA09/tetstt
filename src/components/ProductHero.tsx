@@ -2,11 +2,17 @@
 
 import Image from "next/image";
 import { CheckCircle2, ShoppingBag } from "lucide-react";
-import { Product, money } from "@/lib/products";
+import { Product, OfferTier, money } from "@/lib/products";
 import { useCartStore } from "@/lib/cart-store";
 import { generateEventId, trackEvent } from "@/lib/events";
+import { OfferSelector } from "./OfferSelector";
 
-export function ProductHero({ product }: { product: Product }) {
+type ProductHeroProps = {
+  product: Product;
+  tiers?: OfferTier[];
+};
+
+export function ProductHero({ product, tiers }: ProductHeroProps) {
   const addItem = useCartStore((state) => state.addItem);
 
   function addOffer() {
@@ -32,7 +38,6 @@ export function ProductHero({ product }: { product: Product }) {
               className="object-cover"
               priority
             />
-            {/* Subtle gradient overlay at bottom for text readability */}
             <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[rgba(1,30,20,0.6)] to-transparent" />
           </div>
         </div>
@@ -51,46 +56,50 @@ export function ProductHero({ product }: { product: Product }) {
             {product.headline}
           </p>
 
-          {/* Trust chips */}
-          <div className="mt-5 grid gap-2 rounded-2xl border border-[rgba(201,150,69,0.25)] bg-white/8 p-4 text-sm font-semibold text-[var(--cream-50)] md:grid-cols-3">
-            {["تأكيد قبل الشحن", "الدفع عند الاستلام", "عرض محجوز اليوم"].map((item) => (
-              <span key={item} className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--gold-300)]" />
-                {item}
-              </span>
-            ))}
-          </div>
-
-          {/* Price block */}
-          <div className="mt-6 rounded-[2rem] border border-[rgba(201,150,69,0.4)] bg-black/22 p-5 shadow-inner">
-            <p className="text-xs font-bold tracking-widest text-[var(--gold-300)] uppercase">العرض الحالي</p>
-            <div className="mt-2 flex flex-wrap items-baseline gap-3">
-              <p className="text-4xl font-bold text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)]">
-                {money(product.price)}
-              </p>
-              {product.compareAt && (
-                <p className="text-lg text-[var(--cream-100)]/60 line-through">
-                  {money(product.compareAt)}
-                </p>
-              )}
+          {/* If tiers exist — show OfferSelector inside a white card */}
+          {tiers && tiers.length > 0 ? (
+            <div className="mt-6 rounded-[2rem] bg-white p-5 shadow-xl">
+              {/* Countdown urgency bar */}
+              <div className="mb-4 flex items-center gap-2 rounded-full border border-[var(--border-gold)] bg-[var(--cream-50)] px-3 py-1.5 text-xs font-bold text-[var(--gold-500)]">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-[var(--gold-500)]" />
+                آخر 48 ساعة على عرض الشحن المجاني هذا الأسبوع
+              </div>
+              <p className="mb-3 text-sm font-bold text-[var(--emerald-950)]">اختاري العرض:</p>
+              <OfferSelector tiers={tiers} productName={product.name} />
             </div>
-            <p className="mt-3 text-sm leading-7 text-[var(--cream-100)]">
-              لا تدفعين الآن. نثبت طلبك ونتواصل معك للتأكيد قبل الشحن.
-            </p>
-          </div>
-
-          {/* CTA */}
-          <button
-            onClick={addOffer}
-            className="mt-6 flex w-full items-center justify-center gap-3 rounded-full bg-[var(--gold-500)] px-8 py-5 text-lg font-bold text-[var(--emerald-950)] shadow-2xl transition hover:-translate-y-0.5 hover:bg-[var(--gold-400)] md:w-auto"
-          >
-            <ShoppingBag size={20} />
-            أضيفي العرض للسلة
-          </button>
-
-          <p className="mt-3 text-center text-xs text-[var(--cream-100)]/50 md:text-right">
-            يتم التأكيد عبر الهاتف قبل الشحن
-          </p>
+          ) : (
+            <>
+              {/* Trust chips */}
+              <div className="mt-5 grid gap-2 rounded-2xl border border-[rgba(201,150,69,0.25)] bg-white/8 p-4 text-sm font-semibold text-[var(--cream-50)] md:grid-cols-3">
+                {["تأكيد قبل الشحن", "الدفع عند الاستلام", "عرض محجوز اليوم"].map((item) => (
+                  <span key={item} className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--gold-300)]" />
+                    {item}
+                  </span>
+                ))}
+              </div>
+              {/* Price block */}
+              <div className="mt-6 rounded-[2rem] border border-[rgba(201,150,69,0.4)] bg-black/22 p-5 shadow-inner">
+                <p className="text-xs font-bold tracking-widest text-[var(--gold-300)] uppercase">العرض الحالي</p>
+                <div className="mt-2 flex flex-wrap items-baseline gap-3">
+                  <p className="text-4xl font-bold text-white">{money(product.price)}</p>
+                  {product.compareAt && (
+                    <p className="text-lg text-[var(--cream-100)]/60 line-through">{money(product.compareAt)}</p>
+                  )}
+                </div>
+                <p className="mt-3 text-sm leading-7 text-[var(--cream-100)]">
+                  لا تدفعين الآن. نثبت طلبك ونتواصل معك للتأكيد قبل الشحن.
+                </p>
+              </div>
+              <button
+                onClick={addOffer}
+                className="mt-6 flex w-full items-center justify-center gap-3 rounded-full bg-[var(--gold-500)] px-8 py-5 text-lg font-bold text-[var(--emerald-950)] shadow-2xl transition hover:-translate-y-0.5 hover:bg-[var(--gold-400)] md:w-auto"
+              >
+                <ShoppingBag size={20} />
+                أضيفي العرض للسلة
+              </button>
+            </>
+          )}
         </div>
       </div>
 
