@@ -47,7 +47,7 @@ export default function Home() {
           <div className="order-2 lg:order-1">
             <div className="relative min-h-[420px] overflow-hidden rounded-[2.5rem] border border-[rgba(201,150,69,0.3)] shadow-[0_40px_100px_rgba(0,0,0,0.5)]">
               <Image
-                src="/products/product-bundle-hero.jpg"
+                src="/products/img-bundle-card.jpg"
                 alt="باقة ليالي بيوتي الفاخرة"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
