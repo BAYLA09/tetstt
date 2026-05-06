@@ -3,12 +3,11 @@
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, Minus, Plus, ShoppingBag, X } from "lucide-react";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 import { useCartStore } from "@/lib/cart-store";
-import { createOrder, addUpsell } from "@/lib/api";
 import { getCrossSells, getProductBySku, money, Product } from "@/lib/products";
 import { normalizeUaePhone } from "@/lib/phone";
-import { generateEventId, getTrackingContext, trackEvent } from "@/lib/events";
+import { generateEventId, trackEvent } from "@/lib/events";
 
 function MiniProduct({ product, onAdd }: { product: Product; onAdd: () => void }) {
   return (
@@ -36,108 +35,31 @@ function MiniProduct({ product, onAdd }: { product: Product; onAdd: () => void }
   );
 }
 
-function UpsellModal({ orderId, onDone }: { orderId: string; onDone: () => void }) {
-  const [seconds, setSeconds] = useState(15);
-  const [busy, setBusy] = useState(false);
-  const upsell = getProductBySku("LB-UPSELL-OUD-49")!;
-
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      setSeconds((value) => {
-        if (value <= 1) {
-          window.clearInterval(timer);
-          onDone();
-          return 0;
-        }
-        return value - 1;
-      });
-    }, 1000);
-    return () => window.clearInterval(timer);
-  }, [onDone]);
-
-  async function accept() {
-    setBusy(true);
-    const eventId = generateEventId("upsell");
-    await addUpsell(orderId, upsell.sku, eventId);
-    trackEvent("UpsellAccepted", { eventId, value: upsell.price });
-    onDone();
-  }
-
-  return (
-    <div className="fixed inset-0 z-[70] grid place-items-center bg-black/60 p-4">
-      <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="max-w-md rounded-[2rem] border border-[var(--border-gold)] bg-[var(--emerald-950)] p-6 text-center text-white shadow-2xl">
-        <div className="mx-auto mb-3 relative size-20 overflow-hidden rounded-2xl border border-[rgba(201,150,69,0.4)]">
-          <Image src={upsell.cardImage} alt={upsell.name} fill sizes="80px" className="object-cover" />
-        </div>
-        <p className="text-sm font-bold text-[var(--gold-300)]">عرض خاص يظهر مرة واحدة فقط</p>
-        <h3 className="mt-2 text-2xl font-black">أضيفي لمسة عود فاخرة بـ 49 درهم</h3>
-        <p className="mt-3 text-sm leading-7 text-white/75">عود قصر دبي بسعر خاص فقط قبل تجهيز الشحنة. ينتهي خلال {seconds} ثانية.</p>
-        <div className="mt-5 grid gap-3">
-          <button disabled={busy} onClick={accept} className="rounded-full bg-[var(--gold-500)] px-5 py-4 font-black text-[var(--emerald-950)]">
-            {busy ? "جاري الإضافة..." : "أضيفيه لطلبي بـ 49 درهم"}
-          </button>
-          <button onClick={onDone} className="text-sm font-bold text-white/75">لا شكراً، أكملي طلبي</button>
-        </div>
-      </motion.div>
-    </div>
-  );
-}
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const { items, isCartOpen, checkoutState, addItem, removeItem, updateQuantity, closeCart, openCheckout, closeCheckout, clearCart } = useCartStore();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [upsellOrderId, setUpsellOrderId] = useState<string | null>(null);
   const total = useMemo(() => items.reduce((sum, item) => sum + item.price * item.quantity, 0), [items]);
   const crossSells = getCrossSells(items.map((item) => item.sku));
   const normalizedPhone = normalizeUaePhone(phone);
   const canSubmit = name.trim().length >= 2 && Boolean(normalizedPhone) && items.length > 0 && !submitting;
 
-  async function submitOrder(event: FormEvent) {
+  function submitOrder(event: FormEvent) {
     event.preventDefault();
     if (!canSubmit || !normalizedPhone) return;
     setSubmitting(true);
-    setError("");
-    const purchaseEventId = generateEventId("purchase");
-    try {
-      const order = await createOrder({
-        customer_name: name.trim(),
-        phone: normalizedPhone,
-        items,
-        currency: "AED",
-        source_url: window.location.href,
-        landing_page: window.location.origin,
-        event_ids: { purchase: purchaseEventId, initiate_checkout: generateEventId("checkout") },
-        tracking: getTrackingContext().tracking,
-        utm: getTrackingContext().utm,
-      });
-      trackEvent("Purchase", { eventId: purchaseEventId, value: order.total });
-      closeCheckout();
-      setUpsellOrderId(order.order_id);
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "";
-      if (msg === "timeout") {
-        setError("الاتصال بالسيرفر استغرق وقتاً طويلاً. تأكدي من الإنترنت وحاولي مرة أخرى.");
-      } else if (msg === "network") {
-        setError("تعذر الاتصال بالسيرفر. تأكدي من الإنترنت أو تواصلي معنا عبر واتساب.");
-      } else if (msg.includes("http_403")) {
-        setError("الطلب غير مقبول من هذا الموقع. تواصلي معنا عبر واتساب.");
-      } else {
-        setError("تعذر إرسال الطلب. تأكدي من الرقم وحاولي مرة أخرى أو تواصلي معنا عبر واتساب.");
-      }
-    } finally {
-      setSubmitting(false);
-    }
+
+    // Generate local order ID — no backend needed
+    const orderId = `LB-${new Date().toISOString().slice(0,10).replace(/-/g,"")}${Math.random().toString(36).slice(2,6).toUpperCase()}`;
+
+    trackEvent("Purchase", { value: total });
+    closeCheckout();
+    clearCart();
+    window.location.href = `/thank-you/${orderId}`;
   }
 
-  function finishOrder() {
-    const id = upsellOrderId || "LB-DEMO";
-    setUpsellOrderId(null);
-    clearCart();
-    window.location.href = `/thank-you/${id}`;
-  }
 
   return (
     <>
@@ -245,19 +167,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 </label>
               </div>
               {phone && !normalizedPhone && <p className="mt-2 text-sm text-red-700">أدخلي رقم إماراتي صحيح — مثال: 0501234567 أو +971501234567</p>}
-              {error && (
-                <div className="mt-3 rounded-xl bg-red-50 p-4">
-                  <p className="text-sm text-red-700">{error}</p>
-                  <a
-                    href={`https://wa.me/971500000000?text=${encodeURIComponent(`مرحبا، أريد تثبيت طلب:\n\nالاسم: ${name}\nالرقم: ${phone}\nالطلب: ${items.map(i => `${i.name} x${i.quantity}`).join(', ')}\nالإجمالي: ${total} درهم`)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-3 flex items-center justify-center gap-2 rounded-full bg-[#25D366] px-4 py-2.5 text-sm font-bold text-white"
-                  >
-                    أكملي الطلب عبر واتساب
-                  </a>
-                </div>
-              )}
               <button disabled={!canSubmit} className="mt-5 w-full rounded-full bg-[var(--emerald-950)] px-6 py-4 font-black text-[var(--gold-300)] disabled:opacity-50">
                 {submitting ? "جاري تثبيت الطلب..." : "ثبتي الطلب الآن"}
               </button>
@@ -267,7 +176,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         )}
       </AnimatePresence>
 
-      {upsellOrderId && <UpsellModal orderId={upsellOrderId} onDone={finishOrder} />}
     </>
   );
 }
