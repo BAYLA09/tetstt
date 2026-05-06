@@ -1,24 +1,38 @@
+/**
+ * Accepts any common UAE mobile format:
+ *   0501234567  /  050 123 4567  /  050-123-4567
+ *   971501234567  /  +971501234567  /  +971 50 123 4567
+ *   00971501234567  /  971-50-123-4567
+ * Returns E.164 (+971XXXXXXXXX) or null if invalid.
+ */
 export function normalizeUaePhone(input: string): string | null {
-  const trimmed = input.trim();
-  const digits = trimmed.replace(/\D/g, "");
+  if (!input) return null;
 
-  let normalized = "";
+  // Strip every character that is not a digit or leading +
+  const digits = input.replace(/\D/g, "");
 
-  if (/^05\d{8}$/.test(digits)) {
-    normalized = `+971${digits.slice(1)}`;
-  } else if (/^5\d{8}$/.test(digits)) {
-    normalized = `+971${digits}`;
-  } else if (/^9715\d{8}$/.test(digits)) {
-    normalized = `+${digits}`;
-  } else if (/^009715\d{8}$/.test(digits)) {
-    normalized = `+${digits.slice(2)}`;
+  let local = "";
+
+  if (/^00971/.test(digits)) {
+    // 00971XXXXXXXXX
+    local = digits.slice(5);
+  } else if (/^971/.test(digits)) {
+    // 971XXXXXXXXX  or  +971XXXXXXXXX (+ already stripped)
+    local = digits.slice(3);
+  } else if (/^0/.test(digits)) {
+    // 0XXXXXXXXX
+    local = digits.slice(1);
+  } else {
+    // bare local without leading 0: 5XXXXXXXX
+    local = digits;
   }
 
-  if (!/^\+9715\d{8}$/.test(normalized)) {
-    return null;
+  // UAE mobile local: 5X + 7 digits = 9 digits total, starts with 5
+  if (/^5\d{8}$/.test(local)) {
+    return `+971${local}`;
   }
 
-  return normalized;
+  return null;
 }
 
 export function isValidUaePhone(input: string): boolean {

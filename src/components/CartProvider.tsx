@@ -232,10 +232,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                   <input value={name} onChange={(e) => setName(e.target.value)} dir="rtl" className="rounded-2xl border border-[var(--border-gold)] px-4 py-3 text-right outline-none placeholder:text-right focus:ring-2 focus:ring-[var(--gold-400)]" placeholder="مثال: فاطمة علي" />
                 </label>
                 <label className="grid gap-2 text-sm font-bold text-[var(--emerald-950)]">رقم الهاتف الإماراتي
-                  <input value={phone} onChange={(e) => setPhone(e.target.value)} dir="rtl" inputMode="tel" className="rounded-2xl border border-[var(--border-gold)] px-4 py-3 text-right outline-none placeholder:text-right focus:ring-2 focus:ring-[var(--gold-400)]" placeholder="05XXXXXXXX" />
+                  <input value={phone} onChange={(e) => setPhone(e.target.value)} dir="ltr" inputMode="tel" className="rounded-2xl border border-[var(--border-gold)] px-4 py-3 text-left outline-none placeholder:text-left focus:ring-2 focus:ring-[var(--gold-400)]" placeholder="+971 50 123 4567" />
                 </label>
               </div>
-              {phone && !normalizedPhone && <p className="mt-2 text-sm text-red-700">أدخلي رقم موبايل إماراتي صحيح.</p>}
+              {phone && !normalizedPhone && <p className="mt-2 text-sm text-red-700">أدخلي رقم إماراتي صحيح — مثال: 0501234567 أو +971501234567</p>}
               {error && <p className="mt-3 rounded-xl bg-red-50 p-3 text-sm text-red-700">{error}</p>}
               <button disabled={!canSubmit} className="mt-5 w-full rounded-full bg-[var(--emerald-950)] px-6 py-4 font-black text-[var(--gold-300)] disabled:opacity-50">
                 {submitting ? "جاري تثبيت الطلب..." : "ثبتي الطلب الآن"}
