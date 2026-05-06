@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Script from "next/script";
 import { CheckCircle2 } from "lucide-react";
 
 export default async function ThankYouPage({
@@ -10,6 +11,10 @@ export default async function ThankYouPage({
 
   return (
     <main className="min-h-[70vh] bg-[var(--emerald-950)] px-4 py-16">
+      {/* TikTok CompletePayment event */}
+      <Script id="tiktok-purchase" strategy="afterInteractive">
+        {`if(window.ttq){window.ttq.track('CompletePayment');}`}
+      </Script>
       <div className="container-grid grid gap-8 md:grid-cols-[1fr_0.8fr] md:items-center">
         <section className="rounded-[2rem] border border-[var(--border-gold)] bg-white p-8 shadow-2xl">
           <CheckCircle2 className="mb-4 text-[var(--gold-500)]" size={46} />
