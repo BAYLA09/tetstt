@@ -34,7 +34,7 @@ export function SiteHeader() {
     <>
       <header className="sticky top-0 z-40 border-b border-[var(--border-gold)] bg-[rgba(1,63,42,0.97)] text-[var(--cream-50)] backdrop-blur">
         {/* Top scrolling bar */}
-        <div className="overflow-hidden border-b border-[var(--border-gold)] bg-black/20 py-2">
+        <div className="overflow-hidden border-b border-[var(--border-gold)] bg-black/20 py-2" style={{ overflowX: "hidden" }}>
           <div className="topbar-track flex w-max gap-10 text-xs font-bold text-[var(--gold-300)] md:text-sm">
             {[...topBarMessages, ...topBarMessages].map((message, index) => (
               <span key={`${message}-${index}`} className="whitespace-nowrap">

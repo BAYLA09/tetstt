@@ -103,15 +103,17 @@ export function ProductHero({ product, tiers }: ProductHeroProps) {
         </div>
       </div>
 
-      {/* Sticky mobile CTA */}
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[rgba(201,150,69,0.3)] bg-[rgba(1,63,42,0.95)] p-3 backdrop-blur lg:hidden">
-        <button
-          onClick={addOffer}
-          className="w-full rounded-full bg-[var(--gold-500)] px-5 py-4 font-bold text-[var(--emerald-950)]"
-        >
-          أضيفي العرض للسلة — {money(product.price)}
-        </button>
-      </div>
+      {/* Sticky mobile CTA — only shown when no offer selector (no tiers) */}
+      {!tiers && (
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[rgba(201,150,69,0.3)] bg-[rgba(1,63,42,0.95)] p-3 backdrop-blur lg:hidden">
+          <button
+            onClick={addOffer}
+            className="w-full rounded-full bg-[var(--gold-500)] px-5 py-4 font-bold text-[var(--emerald-950)]"
+          >
+            أضيفي العرض للسلة — {money(product.price)}
+          </button>
+        </div>
+      )}
     </section>
   );
 }

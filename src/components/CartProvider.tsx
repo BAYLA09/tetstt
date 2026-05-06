@@ -7,7 +7,7 @@ import { FormEvent, useMemo, useState } from "react";
 import { useCartStore } from "@/lib/cart-store";
 import { getCrossSells, getProductBySku, money, Product } from "@/lib/products";
 import { normalizeUaePhone } from "@/lib/phone";
-import { generateEventId, trackEvent } from "@/lib/events";
+import { trackEvent } from "@/lib/events";
 
 function MiniProduct({ product, onAdd }: { product: Product; onAdd: () => void }) {
   return (

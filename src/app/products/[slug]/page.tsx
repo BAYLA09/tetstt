@@ -42,7 +42,7 @@ export default async function ProductPage({ params }: Props) {
   const related = products.filter((p) => p.sku !== product.sku).slice(0, 3);
 
   return (
-    <div dir="rtl">
+    <div dir="rtl" className="pb-24 lg:pb-0">
 
       {/* ①  HERO + OFFER SELECTOR */}
       <ProductHero product={product} tiers={tiers} />
