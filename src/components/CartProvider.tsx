@@ -116,8 +116,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       trackEvent("Purchase", { eventId: purchaseEventId, value: order.total });
       closeCheckout();
       setUpsellOrderId(order.order_id);
-    } catch {
-      setError("تعذر إرسال الطلب الآن. تأكدي من الرقم وحاولي مرة أخرى.");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "";
+      if (msg === "timeout") {
+        setError("الاتصال بالسيرفر استغرق وقتاً طويلاً. تأكدي من الإنترنت وحاولي مرة أخرى.");
+      } else if (msg === "network") {
+        setError("تعذر الاتصال بالسيرفر. تأكدي من الإنترنت أو تواصلي معنا عبر واتساب.");
+      } else if (msg.includes("http_403")) {
+        setError("الطلب غير مقبول من هذا الموقع. تواصلي معنا عبر واتساب.");
+      } else {
+        setError("تعذر إرسال الطلب. تأكدي من الرقم وحاولي مرة أخرى أو تواصلي معنا عبر واتساب.");
+      }
     } finally {
       setSubmitting(false);
     }
@@ -236,7 +245,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 </label>
               </div>
               {phone && !normalizedPhone && <p className="mt-2 text-sm text-red-700">أدخلي رقم إماراتي صحيح — مثال: 0501234567 أو +971501234567</p>}
-              {error && <p className="mt-3 rounded-xl bg-red-50 p-3 text-sm text-red-700">{error}</p>}
+              {error && (
+                <div className="mt-3 rounded-xl bg-red-50 p-4">
+                  <p className="text-sm text-red-700">{error}</p>
+                  <a
+                    href={`https://wa.me/971500000000?text=${encodeURIComponent(`مرحبا، أريد تثبيت طلب:\n\nالاسم: ${name}\nالرقم: ${phone}\nالطلب: ${items.map(i => `${i.name} x${i.quantity}`).join(', ')}\nالإجمالي: ${total} درهم`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 flex items-center justify-center gap-2 rounded-full bg-[#25D366] px-4 py-2.5 text-sm font-bold text-white"
+                  >
+                    أكملي الطلب عبر واتساب
+                  </a>
+                </div>
+              )}
               <button disabled={!canSubmit} className="mt-5 w-full rounded-full bg-[var(--emerald-950)] px-6 py-4 font-black text-[var(--gold-300)] disabled:opacity-50">
                 {submitting ? "جاري تثبيت الطلب..." : "ثبتي الطلب الآن"}
               </button>

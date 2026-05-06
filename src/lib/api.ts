@@ -22,30 +22,70 @@ export type OrderResponse = {
   currency: "AED";
 };
 
+async function fetchWithTimeout(
+  url: string,
+  options: RequestInit,
+  timeoutMs = 12000
+): Promise<Response> {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, { ...options, signal: controller.signal });
+    return response;
+  } finally {
+    clearTimeout(id);
+  }
+}
+
 export async function createOrder(payload: OrderPayload): Promise<OrderResponse> {
-  const response = await fetch(`${API_BASE_URL}/orders`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
+  let response: Response;
+  try {
+    response = await fetchWithTimeout(
+      `${API_BASE_URL}/orders`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      },
+      12000
+    );
+  } catch (err: unknown) {
+    // Network error or timeout — give a clear message
+    const isTimeout =
+      err instanceof Error && (err.name === "AbortError" || err.message.includes("abort"));
+    if (isTimeout) {
+      throw new Error("timeout");
+    }
+    throw new Error("network");
+  }
 
   if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || "Order request failed");
+    let detail = "";
+    try {
+      const body = await response.json();
+      detail = body?.detail?.message || body?.detail || body?.message || "";
+    } catch {
+      detail = await response.text().catch(() => "");
+    }
+    throw new Error(detail || `http_${response.status}`);
   }
 
   return response.json();
 }
 
 export async function addUpsell(orderId: string, sku: string, eventId: string) {
-  const response = await fetch(`${API_BASE_URL}/orders/${orderId}/upsell`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ sku, event_id: eventId, quantity: 1 }),
-  });
+  const response = await fetchWithTimeout(
+    `${API_BASE_URL}/orders/${orderId}/upsell`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sku, event_id: eventId, quantity: 1 }),
+    },
+    8000
+  );
 
   if (!response.ok) {
-    const message = await response.text();
+    const message = await response.text().catch(() => "");
     throw new Error(message || "Upsell request failed");
   }
 
