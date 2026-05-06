@@ -86,7 +86,7 @@ export const products: Product[] = [
     image: "/products/aroma-lamp-oud-hero.jpg",
     cardImage: "/products/img-diffuser-card.jpg",
     beforeImage: "/products/before-diffuser.jpg",
-    afterImage: "/products/after-diffuser.jpg",
+    afterImage: "/products/after-family-aroma.jpg",
   },
 ];
 
