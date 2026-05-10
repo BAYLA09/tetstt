@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { Star } from "lucide-react";
 import { type Product } from "@/lib/products";
@@ -11,9 +12,21 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <article className="rounded-[2rem] border border-[var(--border-gold)] bg-white p-4 shadow-[0_18px_60px_rgba(1,63,42,0.12)]">
       <Link href={`/products/${product.slug}`} className="block">
-        <div className="placeholder-art h-64 rounded-[1.5rem]">
-          <span>{product.shortName}</span>
-        </div>
+        {product.cardImage ? (
+          <div className="relative h-64 overflow-hidden rounded-[1.5rem] border border-[var(--border-gold)] bg-[var(--cream-50)]">
+            <Image
+              src={product.cardImage}
+              alt={product.name}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 33vw"
+            />
+          </div>
+        ) : (
+          <div className="placeholder-art h-64 rounded-[1.5rem]">
+            <span>{product.shortName}</span>
+          </div>
+        )}
       </Link>
       <div className="mt-5 space-y-3">
         <div className="flex items-center justify-between gap-3">
