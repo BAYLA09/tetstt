@@ -5,6 +5,7 @@ Layali API — Easypanel (deploy-backend)
    - Repository: your GitHub repo (e.g. BAYLA09/tetstt)
    - Branch: deploy-backend (legacy) or layali-api or layali-backend-prod (same API code)
    - Path / context: repository ROOT (where Dockerfile lives)
+   - Pushing code: always from the repo root (`git add`, `git commit`, `git push`). You do NOT `cd backend` to push — backend is just a folder inside the same git repo.
 
 2) Build
    - Preferred: Dockerfile at repo root + build context = repository ROOT (same as CI).
