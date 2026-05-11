@@ -36,9 +36,19 @@ def is_whitelisted_phone(phone_e164: str) -> bool:
     return phone_e164 in allowed
 
 
+def _public_fraud_message() -> str:
+    """User-facing text; technical reason stays in `reason` field."""
+    return (
+        "لم يتم قبول الطلب بعد فحص أمني. إذا رقمك إماراتي صحيح، جرّبي من شبكة أخرى أو تواصلي معنا."
+    )
+
+
 async def evaluate_order_ip(ip: str | None, phone_e164: str) -> FraudDecision:
     if is_whitelisted_phone(phone_e164):
         return FraudDecision(True, "phone_whitelisted")
+
+    if settings.trust_uae_e164_without_geo and phone_e164.startswith("+971"):
+        return FraudDecision(True, "uae_phone_trusted")
 
     if not settings.enable_ip_fraud_check:
         return FraudDecision(True, "fraud_check_disabled")
@@ -65,26 +75,27 @@ async def evaluate_order_ip(ip: str | None, phone_e164: str) -> FraudDecision:
         payload.get("country", {}).get("iso_code")
         or payload.get("registered_country", {}).get("iso_code")
     )
-    if country_code != settings.allowed_order_country:
+    if country_code != settings.order_allowed_country:
         return FraudDecision(False, f"country_not_allowed:{country_code}", payload)
 
-    traits = payload.get("traits", {})
-    blocked_traits = [
-        "is_anonymous",
-        "is_anonymous_proxy",
-        "is_anonymous_vpn",
-        "is_hosting_provider",
-        "is_public_proxy",
-        "is_residential_proxy",
-        "is_tor_exit_node",
-    ]
-    for trait in blocked_traits:
-        if traits.get(trait):
-            return FraudDecision(False, f"blocked_trait:{trait}", payload)
+    if settings.enable_maxmind_vpn_trait_block:
+        traits = payload.get("traits", {})
+        blocked_traits = [
+            "is_anonymous",
+            "is_anonymous_proxy",
+            "is_anonymous_vpn",
+            "is_hosting_provider",
+            "is_public_proxy",
+            "is_residential_proxy",
+            "is_tor_exit_node",
+        ]
+        for trait in blocked_traits:
+            if traits.get(trait):
+                return FraudDecision(False, f"blocked_trait:{trait}", payload)
 
-    risk_score = traits.get("ip_risk")
-    if isinstance(risk_score, (int, float)) and risk_score >= settings.maxmind_max_ip_risk:
-        return FraudDecision(False, f"ip_risk_too_high:{risk_score}", payload)
+        risk_score = traits.get("ip_risk")
+        if isinstance(risk_score, (int, float)) and risk_score >= 75:
+            return FraudDecision(False, f"ip_risk_too_high:{risk_score}", payload)
 
     return FraudDecision(True, "maxmind_allowed", payload)
 
@@ -97,7 +108,7 @@ async def verify_order_ip(client_ip: str | None, phone_e164: str) -> None:
     raise HTTPException(
         status_code=403,
         detail={
-            "message": "Orders are only accepted from Saudi Arabia without VPN/proxy signals.",
+            "message": _public_fraud_message(),
             "reason": decision.reason,
         },
     )

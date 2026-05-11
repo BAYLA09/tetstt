@@ -32,6 +32,8 @@ class Settings(BaseSettings):
     maxmind_account_id: str | None = None
     maxmind_license_key: str | None = None
     enable_ip_fraud_check: bool = False
+    trust_uae_e164_without_geo: bool = True
+    enable_maxmind_vpn_trait_block: bool = False
     order_allowed_country: str = "AE"
     whitelisted_phones: str = ""
     log_level: str = "INFO"
