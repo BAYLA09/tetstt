@@ -1,0 +1,76 @@
+Layali Beauty API — EasyPanel (exact settings)
+===============================================
+
+Use branch: **deploy-backend** (or **layali-api** / **layali-backend-prod** — same API layout).
+
+Git
+---
+- **Repository:** your GitHub repo (e.g. BAYLA09/tetstt).
+- **Branch:** deploy-backend (recommended).
+- **Push:** always from repo root (`git push`). No `cd backend` required for git.
+
+Build (critical — fixes `failed to read dockerfile: open code`)
+-----------------------------------------------------------------
+- **Build context / Root directory:** the folder that contains **`Dockerfile`**, **`requirements.txt`**, and **`app/`** (repository root after clone — NOT a bare folder named `code` unless that folder actually contains the Dockerfile file).
+- **Dockerfile path:** **`Dockerfile`** (the filename only, or path relative to context that ends with `Dockerfile`).
+- **Never** set Dockerfile path to: **`code`**, **`code/`**, or any **directory** path. Docker `-f` must point to a **file**. If EasyPanel shows `-f .../backend/code/`, the Dockerfile field is wrong — set it to **`Dockerfile`** so the full path becomes `.../code/Dockerfile` (or equivalent).
+
+Expose / Domain
+----------------
+- **Host:** api.layalibeauty.shop
+- **Public Path:** /
+- **Destination Protocol:** HTTP
+- **Destination Port:** 8000
+- **Destination Path:** /
+
+Health Check (internal — do not use public HTTPS for the probe if TLS fails)
+------------------------------------------------------------------------------
+- **Protocol:** HTTP
+- **Method:** GET
+- **Path:** /ping
+- **Port:** 8000 (must match container **PORT**; default is 8000).
+- If GET fails, try **HEAD** on **`/ping`**.
+- **Do not** use the HTTPS public domain for the **internal** health check if the panel mis-reports unhealthy while the app works in the browser.
+
+Runtime env (examples)
+----------------------
+- `DATABASE_URL` — Postgres (app normalizes `postgres://` and `sslmode` for asyncpg).
+- `FRONTEND_ORIGIN` / `FRONTEND_URL` — storefront URL(s) for CORS.
+- `PORT` — optional; image defaults to **8000** if unset.
+
+Notes
+-----
+- The API listens on **0.0.0.0** and **`${PORT:-8000}`** (see root `Dockerfile` `CMD`).
+- Liveness: **`GET /`** and **`HEAD /`** return **200** (body `ok` for GET `/`).
+- EasyPanel-friendly probe: **`GET /ping`** → plain text **`ok`**; **`HEAD /ping`** → **200**.
+- **`GET /health`** → JSON `{"status":"ok"}`; **`HEAD /health`** → **200** (also **`/health/`**).
+- Orders and other business routes are unchanged under **`/orders`**, etc.
+
+Quick curl
+----------
+- `curl -sS http://HOST:8000/ping` → `ok`
+- `curl -sS http://HOST:8000/health` → `{"status":"ok"}`
+
+CORS + IP fraud (403 security message from storefront)
+--------------------------------------------------------
+- **CORS:** defaults include `https://layalibeauty.shop`, `https://www.layalibeauty.shop`, and `https://api.layalibeauty.shop`. Set `CORS_ORIGINS` (comma-separated) if you use another storefront host.
+- **IP / MaxMind:** any order whose phone normalizes to **+971…** (UAE mobile) **always skips** IP / MaxMind in `app/services/fraud.py` so COD works behind Easypanel even when the resolved IP is private or wrong. Non-UAE numbers still go through `ENABLE_IP_FRAUD_CHECK` when it is `true`. The image runs uvicorn with `--proxy-headers --forwarded-allow-ips='*'` so `X-Forwarded-For`, `CF-Connecting-IP`, and `X-Real-IP` are used for those checks.
+- **Logs:** rejections log `order_ip_fraud_rejected` with `reason=` (e.g. `missing_or_private_ip`, `country_not_allowed:XX`).
+- **Next.js `/api/orders` proxy:** must forward `x-forwarded-for`, `x-real-ip`, and `cf-connecting-ip` from the browser to the API.
+
+Test OPTIONS + POST (replace HOST; use a real SKU from app/products.py)
+-------------------------------------------------------------------------
+```bash
+HOST=api.layalibeauty.shop
+curl -sS -D - -o /dev/null -X OPTIONS "https://$HOST/orders" \
+  -H "Origin: https://layalibeauty.shop" \
+  -H "Access-Control-Request-Method: POST" \
+  -H "Access-Control-Request-Headers: content-type"
+
+curl -sS -D - "https://$HOST/orders" \
+  -H "Origin: https://layalibeauty.shop" \
+  -H "Content-Type: application/json" \
+  -H "X-Forwarded-For: 203.0.113.10" \
+  --data '{"customer_name":"Test","phone":"+971501234567","items":[{"sku":"LB-BUNDLE-299","name":"Test","price":299,"quantity":1}],"currency":"AED","source_url":"https://layalibeauty.shop/","landing_page":"https://layalibeauty.shop/","event_ids":{},"tracking":{},"utm":{}}'
+```
+Without `X-Forwarded-For`, some setups only see a private IP → 403 with `reason=missing_or_private_ip`.

@@ -40,6 +40,11 @@ async def evaluate_order_ip(ip: str | None, phone_e164: str) -> FraudDecision:
     if is_whitelisted_phone(phone_e164):
         return FraudDecision(True, "phone_whitelisted")
 
+    # UAE E.164: always skip IP / MaxMind for COD — Easypanel and BFFs often hide the real public IP.
+    compact = phone_e164.strip().replace(" ", "").replace("-", "")
+    if compact.startswith("+971"):
+        return FraudDecision(True, "uae_e164_bypass")
+
     if not settings.enable_ip_fraud_check:
         return FraudDecision(True, "fraud_check_disabled")
 
@@ -97,7 +102,9 @@ async def verify_order_ip(client_ip: str | None, phone_e164: str) -> None:
     raise HTTPException(
         status_code=403,
         detail={
-            "message": "Orders are only accepted from Saudi Arabia without VPN/proxy signals.",
+            "message": (
+                "لم يتم قبول الطلب بعد فحص أمني. إذا رقمك إماراتي صحيح، جرّبي من شبكة أخرى أو تواصلي معنا."
+            ),
             "reason": decision.reason,
         },
     )
