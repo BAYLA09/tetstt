@@ -1,0 +1,10 @@
+# Smaller Docker build context for API image (Easypanel)
+.next
+node_modules
+frontend
+backend
+**/__pycache__
+*.pyc
+.git
+.env
+.env.*
