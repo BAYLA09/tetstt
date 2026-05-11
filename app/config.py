@@ -1,7 +1,10 @@
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
-from pydantic import AliasChoices, Field
+from pydantic import AliasChoices, Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from typing import Self
+
+from app.env_bool import env_bool
 
 
 class Settings(BaseSettings):
@@ -41,8 +44,10 @@ class Settings(BaseSettings):
     maxmind_api_url: str = "https://geoip.maxmind.com/geoip/v2.1/insights"
     maxmind_account_id: str | None = None
     maxmind_license_key: str | None = None
+    maxmind_max_ip_risk: int = 75
     enable_ip_fraud_check: bool = False
     trust_uae_e164_without_geo: bool = True
+    disable_order_security_checks: bool = False
     enable_maxmind_vpn_trait_block: bool = False
     order_allowed_country: str = "AE"
     whitelisted_phones: str = ""
@@ -50,6 +55,28 @@ class Settings(BaseSettings):
     cors_allow_www: bool = True
     # Emergency only: CORS_ALLOW_ALL=true → allow any Origin (diagnose "failed fetch"). Turn off after fixing.
     cors_allow_all: bool = False
+
+    @model_validator(mode="after")
+    def apply_strict_bool_env(self) -> Self:
+        object.__setattr__(self, "enable_ip_fraud_check", env_bool("ENABLE_IP_FRAUD_CHECK", self.enable_ip_fraud_check))
+        object.__setattr__(
+            self, "trust_uae_e164_without_geo", env_bool("TRUST_UAE_E164_WITHOUT_GEO", self.trust_uae_e164_without_geo)
+        )
+        object.__setattr__(
+            self,
+            "disable_order_security_checks",
+            env_bool("DISABLE_ORDER_SECURITY_CHECKS", self.disable_order_security_checks),
+        )
+        object.__setattr__(self, "enable_capt", env_bool("ENABLE_CAPT", self.enable_capt))
+        object.__setattr__(self, "enable_meta_capt", env_bool("ENABLE_META_CAPT", self.enable_meta_capt))
+        object.__setattr__(self, "enable_tiktok_capt", env_bool("ENABLE_TIKTOK_CAPT", self.enable_tiktok_capt))
+        object.__setattr__(self, "enable_snap_capt", env_bool("ENABLE_SNAP_CAPT", self.enable_snap_capt))
+        object.__setattr__(self, "cors_allow_www", env_bool("CORS_ALLOW_WWW", self.cors_allow_www))
+        object.__setattr__(self, "cors_allow_all", env_bool("CORS_ALLOW_ALL", self.cors_allow_all))
+        object.__setattr__(
+            self, "enable_maxmind_vpn_trait_block", env_bool("ENABLE_MAXMIND_VPN_TRAIT_BLOCK", self.enable_maxmind_vpn_trait_block)
+        )
+        return self
 
     @staticmethod
     def _normalize_postgres_url(url: str, *, async_driver: bool) -> str:

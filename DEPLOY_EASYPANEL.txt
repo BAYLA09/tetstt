@@ -51,15 +51,39 @@ Quick curl
 - `curl -sS http://HOST:8000/ping` → `ok`
 - `curl -sS http://HOST:8000/health` → `{"status":"ok"}`
 
-CORS + IP fraud (403 security message from storefront)
---------------------------------------------------------
-- **CORS:** defaults include `https://layalibeauty.shop`, `https://www.layalibeauty.shop`, and `https://api.layalibeauty.shop`. Set `CORS_ORIGINS` (comma-separated) if you use another storefront host.
-- **IP / MaxMind:** with `ENABLE_IP_FRAUD_CHECK=true`, the API needs a **public** client IP. The image runs uvicorn with `--proxy-headers --forwarded-allow-ips='*'` so `X-Forwarded-For`, `CF-Connecting-IP`, and `X-Real-IP` are used. If 403 persists, set `ENABLE_IP_FRAUD_CHECK=false` until MaxMind + proxy headers are correct, or keep `TRUST_UAE_E164_WITHOUT_GEO=true` so **+971** orders bypass geo IP checks.
-- **Logs:** rejections log `order_ip_fraud_rejected` with `reason=` (e.g. `missing_or_private_ip`, `country_not_allowed:XX`).
-- **Next.js `/api/orders` proxy:** must forward `x-forwarded-for`, `x-real-ip`, and `cf-connecting-ip` from the browser to the API.
+CORS + order security (403 “أسباب أمنية” from storefront)
+---------------------------------------------------------
+**Recommended production env (until checkout is stable):**
 
-Test OPTIONS + POST (replace HOST; use a real SKU from app/products.py)
--------------------------------------------------------------------------
+```
+ENABLE_IP_FRAUD_CHECK=false
+DISABLE_ORDER_SECURITY_CHECKS=true
+TRUST_UAE_E164_WITHOUT_GEO=true
+ENABLE_CAPT=false
+ENABLE_META_CAPT=false
+ENABLE_TIKTOK_CAPT=false
+ENABLE_SNAP_CAPT=false
+CORS_ORIGINS=https://layalibeauty.shop,https://www.layalibeauty.shop,https://api.layalibeauty.shop,http://localhost:3000
+PORT=8000
+```
+
+- **`DISABLE_ORDER_SECURITY_CHECKS=true`:** skips IP/MaxMind fraud gate, skips CAPI sidecar for orders, and prevents false security blocks. **Turn off after debugging** if you want IP checks again.
+- **`ENABLE_IP_FRAUD_CHECK`:** must parse as real boolean; the string **`false`** is coerced via `env_bool` (see `backend/app/env_bool.py`) so it is never truthy by accident.
+- **CORS:** set `CORS_ORIGINS` as above if you override defaults; include apex + `www` + API host.
+
+**Runtime logs (POST /orders):**
+
+- `order_submit_started` — handler entered.
+- `order_security_config` — shows `ENABLE_IP_FRAUD_CHECK`, `DISABLE_ORDER_SECURITY_CHECKS`, `ENABLE_CAPT` **values and Python types** after env coercion.
+- `order_security_bypassed_by_env` — `DISABLE_ORDER_SECURITY_CHECKS=true` (fraud gate not applied).
+- `order_ip_fraud_check_disabled` — `ENABLE_IP_FRAUD_CHECK=false` (fraud gate not applied).
+- `order_ip_fraud_skipped_uae_phone` — UAE COD phone (store policy).
+- `order_rejected_security` — only if a non-UAE path still fails MaxMind/IP (includes `reason=`).
+
+**Next.js `/api/orders` proxy:** forward `x-forwarded-for`, `x-real-ip`, `cf-connecting-ip` when calling the API directly.
+
+Test OPTIONS + POST (replace HOST; use a real SKU from `backend/app/products.py`)
+----------------------------------------------------------------------------------
 ```bash
 HOST=api.layalibeauty.shop
 curl -sS -D - -o /dev/null -X OPTIONS "https://$HOST/orders" \
@@ -73,4 +97,4 @@ curl -sS -D - "https://$HOST/orders" \
   -H "X-Forwarded-For: 203.0.113.10" \
   --data '{"customer_name":"Test","phone":"+971501234567","items":[{"sku":"LB-BUNDLE-299","name":"Test","price":299,"quantity":1}],"currency":"AED","source_url":"https://layalibeauty.shop/","landing_page":"https://layalibeauty.shop/","event_ids":{},"tracking":{},"utm":{}}'
 ```
-Without `X-Forwarded-For`, some setups only see a private IP → 403 with `reason=missing_or_private_ip`.
+With `DISABLE_ORDER_SECURITY_CHECKS=true` you should see **`order_security_bypassed_by_env`** in API logs and **HTTP 200** on successful POST. With only `ENABLE_IP_FRAUD_CHECK=false`, look for **`order_ip_fraud_check_disabled`**. Without bypass, non-UAE paths may 403 with `reason=missing_or_private_ip` if `X-Forwarded-For` is missing.
