@@ -10,6 +10,25 @@ export type Product = {
   subheading: string;
   story: string;
   notes: string[];
+  image?: string;
+  cardImage?: string;
+  heroPanorama?: boolean;
+  /** Hero image + story blocks render above price and add-to-cart. */
+  storyBeforeCommerce?: boolean;
+  beforeAfterStory?: {
+    kicker: string;
+    title: string;
+    body: string;
+    beforeSrc: string;
+    afterSrc: string;
+    beforeLabel: string;
+    afterLabel: string;
+  };
+  insightStrip?: {
+    imageSrc: string;
+    headline: string;
+    subline: string;
+  };
 };
 
 export type CartItem = {
@@ -74,6 +93,40 @@ export const products: Product[] = [
       "اختيار عملي لزيادة قيمة طلبك وتجربة رائحتين مختلفتين تناسبان يومك ومناسباتك.",
     notes: ["وفر 29 درهم", "الأكثر إضافة مع الباقة", "رائحتان في طلب واحد"],
   },
+  {
+    sku: "LB-LAMP-189",
+    slug: "aroma-flame-lamp",
+    name: "موقد اللهب الفاخر",
+    shortName: "الموقد الفاخر",
+    price: 299,
+    compareAt: 449,
+    badge: "يحوّل جو البيت",
+    headline: "لهب واقعي + ضباب بارد + رائحة تملأ الغرفة — بدون نار حقيقية.",
+    subheading:
+      "موقد إلكتروني فاخر يعطي دفء وجو راقٍ لأي غرفة. يعمل مع أي زيت عطري.",
+    story: "الجهاز الذي يحوّل غرفتك من فارغة لدافئة في دقائق.",
+    notes: ["لهب LED واقعي", "ناشر زيوت عطرية", "مؤقت 1h/3h/5h", "آمن مع الأطفال"],
+    image: "/products/aroma-lamp-oud-hero.jpg",
+    cardImage: "/products/img-diffuser-card.jpg",
+    heroPanorama: true,
+    storyBeforeCommerce: true,
+    beforeAfterStory: {
+      kicker: "قبل وبعد",
+      title: "بيتك يحس فاضي وبارد – حتى مع كل الديكور",
+      body:
+        "الهواء الجاف، الإضاءة الباردة، والغرفة بدون روح تخليك ما تحبين الجلوس في بيتك. المشكلة مو في الأثاث — في الجو.",
+      beforeSrc: "/products/before-diffuser.jpg",
+      afterSrc: "/products/after-family-aroma.jpg",
+      beforeLabel: "قبل",
+      afterLabel: "بعد",
+    },
+    insightStrip: {
+      imageSrc: "/products/aroma-stat-woman.jpg",
+      headline:
+        "نساء في الإمارات يحسسن أن بيتهن يفتقر للدفء والجو الراقي – حتى بعد الاهتمام بالديكور.",
+      subline: "استطلاع ليالي بيوتي، الإمارات 2024",
+    },
+  },
 ];
 
 export const upsells: Product[] = [
@@ -121,8 +174,17 @@ export function getCrossSells(skus: string[]) {
   const inCart = new Set(skus);
   const suggestions: Product[] = [];
   const hasBundle = inCart.has("LB-BUNDLE-299");
+  const hasLamp = inCart.has("LB-LAMP-189");
   const hasMusk = inCart.has("LB-SERUM-MUSK-59");
   const hasOud = inCart.has("LB-SERUM-OUD-69");
+
+  if (hasLamp && !hasOud) {
+    suggestions.push(getProductBySku("LB-SERUM-OUD-69")!);
+  }
+
+  if (hasLamp && hasOud && !hasMusk) {
+    suggestions.push(getProductBySku("LB-SERUM-MUSK-59")!);
+  }
 
   if (hasBundle && !inCart.has("LB-SERUM-SET-99")) {
     suggestions.push(getProductBySku("LB-SERUM-SET-99")!);

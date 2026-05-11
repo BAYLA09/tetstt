@@ -13,6 +13,7 @@
   --cream-100: #f7ead7;
   --ink: #18130d;
   --muted: #7b705f;
+  --border-gold: rgba(201, 150, 69, 0.35);
 }
 
 @theme inline {
