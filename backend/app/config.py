@@ -31,6 +31,7 @@ class Settings(BaseSettings):
     maxmind_api_url: str = "https://geoip.maxmind.com/geoip/v2.1/insights"
     maxmind_account_id: str | None = None
     maxmind_license_key: str | None = None
+    maxmind_max_ip_risk: int = 75
     enable_ip_fraud_check: bool = False
     order_allowed_country: str = "AE"
     whitelisted_phones: str = ""

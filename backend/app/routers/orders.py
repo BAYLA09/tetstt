@@ -82,7 +82,7 @@ async def create_order(
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     client_ip = get_client_ip(request)
-    await verify_order_ip(client_ip=client_ip, phone_e164=normalized_phone)
+    await verify_order_ip(client_ip=client_ip, phone_e164=normalized_phone, request=request)
     subtotal = Decimal("0")
     order_items: list[OrderItem] = []
     order_items_payload: list[dict] = []

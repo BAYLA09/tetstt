@@ -107,8 +107,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       trackEvent("Purchase", { eventId: purchaseEventId, value: order.total });
       closeCheckout();
       setUpsellOrderId(order.order_id);
-    } catch {
-      setError("تعذر إرسال الطلب الآن. تأكدي من الرقم وحاولي مرة أخرى.");
+    } catch (e) {
+      const msg =
+        e instanceof Error && e.message
+          ? e.message
+          : "تعذر إرسال الطلب الآن. تأكدي من الرقم وحاولي مرة أخرى.";
+      setError(msg);
     } finally {
       setSubmitting(false);
     }
