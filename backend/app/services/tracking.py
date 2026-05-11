@@ -12,16 +12,18 @@ from app.services.phone import normalize_uae_phone
 
 def provider_hashes(phone: str) -> dict[str, str]:
     normalized = normalize_uae_phone(phone)
-    numeric = normalized.e164.replace("+", "")
+    numeric = normalized.replace("+", "")
     return {
         "meta_ph": sha256_hex(numeric),
         "snap_ph": sha256_hex(numeric),
-        "tiktok_phone": sha256_hex(normalized.e164),
+        "tiktok_phone": sha256_hex(normalized),
     }
 
 
 async def send_capi_events(order: dict[str, Any], user_agent: str | None, ip: str | None) -> None:
     """Best-effort CAPI dispatch. Orders must never fail because an ad API is down."""
+    if settings.disable_order_security_checks:
+        return
     payload_order = {
         **order,
         "items": [

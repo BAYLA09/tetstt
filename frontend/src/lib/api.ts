@@ -4,6 +4,24 @@ import type { CartItem } from "./products";
 const useSameOriginOrderProxy =
   process.env.NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY !== "false";
 
+function logOrderSecurityReason(status: number, raw: string): void {
+  if (typeof window === "undefined" || status !== 403) return;
+  const trimmed = raw.trim();
+  if (!trimmed.startsWith("{")) return;
+  try {
+    const j = JSON.parse(trimmed) as { detail?: unknown };
+    const d = j.detail;
+    if (d && typeof d === "object" && "reason" in d) {
+      const r = (d as { reason?: unknown }).reason;
+      if (typeof r === "string" && r) {
+        console.warn("[checkout] order API detail.reason (debug only):", r);
+      }
+    }
+  } catch {
+    /* ignore */
+  }
+}
+
 function orderApiUserMessage(status: number, raw: string): string {
   const trimmed = raw.trim();
   if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
@@ -67,6 +85,7 @@ export async function createOrder(payload: OrderPayload): Promise<OrderResponse>
 
   if (!response.ok) {
     const message = await response.text();
+    logOrderSecurityReason(response.status, message);
     throw new Error(orderApiUserMessage(response.status, message));
   }
 
@@ -82,6 +101,7 @@ export async function addUpsell(orderId: string, sku: string, eventId: string) {
 
   if (!response.ok) {
     const message = await response.text();
+    logOrderSecurityReason(response.status, message);
     throw new Error(orderApiUserMessage(response.status, message));
   }
 
