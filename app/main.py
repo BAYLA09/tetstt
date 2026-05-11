@@ -32,20 +32,20 @@ else:
 
 @app.get("/")
 async def root() -> dict[str, str]:
-    """Many load balancers / panels probe `/` — must return fast without blocking on DB."""
-    return {"status": "ok", "service": settings.app_name}
+    """Liveness for `/` — 200 + JSON (no DB)."""
+    return {"status": "ok"}
 
 
 @app.get("/live")
 async def live() -> dict[str, str]:
-    """Some PaaS panels default to /live — same fast response as /."""
-    return {"status": "ok", "service": settings.app_name}
+    """Some PaaS panels default to /live."""
+    return {"status": "ok"}
 
 
 @app.get("/ready")
 async def ready() -> dict[str, str]:
-    """Some PaaS panels default to /ready — we treat it as liveness (no DB wait)."""
-    return {"status": "ok", "service": settings.app_name}
+    """Some PaaS panels default to /ready (liveness only; no DB gate)."""
+    return {"status": "ok"}
 
 
 async def _init_db_retry_background() -> None:

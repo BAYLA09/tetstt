@@ -15,8 +15,9 @@ Layali API — Easypanel (deploy-backend)
    - Do NOT point the API service at the Next.js / frontend Dockerfile.
 
 3) Run
-   - Internal port: 8000 (must match EXPOSE in Dockerfile)
-   - Public HTTPS: map host port → container 8000
+   - Internal port: set EasyPanel **PORT** (env) to match the container port you publish (default image `PORT=8000`).
+   - The process listens on **0.0.0.0** and **PORT** from the environment (`start.sh` → uvicorn). Optional **HOST** env overrides bind address (default `0.0.0.0`).
+   - Public HTTPS: map host port → container **PORT** (often 8000).
 
 4) Health check (Easypanel / reverse proxy)
    - Internal HTTP port must be 8000 (same as CMD).
