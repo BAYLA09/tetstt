@@ -13,6 +13,7 @@ from app.db import get_session
 from app.models import Order, OrderItem
 from app.products import PRODUCTS
 from app.schemas import OrderCreate, OrderResponse, UpsellCreate
+from app.services.client_ip import get_client_ip
 from app.services.fraud import verify_order_ip
 from app.services.phone import normalize_uae_phone, phone_hash
 from app.services.sheet_webhook import send_order_to_sheet
@@ -31,13 +32,6 @@ def format_sheet_phone(phone_e164: str) -> str:
 
 def line_total(price: Decimal, quantity: int) -> Decimal:
     return price * Decimal(quantity)
-
-
-def get_client_ip(request: Request) -> str | None:
-    forwarded = request.headers.get("x-forwarded-for")
-    if forwarded:
-        return forwarded.split(",")[0].strip()
-    return request.client.host if request.client else None
 
 
 def order_to_sheet_payload(order: Order, items: list[dict]) -> dict:
@@ -85,7 +79,7 @@ async def create_order(
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     client_ip = get_client_ip(request)
-    await verify_order_ip(client_ip=client_ip, phone_e164=normalized_phone)
+    await verify_order_ip(client_ip=client_ip, phone_e164=normalized_phone, request=request)
     subtotal = Decimal("0")
     order_items: list[OrderItem] = []
     order_items_payload: list[dict] = []

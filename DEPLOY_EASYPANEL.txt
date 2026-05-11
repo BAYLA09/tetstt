@@ -50,3 +50,27 @@ Quick curl
 ----------
 - `curl -sS http://HOST:8000/ping` → `ok`
 - `curl -sS http://HOST:8000/health` → `{"status":"ok"}`
+
+CORS + IP fraud (403 security message from storefront)
+--------------------------------------------------------
+- **CORS:** defaults include `https://layalibeauty.shop`, `https://www.layalibeauty.shop`, and `https://api.layalibeauty.shop`. Set `CORS_ORIGINS` (comma-separated) if you use another storefront host.
+- **IP / MaxMind:** with `ENABLE_IP_FRAUD_CHECK=true`, the API needs a **public** client IP. The image runs uvicorn with `--proxy-headers --forwarded-allow-ips='*'` so `X-Forwarded-For`, `CF-Connecting-IP`, and `X-Real-IP` are used. If 403 persists, set `ENABLE_IP_FRAUD_CHECK=false` until MaxMind + proxy headers are correct, or keep `TRUST_UAE_E164_WITHOUT_GEO=true` so **+971** orders bypass geo IP checks.
+- **Logs:** rejections log `order_ip_fraud_rejected` with `reason=` (e.g. `missing_or_private_ip`, `country_not_allowed:XX`).
+- **Next.js `/api/orders` proxy:** must forward `x-forwarded-for`, `x-real-ip`, and `cf-connecting-ip` from the browser to the API.
+
+Test OPTIONS + POST (replace HOST; use a real SKU from app/products.py)
+-------------------------------------------------------------------------
+```bash
+HOST=api.layalibeauty.shop
+curl -sS -D - -o /dev/null -X OPTIONS "https://$HOST/orders" \
+  -H "Origin: https://layalibeauty.shop" \
+  -H "Access-Control-Request-Method: POST" \
+  -H "Access-Control-Request-Headers: content-type"
+
+curl -sS -D - "https://$HOST/orders" \
+  -H "Origin: https://layalibeauty.shop" \
+  -H "Content-Type: application/json" \
+  -H "X-Forwarded-For: 203.0.113.10" \
+  --data '{"customer_name":"Test","phone":"+971501234567","items":[{"sku":"LB-BUNDLE-299","name":"Test","price":299,"quantity":1}],"currency":"AED","source_url":"https://layalibeauty.shop/","landing_page":"https://layalibeauty.shop/","event_ids":{},"tracking":{},"utm":{}}'
+```
+Without `X-Forwarded-For`, some setups only see a private IP → 403 with `reason=missing_or_private_ip`.

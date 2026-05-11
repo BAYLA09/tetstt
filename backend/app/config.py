@@ -87,7 +87,10 @@ class Settings(BaseSettings):
         if self.cors_origins:
             return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
 
-        production = ["https://layalibeauty.shop"]
+        production = [
+            "https://layalibeauty.shop",
+            "https://api.layalibeauty.shop",
+        ]
         if self.cors_allow_www:
             production.append("https://www.layalibeauty.shop")
         raw = [

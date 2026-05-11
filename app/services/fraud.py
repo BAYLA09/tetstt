@@ -1,13 +1,17 @@
 from __future__ import annotations
 
 import ipaddress
+import logging
 from dataclasses import dataclass
 from typing import Any
 
 import httpx
 from fastapi import HTTPException
+from starlette.requests import Request
 
 from app.config import settings
+
+log = logging.getLogger(__name__)
 
 
 @dataclass
@@ -100,10 +104,31 @@ async def evaluate_order_ip(ip: str | None, phone_e164: str) -> FraudDecision:
     return FraudDecision(True, "maxmind_allowed", payload)
 
 
-async def verify_order_ip(client_ip: str | None, phone_e164: str) -> None:
+async def verify_order_ip(
+    client_ip: str | None,
+    phone_e164: str,
+    *,
+    request: Request | None = None,
+) -> None:
     decision = await evaluate_order_ip(client_ip, phone_e164)
     if decision.allowed:
         return
+
+    phone_prefix = phone_e164[:8] + "…" if len(phone_e164) > 8 else "***"
+    xff = (request.headers.get("x-forwarded-for") or "")[:256] if request else ""
+    origin = request.headers.get("origin") if request else None
+    referer = (request.headers.get("referer") or "")[:160] if request else ""
+    ua_len = len(request.headers.get("user-agent") or "") if request else 0
+    log.warning(
+        "order_ip_fraud_rejected reason=%s resolved_ip=%s xff=%r origin=%r referer=%r ua_len=%s phone_prefix=%s",
+        decision.reason,
+        client_ip,
+        xff,
+        origin,
+        referer,
+        ua_len,
+        phone_prefix,
+    )
 
     raise HTTPException(
         status_code=403,
