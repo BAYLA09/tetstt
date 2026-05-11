@@ -7,8 +7,11 @@ Layali API — Easypanel (deploy-backend)
    - Path / context: repository ROOT (where Dockerfile lives)
 
 2) Build
-   - Dockerfile path: Dockerfile
-   - Do NOT set a subdirectory unless your Dockerfile is inside one.
+   - Preferred: Dockerfile at repo root + build context = repository ROOT (same as CI).
+   - If you use Dockerfile path `backend/Dockerfile` with context `backend/`, that image
+     must NOT block on Alembic before uvicorn (fixed in repo). Wrong Alembic/DB order used
+     to leave the service permanently RED because the process never reached uvicorn.
+   - Do NOT point the API service at the Next.js / frontend Dockerfile.
 
 3) Run
    - Internal port: 8000 (must match EXPOSE in Dockerfile)
