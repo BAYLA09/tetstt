@@ -1,18 +1,30 @@
 from __future__ import annotations
 
+import re
 import time
 from typing import Any
 
 import httpx
 
 from app.config import settings
-from app.services.phone import normalize_uae_phone
 from app.services.hashing import sha256_hex
+from app.services.phone import normalize_uae_phone
+
+
+def _purchase_event_id(event_ids: dict[str, Any] | None) -> str | None:
+    """Frontend may send purchase / Purchase / PURCHASE."""
+    if not event_ids:
+        return None
+    for key in ("purchase", "Purchase", "PURCHASE"):
+        v = event_ids.get(key)
+        if isinstance(v, str) and v.strip():
+            return v.strip()
+    return None
 
 
 def provider_hashes(phone: str) -> dict[str, str]:
     e164 = normalize_uae_phone(phone)
-    numeric = e164.replace("+", "")
+    numeric = re.sub(r"\D", "", e164)
     return {
         "meta_ph": sha256_hex(numeric),
         "snap_ph": sha256_hex(numeric),
@@ -55,7 +67,7 @@ async def _send_meta(order: dict[str, Any], user_agent: str | None, ip: str | No
             {
                 "event_name": "Purchase",
                 "event_time": int(time.time()),
-                "event_id": order["event_ids"].get("purchase"),
+                "event_id": _purchase_event_id(order.get("event_ids")),
                 "action_source": "website",
                 "event_source_url": order.get("source_url"),
                 "user_data": {
@@ -87,7 +99,7 @@ async def _send_tiktok(order: dict[str, Any], user_agent: str | None, ip: str | 
             {
                 "event": "CompletePayment",
                 "event_time": int(time.time()),
-                "event_id": order["event_ids"].get("purchase"),
+                "event_id": _purchase_event_id(order.get("event_ids")),
                 "user": {
                     "phone": hashes["tiktok_phone"],
                     "ttclid": order["tracking"].get("ttclid"),
@@ -119,7 +131,7 @@ async def _send_snap(order: dict[str, Any], user_agent: str | None, ip: str | No
             {
                 "event_name": "PURCHASE",
                 "event_time": int(time.time()),
-                "event_id": order["event_ids"].get("purchase"),
+                "event_id": _purchase_event_id(order.get("event_ids")),
                 "action_source": "WEB",
                 "event_source_url": order.get("source_url"),
                 "user_data": {
