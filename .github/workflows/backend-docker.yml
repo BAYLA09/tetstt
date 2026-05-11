@@ -2,9 +2,9 @@ name: Backend Docker build
 
 on:
   push:
-    branches: [deploy-backend]
+    branches: [deploy-backend, layali-api]
   pull_request:
-    branches: [deploy-backend]
+    branches: [deploy-backend, layali-api]
 
 jobs:
   docker-build:
