@@ -77,7 +77,10 @@ async def create_order(
     user_agent: Annotated[str | None, Header(alias="user-agent")] = None,
     session: AsyncSession = Depends(get_session),
 ) -> OrderResponse:
-    normalized_phone = normalize_uae_phone(payload.phone)
+    try:
+        normalized_phone = normalize_uae_phone(payload.phone)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
     client_ip = get_client_ip(request)
     await verify_order_ip(client_ip=client_ip, phone_e164=normalized_phone)
     subtotal = Decimal("0")

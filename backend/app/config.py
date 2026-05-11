@@ -80,6 +80,9 @@ class Settings(BaseSettings):
         ]
         if self.cors_allow_www:
             origins.append("https://www.layalibeauty.shop")
+        for extra in ("https://layalibeauty.shop", "https://api.layalibeauty.shop"):
+            if extra not in origins:
+                origins.append(extra)
         return origins
 
     @property

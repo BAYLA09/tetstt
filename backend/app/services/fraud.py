@@ -70,7 +70,7 @@ async def evaluate_order_ip(ip: str | None, phone_e164: str) -> FraudDecision:
         payload.get("country", {}).get("iso_code")
         or payload.get("registered_country", {}).get("iso_code")
     )
-    if country_code != settings.allowed_order_country:
+    if country_code != settings.order_allowed_country:
         return FraudDecision(False, f"country_not_allowed:{country_code}", payload)
 
     traits = payload.get("traits", {})
