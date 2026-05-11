@@ -76,8 +76,8 @@ export const products: Product[] = [
   {
     sku: "LB-LAMP-189",
     slug: "aroma-flame-lamp",
-    name: "موقد اللهب الفاخر",
-    shortName: "الموقد الفاخر",
+    name: "موقد ليالي الفاخر",
+    shortName: "موقد ليالي",
     price: 299,
     compareAt: 449,
     badge: "يحوّل جو البيت",
@@ -116,15 +116,15 @@ export const offerTiers: Record<string, OfferTier[]> = {
   "luxury-bundle": [
     {
       sku: "LB-BUNDLE-299",
-      label: "الموقد + سيروم واحد",
-      sublabel: "موقد اللهب الفاخر + سيروم مسك أو عود",
+      label: "موقد ليالي + سيروم واحد",
+      sublabel: "موقد ليالي الفاخر + سيروم مسك أو عود",
       price: 299,
       badge: "نتيجة من أول طلبة",
     },
     {
       sku: "LB-BUNDLE-379",
-      label: "الموقد + سيرومان",
-      sublabel: "موقد اللهب + مسك المطر + عود قصر دبي",
+      label: "موقد ليالي + سيرومان",
+      sublabel: "موقد ليالي + مسك المطر + عود قصر دبي",
       price: 379,
       compareAt: 448,
       badge: "الأكثر اختياراً",
@@ -134,7 +134,7 @@ export const offerTiers: Record<string, OfferTier[]> = {
     {
       sku: "LB-BUNDLE-449",
       label: "الباقة الكاملة الفاخرة",
-      sublabel: "الموقد + 3 سيروم + تغليف هدية فاخر",
+      sublabel: "موقد ليالي + 3 سيروم + تغليف هدية فاخر",
       price: 449,
       compareAt: 597,
       badge: "الأكثر توفيراً",
@@ -161,8 +161,8 @@ export const offerTiers: Record<string, OfferTier[]> = {
     },
     {
       sku: "LB-BUNDLE-379",
-      label: "الثنائي + الموقد الفاخر",
-      sublabel: "السيرومان + موقد اللهب الفاخر",
+      label: "الثنائي + موقد ليالي الفاخر",
+      sublabel: "السيرومان + موقد ليالي الفاخر",
       price: 349,
       compareAt: 697,
       badge: "الأكثر توفيراً",
@@ -172,15 +172,15 @@ export const offerTiers: Record<string, OfferTier[]> = {
   "aroma-flame-lamp": [
     {
       sku: "LB-LAMP-189",
-      label: "الموقد فقط",
-      sublabel: "جهاز موقد اللهب الفاخر · بدون سيروم",
+      label: "موقد ليالي فقط",
+      sublabel: "جهاز موقد ليالي الفاخر · بدون سيروم",
       price: 299,
       badge: "ابدئي بالموقد",
     },
     {
       sku: "LB-BUNDLE-299",
-      label: "الموقد + سيروم عود قصر دبي",
-      sublabel: "موقد اللهب + عود قصر دبي 100mL — الثنائي الأمثل",
+      label: "موقد ليالي + سيروم عود قصر دبي",
+      sublabel: "موقد ليالي الفاخر + عود قصر دبي 100mL — الثنائي الأمثل",
       price: 379,
       compareAt: 498,
       badge: "الأكثر اختياراً",
@@ -189,8 +189,8 @@ export const offerTiers: Record<string, OfferTier[]> = {
     },
     {
       sku: "LB-BUNDLE-449",
-      label: "الموقد + عود + مسك",
-      sublabel: "موقد اللهب + عود قصر دبي + مسك المطر الأبيض",
+      label: "موقد ليالي + عود + مسك",
+      sublabel: "موقد ليالي الفاخر + عود قصر دبي + مسك المطر الأبيض",
       price: 449,
       compareAt: 697,
       badge: "الأكثر توفيراً",
