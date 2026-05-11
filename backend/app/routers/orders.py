@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.db import get_session
 from app.models import Order, OrderItem
 from app.products import PRODUCTS
-from app.schemas import OrderCreate, OrderResponse, UpsellCreate, UpsellResponse
+from app.schemas import OrderCreate, OrderResponse, UpsellCreate
 from app.services.fraud import verify_order_ip
 from app.services.phone import normalize_uae_phone, phone_hash
 from app.services.sheet_webhook import send_order_to_sheet
@@ -89,12 +89,17 @@ async def create_order(
         if not product:
             raise HTTPException(status_code=400, detail=f"Unknown SKU: {item.sku}")
         quantity = item.quantity
-        price = product["price"]
+        price = (
+            Decimal(str(item.price))
+            if item.price is not None
+            else product["price"]
+        )
         subtotal += line_total(price, quantity)
+        line_name = (item.name or "").strip() or product["name"]
         order_items_payload.append(
             {
                 "sku": product["sheet_sku"],
-                "name": product["name"],
+                "name": line_name,
                 "price": float(price),
                 "quantity": quantity,
                 "is_upsell": False,
@@ -103,7 +108,7 @@ async def create_order(
         order_items.append(
             OrderItem(
                 sku=item.sku,
-                name=product["name"],
+                name=line_name,
                 unit_price=price,
                 quantity=quantity,
                 line_total=line_total(price, quantity),
@@ -132,7 +137,7 @@ async def create_order(
         sheet_sync_status="pending",
     )
     order.items = order_items
-    order.public_order_id = f"LB-{datetime.now(UTC):%Y%m%d}-{uuid4().hex[:8].upper()}"
+    order.public_order_id = f"nama-{datetime.now(UTC):%Y%m%d}-{uuid4().hex[:8].upper()}"
     session.add(order)
     await session.commit()
 
@@ -153,9 +158,9 @@ async def add_upsell(
     order_id: str,
     payload: UpsellCreate,
     session: AsyncSession = Depends(get_session),
-) -> UpsellResponse:
+) -> OrderResponse:
     product = PRODUCTS.get(payload.sku)
-    if not product or product["price"] != Decimal("39"):
+    if not product or not str(payload.sku).startswith("LB-UPSELL-"):
         raise HTTPException(status_code=400, detail="Invalid upsell SKU")
 
     result = await session.execute(select(Order).where(Order.public_order_id == order_id))
