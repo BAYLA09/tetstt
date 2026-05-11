@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import ipaddress
 import logging
+import re
 from dataclasses import dataclass
 from typing import Any
 
@@ -10,6 +11,7 @@ from fastapi import HTTPException
 from starlette.requests import Request
 
 from app.config import settings
+from app.services.phone import numeric_phone
 
 log = logging.getLogger(__name__)
 
@@ -40,6 +42,14 @@ def is_whitelisted_phone(phone_e164: str) -> bool:
     return phone_e164 in allowed
 
 
+def _is_uae_mobile_cod(phone_e164: str) -> bool:
+    """UAE mobile under 971 (5 + 8 digits), digits-only — survives odd Unicode/plus/spacing."""
+    d = numeric_phone(phone_e164)
+    if d.startswith("00971"):
+        d = d[2:]
+    return bool(re.fullmatch(r"9715\d{8}", d))
+
+
 def _public_fraud_message() -> str:
     """User-facing text; technical reason stays in `reason` field."""
     return (
@@ -51,7 +61,10 @@ async def evaluate_order_ip(ip: str | None, phone_e164: str) -> FraudDecision:
     if is_whitelisted_phone(phone_e164):
         return FraudDecision(True, "phone_whitelisted")
 
-    # UAE E.164: always skip IP / MaxMind for COD (Easypanel / proxies — unreliable client IP).
+    # UAE mobiles: never tie COD to client IP (Easypanel / BFF / odd phone formatting).
+    if _is_uae_mobile_cod(phone_e164):
+        return FraudDecision(True, "uae_mobile_bypass")
+
     compact = phone_e164.strip().replace(" ", "").replace("-", "")
     if compact.startswith("+971"):
         return FraudDecision(True, "uae_e164_bypass")
