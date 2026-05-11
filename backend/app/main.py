@@ -24,25 +24,28 @@ app.add_middleware(
 
 @app.get("/")
 async def root() -> dict[str, str]:
-    """Many load balancers / panels probe `/` — keep green without hitting DB."""
+    """Many load balancers / panels probe `/` — must return fast without blocking on DB."""
     return {"status": "ok", "service": settings.app_name}
 
 
-@app.on_event("startup")
-async def on_startup() -> None:
-    # Postgres may start after the API container on first deploy — retry migrations.
+async def _init_db_retry_background() -> None:
+    """Postgres may start after the API; Easypanel health checks time out if startup blocks too long."""
     last_exc: BaseException | None = None
-    for attempt in range(12):
+    for attempt in range(36):
         try:
             await init_db()
+            log.info("init_db succeeded on attempt %s", attempt + 1)
             return
         except BaseException as exc:
             last_exc = exc
             log.warning("init_db attempt %s failed: %s", attempt + 1, exc)
-            await asyncio.sleep(min(2**attempt, 30))
-    if last_exc is not None:
-        raise last_exc
-    raise RuntimeError("init_db failed with no exception captured")
+            await asyncio.sleep(min(2 ** min(attempt, 5), 20))
+    log.error("init_db exhausted retries; API is up but DB schema may be missing: %s", last_exc)
+
+
+@app.on_event("startup")
+async def on_startup() -> None:
+    asyncio.create_task(_init_db_retry_background())
 
 
 app.include_router(health.router)
