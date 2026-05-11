@@ -1,24 +1,14 @@
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
-from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     app_env: str = "development"
     app_name: str = "Layali Beauty API"
-    # HTTP server bind (EasyPanel sets PORT; use HOST if you need to override)
-    bind_host: str = Field(
-        default="0.0.0.0",
-        validation_alias=AliasChoices("HOST", "BIND_HOST", "UVICORN_HOST"),
-    )
-    bind_port: int = Field(
-        default=8000,
-        validation_alias=AliasChoices("PORT", "UVICORN_PORT"),
-    )
     api_base_url: str | None = None
     database_url: str = "sqlite+aiosqlite:///./layali_dev.db"
-    frontend_origin: str = "https://layalibeauty.shop"
+    frontend_origin: str = "http://localhost:3000"
     frontend_url: str | None = None
     cors_origins: str | None = None
     sheet_webhook_url: str | None = None
@@ -41,15 +31,12 @@ class Settings(BaseSettings):
     maxmind_api_url: str = "https://geoip.maxmind.com/geoip/v2.1/insights"
     maxmind_account_id: str | None = None
     maxmind_license_key: str | None = None
+    maxmind_max_ip_risk: int = 75
     enable_ip_fraud_check: bool = False
-    trust_uae_e164_without_geo: bool = True
-    enable_maxmind_vpn_trait_block: bool = False
     order_allowed_country: str = "AE"
     whitelisted_phones: str = ""
     log_level: str = "INFO"
     cors_allow_www: bool = True
-    # Emergency only: CORS_ALLOW_ALL=true → allow any Origin (diagnose "failed fetch"). Turn off after fixing.
-    cors_allow_all: bool = False
 
     @staticmethod
     def _normalize_postgres_url(url: str, *, async_driver: bool) -> str:
@@ -87,25 +74,17 @@ class Settings(BaseSettings):
         if self.cors_origins:
             return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
 
-        production = [
-            "https://layalibeauty.shop",
-            "https://api.layalibeauty.shop",
-        ]
-        if self.cors_allow_www:
-            production.append("https://www.layalibeauty.shop")
-        raw = [
+        origins = [
             self.effective_frontend_origin,
-            *production,
             "http://localhost:3000",
             "http://127.0.0.1:3000",
         ]
-        seen: set[str] = set()
-        out: list[str] = []
-        for origin in raw:
-            if origin and origin not in seen:
-                seen.add(origin)
-                out.append(origin)
-        return out
+        if self.cors_allow_www:
+            origins.append("https://www.layalibeauty.shop")
+        for extra in ("https://layalibeauty.shop", "https://api.layalibeauty.shop"):
+            if extra not in origins:
+                origins.append(extra)
+        return origins
 
     @property
     def effective_sheet_webhook_url(self) -> str | None:

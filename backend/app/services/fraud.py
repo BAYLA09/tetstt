@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import ipaddress
 import logging
+import re
 from dataclasses import dataclass
 from typing import Any
 
@@ -10,6 +11,7 @@ from fastapi import HTTPException
 from starlette.requests import Request
 
 from app.config import settings
+from app.services.phone import numeric_phone
 
 log = logging.getLogger(__name__)
 
@@ -40,18 +42,23 @@ def is_whitelisted_phone(phone_e164: str) -> bool:
     return phone_e164 in allowed
 
 
-def _public_fraud_message() -> str:
-    """User-facing text; technical reason stays in `reason` field."""
-    return (
-        "لم يتم قبول الطلب بعد فحص أمني. إذا رقمك إماراتي صحيح، جرّبي من شبكة أخرى أو تواصلي معنا."
-    )
+def _is_uae_mobile_cod(phone_e164: str) -> bool:
+    """UAE mobile under 971 (5 + 8 digits), digits-only — survives odd Unicode/plus/spacing."""
+    d = numeric_phone(phone_e164)
+    if d.startswith("00971"):
+        d = d[2:]
+    return bool(re.fullmatch(r"9715\d{8}", d))
 
 
 async def evaluate_order_ip(ip: str | None, phone_e164: str) -> FraudDecision:
     if is_whitelisted_phone(phone_e164):
         return FraudDecision(True, "phone_whitelisted")
 
-    # UAE E.164: always skip IP / MaxMind for COD (Easypanel / proxies — unreliable client IP).
+    # UAE mobiles: never tie COD to client IP (Easypanel / BFF / Unicode phone formatting).
+    if _is_uae_mobile_cod(phone_e164):
+        return FraudDecision(True, "uae_mobile_bypass")
+
+    # Secondary guard: normalized +971… from our phone helper
     compact = phone_e164.strip().replace(" ", "").replace("-", "")
     if compact.startswith("+971"):
         return FraudDecision(True, "uae_e164_bypass")
@@ -84,24 +91,23 @@ async def evaluate_order_ip(ip: str | None, phone_e164: str) -> FraudDecision:
     if country_code != settings.order_allowed_country:
         return FraudDecision(False, f"country_not_allowed:{country_code}", payload)
 
-    if settings.enable_maxmind_vpn_trait_block:
-        traits = payload.get("traits", {})
-        blocked_traits = [
-            "is_anonymous",
-            "is_anonymous_proxy",
-            "is_anonymous_vpn",
-            "is_hosting_provider",
-            "is_public_proxy",
-            "is_residential_proxy",
-            "is_tor_exit_node",
-        ]
-        for trait in blocked_traits:
-            if traits.get(trait):
-                return FraudDecision(False, f"blocked_trait:{trait}", payload)
+    traits = payload.get("traits", {})
+    blocked_traits = [
+        "is_anonymous",
+        "is_anonymous_proxy",
+        "is_anonymous_vpn",
+        "is_hosting_provider",
+        "is_public_proxy",
+        "is_residential_proxy",
+        "is_tor_exit_node",
+    ]
+    for trait in blocked_traits:
+        if traits.get(trait):
+            return FraudDecision(False, f"blocked_trait:{trait}", payload)
 
-        risk_score = traits.get("ip_risk")
-        if isinstance(risk_score, (int, float)) and risk_score >= 75:
-            return FraudDecision(False, f"ip_risk_too_high:{risk_score}", payload)
+    risk_score = traits.get("ip_risk")
+    if isinstance(risk_score, (int, float)) and risk_score >= settings.maxmind_max_ip_risk:
+        return FraudDecision(False, f"ip_risk_too_high:{risk_score}", payload)
 
     return FraudDecision(True, "maxmind_allowed", payload)
 
@@ -116,26 +122,27 @@ async def verify_order_ip(
     if decision.allowed:
         return
 
-    phone_prefix = phone_e164[:8] + "…" if len(phone_e164) > 8 else "***"
     xff = (request.headers.get("x-forwarded-for") or "")[:256] if request else ""
     origin = request.headers.get("origin") if request else None
     referer = (request.headers.get("referer") or "")[:160] if request else ""
     ua_len = len(request.headers.get("user-agent") or "") if request else 0
     log.warning(
-        "order_ip_fraud_rejected reason=%s resolved_ip=%s xff=%r origin=%r referer=%r ua_len=%s phone_prefix=%s",
+        "order_ip_fraud_rejected reason=%s client_ip=%r xff=%r origin=%r referer=%r ua_len=%s phone_digits_prefix=%s",
         decision.reason,
         client_ip,
         xff,
         origin,
         referer,
         ua_len,
-        phone_prefix,
+        (numeric_phone(phone_e164)[:6] + "…") if phone_e164 else None,
     )
 
     raise HTTPException(
         status_code=403,
         detail={
-            "message": _public_fraud_message(),
+            "message": (
+                "لم يتم قبول الطلب بعد فحص أمني. إذا رقمك إماراتي صحيح، جرّبي من شبكة أخرى أو تواصلي معنا."
+            ),
             "reason": decision.reason,
         },
     )

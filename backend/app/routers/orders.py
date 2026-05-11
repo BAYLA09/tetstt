@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 from datetime import UTC, datetime
 from decimal import Decimal
 from typing import Annotated
@@ -13,13 +12,10 @@ from app.db import get_session
 from app.models import Order, OrderItem
 from app.products import PRODUCTS
 from app.schemas import OrderCreate, OrderResponse, UpsellCreate
-from app.services.client_ip import get_client_ip
 from app.services.fraud import verify_order_ip
 from app.services.phone import normalize_uae_phone, phone_hash
 from app.services.sheet_webhook import send_order_to_sheet
 from app.services.tracking import send_capi_events
-
-log = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/orders", tags=["orders"])
 
@@ -32,6 +28,13 @@ def format_sheet_phone(phone_e164: str) -> str:
 
 def line_total(price: Decimal, quantity: int) -> Decimal:
     return price * Decimal(quantity)
+
+
+def get_client_ip(request: Request) -> str | None:
+    forwarded = request.headers.get("x-forwarded-for")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    return request.client.host if request.client else None
 
 
 def order_to_sheet_payload(order: Order, items: list[dict]) -> dict:
@@ -89,17 +92,12 @@ async def create_order(
         if not product:
             raise HTTPException(status_code=400, detail=f"Unknown SKU: {item.sku}")
         quantity = item.quantity
-        price = (
-            Decimal(str(item.price))
-            if item.price is not None
-            else product["price"]
-        )
+        price = product["price"]
         subtotal += line_total(price, quantity)
-        line_name = (item.name or "").strip() or product["name"]
         order_items_payload.append(
             {
                 "sku": product["sheet_sku"],
-                "name": line_name,
+                "name": product["name"],
                 "price": float(price),
                 "quantity": quantity,
                 "is_upsell": False,
@@ -108,7 +106,7 @@ async def create_order(
         order_items.append(
             OrderItem(
                 sku=item.sku,
-                name=line_name,
+                name=product["name"],
                 unit_price=price,
                 quantity=quantity,
                 line_total=line_total(price, quantity),
@@ -142,11 +140,8 @@ async def create_order(
     await session.commit()
 
     sheet_payload = order_to_sheet_payload(order, order_items_payload)
-    try:
-        await send_order_to_sheet(sheet_payload)
-        await send_capi_events(sheet_payload, user_agent, client_ip)
-    except Exception:
-        log.exception("order_hooks_failed_after_commit order_id=%s", order.public_order_id)
+    await send_order_to_sheet(sheet_payload)
+    await send_capi_events(sheet_payload, user_agent, client_ip)
 
     return OrderResponse(
         order_id=order.public_order_id,
@@ -161,9 +156,9 @@ async def add_upsell(
     order_id: str,
     payload: UpsellCreate,
     session: AsyncSession = Depends(get_session),
-) -> OrderResponse:
+) -> UpsellResponse:
     product = PRODUCTS.get(payload.sku)
-    if not product or not str(payload.sku).startswith("LB-UPSELL-"):
+    if not product or product["price"] != Decimal("39"):
         raise HTTPException(status_code=400, detail="Invalid upsell SKU")
 
     result = await session.execute(select(Order).where(Order.public_order_id == order_id))
