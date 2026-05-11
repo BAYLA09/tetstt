@@ -3,7 +3,7 @@ Layali API — Easypanel (deploy-backend)
 
 1) Git
    - Repository: your GitHub repo (e.g. BAYLA09/tetstt)
-   - Branch: deploy-backend
+   - Branch: deploy-backend   (legacy) or layali-api   (new name — same code)
    - Path / context: repository ROOT (where Dockerfile lives)
 
 2) Build
