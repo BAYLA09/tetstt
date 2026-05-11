@@ -33,6 +33,47 @@ export type OrderResponse = {
   currency: "AED";
 };
 
+function formatOrderApiError(status: number, body: unknown, rawText: string): string {
+  const trimmedRaw = rawText.replace(/^\s+|\s+$/g, "").slice(0, 280);
+
+  if (body && typeof body === "object") {
+    const o = body as Record<string, unknown>;
+    const d = o.detail;
+    if (typeof d === "string" && d.trim()) return d.trim();
+    if (d && typeof d === "object" && !Array.isArray(d)) {
+      const m = (d as Record<string, unknown>).message;
+      if (typeof m === "string" && m.trim()) return m.trim();
+    }
+    if (Array.isArray(d) && d.length) {
+      const parts = d.map((e) => {
+        if (e && typeof e === "object" && "msg" in e) return String((e as { msg: unknown }).msg);
+        return "";
+      }).filter(Boolean);
+      if (parts.length) return parts.join("؛ ");
+    }
+    const top = o.message;
+    if (typeof top === "string" && top.trim()) return top.trim();
+  }
+
+  if (trimmedRaw && !trimmedRaw.startsWith("<") && trimmedRaw.length < 400) {
+    return trimmedRaw;
+  }
+
+  if (status === 502 || status === 503 || status === 504) {
+    return "خادم الطلبات مشغول أو غير متصل مؤقتاً. جرّبي بعد قليل.";
+  }
+  if (status === 403) {
+    return "تعذر قبول الطلب لأسباب أمنية. جرّبي من شبكة أخرى أو تواصلي معنا.";
+  }
+  if (status === 400) {
+    return "بيانات الطلب غير مقبولة. راجعي السلة والرقم وحاولي مجدداً.";
+  }
+  if (status >= 500) {
+    return "خطأ داخلي في خادم الطلبات. أعدي المحاولة بعد دقائق أو تواصلي مع الدعم.";
+  }
+  return `تعذر تثبيت الطلب (رمز ${status}). جرّبي لاحقاً أو تواصلي مع الدعم.`;
+}
+
 async function fetchWithTimeout(
   url: string,
   options: RequestInit,
@@ -71,14 +112,15 @@ export async function createOrder(payload: OrderPayload): Promise<OrderResponse>
   }
 
   if (!response.ok) {
-    let detail = "";
+    const status = response.status;
+    const raw = await response.text().catch(() => "");
+    let body: unknown;
     try {
-      const body = await response.json();
-      detail = body?.detail?.message || body?.detail || body?.message || "";
+      body = raw ? (JSON.parse(raw) as unknown) : undefined;
     } catch {
-      detail = await response.text().catch(() => "");
+      body = undefined;
     }
-    throw new Error(detail || `http_${response.status}`);
+    throw new Error(formatOrderApiError(status, body, raw));
   }
 
   return response.json();
@@ -96,8 +138,15 @@ export async function addUpsell(orderId: string, sku: string, eventId: string) {
   );
 
   if (!response.ok) {
-    const message = await response.text().catch(() => "");
-    throw new Error(message || "Upsell request failed");
+    const status = response.status;
+    const raw = await response.text().catch(() => "");
+    let body: unknown;
+    try {
+      body = raw ? (JSON.parse(raw) as unknown) : undefined;
+    } catch {
+      body = undefined;
+    }
+    throw new Error(formatOrderApiError(status, body, raw));
   }
 
   return response.json();

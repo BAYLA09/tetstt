@@ -90,9 +90,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
               ? "انتهت مهلة الاتصال. جرّبي مرة أخرى."
               : err.message === "network"
                 ? "تعذر الوصول لخادم الطلبات. إذا الإنترنت خدام، غالباً إعداد السيرفر (CORS أو رابط الـ API) — جرّبي لاحقاً أو تواصلي مع الدعم."
-                : err.message.startsWith("http_")
-                  ? "الخادم رفض الطلب مؤقتاً. تواصلي مع الدعم أو جرّبي لاحقاً."
-                  : err.message || "تعذر تثبيت الطلب."
+                : err.message || "تعذر تثبيت الطلب."
             : "تعذر تثبيت الطلب.";
         setOrderError(msg);
         setSubmitting(false);
