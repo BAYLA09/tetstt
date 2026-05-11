@@ -8,11 +8,12 @@ from fastapi import APIRouter, Depends, Header, HTTPException, Request
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.config import settings
 from app.db import get_session
 from app.models import Order, OrderItem
 from app.products import PRODUCTS
 from app.schemas import OrderCreate, OrderResponse, UpsellCreate
-from app.services.fraud import verify_order_ip
+from app.services.fraud import is_uae_cod_phone, verify_order_ip
 from app.services.phone import normalize_uae_phone, phone_hash
 from app.services.sheet_webhook import send_order_to_sheet
 from app.services.tracking import send_capi_events
@@ -82,7 +83,9 @@ async def create_order(
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     client_ip = get_client_ip(request)
-    await verify_order_ip(client_ip=client_ip, phone_e164=normalized_phone, request=request)
+    # UAE-only store: never run IP fraud for valid UAE mobiles (Easypanel / proxies).
+    if settings.enable_ip_fraud_check and not is_uae_cod_phone(normalized_phone):
+        await verify_order_ip(client_ip=client_ip, phone_e164=normalized_phone, request=request)
     subtotal = Decimal("0")
     order_items: list[OrderItem] = []
     order_items_payload: list[dict] = []
