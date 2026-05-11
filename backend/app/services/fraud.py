@@ -47,11 +47,7 @@ async def evaluate_order_ip(ip: str | None, phone_e164: str) -> FraudDecision:
     if is_whitelisted_phone(phone_e164):
         return FraudDecision(True, "phone_whitelisted")
 
-    if (
-        settings.trust_uae_e164_without_geo
-        and (settings.order_allowed_country or "").upper() == "AE"
-        and phone_e164.startswith("+971")
-    ):
+    if settings.trust_uae_e164_without_geo and phone_e164.startswith("+971"):
         return FraudDecision(True, "uae_phone_trusted")
 
     if not settings.enable_ip_fraud_check:
