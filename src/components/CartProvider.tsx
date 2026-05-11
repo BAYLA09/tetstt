@@ -46,13 +46,39 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const normalizedPhone = normalizeUaePhone(phone);
   const canSubmit = name.trim().length >= 2 && Boolean(normalizedPhone) && items.length > 0 && !submitting;
 
-  function submitOrder(event: FormEvent) {
+  async function submitOrder(event: FormEvent) {
     event.preventDefault();
     if (!canSubmit || !normalizedPhone) return;
     setSubmitting(true);
 
-    // Generate local order ID — no backend needed
-    const orderId = `LB-${new Date().toISOString().slice(0,10).replace(/-/g,"")}${Math.random().toString(36).slice(2,6).toUpperCase()}`;
+    const orderId = `LB-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+    const productSummary = items.map((i) => `${i.name} ×${i.quantity}`).join(" | ");
+    const itemsJson = JSON.stringify(
+      items.map((i) => ({ sku: i.sku, name: i.name, quantity: i.quantity, price: i.price })),
+    );
+
+    const webhook = process.env.NEXT_PUBLIC_GOOGLE_ORDERS_WEBHOOK_URL;
+    if (webhook) {
+      try {
+        await fetch(webhook, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            date: new Date().toISOString(),
+            orderId,
+            name: name.trim(),
+            phone: normalizedPhone,
+            country: "AE",
+            product: productSummary,
+            total,
+            currency: "AED",
+            itemsJson,
+          }),
+        });
+      } catch (err) {
+        console.error("Google Sheet order webhook failed:", err);
+      }
+    }
 
     trackEvent("Purchase", { value: total });
     closeCheckout();
