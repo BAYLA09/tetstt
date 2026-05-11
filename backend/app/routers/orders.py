@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from datetime import UTC, datetime
 from decimal import Decimal
 from typing import Annotated
@@ -16,6 +17,8 @@ from app.services.fraud import verify_order_ip
 from app.services.phone import normalize_uae_phone, phone_hash
 from app.services.sheet_webhook import send_order_to_sheet
 from app.services.tracking import send_capi_events
+
+log = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/orders", tags=["orders"])
 
@@ -77,7 +80,10 @@ async def create_order(
     user_agent: Annotated[str | None, Header(alias="user-agent")] = None,
     session: AsyncSession = Depends(get_session),
 ) -> OrderResponse:
-    normalized_phone = normalize_uae_phone(payload.phone)
+    try:
+        normalized_phone = normalize_uae_phone(payload.phone)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
     client_ip = get_client_ip(request)
     await verify_order_ip(client_ip=client_ip, phone_e164=normalized_phone)
     subtotal = Decimal("0")
@@ -142,8 +148,11 @@ async def create_order(
     await session.commit()
 
     sheet_payload = order_to_sheet_payload(order, order_items_payload)
-    await send_order_to_sheet(sheet_payload)
-    await send_capi_events(sheet_payload, user_agent, client_ip)
+    try:
+        await send_order_to_sheet(sheet_payload)
+        await send_capi_events(sheet_payload, user_agent, client_ip)
+    except Exception:
+        log.exception("order_hooks_failed_after_commit order_id=%s", order.public_order_id)
 
     return OrderResponse(
         order_id=order.public_order_id,
