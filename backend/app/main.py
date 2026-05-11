@@ -36,6 +36,18 @@ async def root() -> dict[str, str]:
     return {"status": "ok", "service": settings.app_name}
 
 
+@app.get("/live")
+async def live() -> dict[str, str]:
+    """Some PaaS panels default to /live — same fast response as /."""
+    return {"status": "ok", "service": settings.app_name}
+
+
+@app.get("/ready")
+async def ready() -> dict[str, str]:
+    """Some PaaS panels default to /ready — we treat it as liveness (no DB wait)."""
+    return {"status": "ok", "service": settings.app_name}
+
+
 async def _init_db_retry_background() -> None:
     """Postgres may start after the API; Easypanel health checks time out if startup blocks too long."""
     last_exc: BaseException | None = None
