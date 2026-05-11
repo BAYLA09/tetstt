@@ -15,7 +15,12 @@ Layali API — Easypanel (deploy-backend)
    - Public HTTPS: map host port → container 8000
 
 4) Health check (optional)
-   - HTTP GET: /health   (full URL e.g. http://127.0.0.1:8000/health inside container)
+   - Many panels default to GET `/` — this API returns 200 on `/` (no DB).
+   - You can also use: GET /health
+
+5) If the service stays RED on first deploy
+   - Postgres container may start AFTER the API: the API now retries DB init for ~2 minutes.
+   - Still red? Check DATABASE_URL (host must be the INTERNAL Docker service name, not a public IP, unless you use host networking).
 
 5) Environment variables (examples — set in Easypanel, not committed)
    - DATABASE_URL=postgresql+asyncpg://user:pass@host:5432/dbname
