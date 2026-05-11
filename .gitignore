@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+.env
+.env.*
+
+# Next (if present in same clone)
+.next/
+node_modules/
+
+# OS
+.DS_Store
