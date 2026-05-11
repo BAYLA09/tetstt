@@ -19,8 +19,9 @@ Layali API — Easypanel (deploy-backend)
    - You can also use: GET /health
 
 5) If the service stays RED on first deploy
-   - Postgres container may start AFTER the API: the API now retries DB init for ~2 minutes.
-   - Still red? Check DATABASE_URL (host must be the INTERNAL Docker service name, not a public IP, unless you use host networking).
+   - Easypanel often times out while the API waits for Postgres. The API now starts immediately and runs DB init in the background (service can go green while Postgres is still starting).
+   - If orders fail with DB errors right after deploy, wait ~1 minute for background init, then retry.
+   - Still red? Check DATABASE_URL (internal Docker hostname for Postgres, not a random public IP unless you know routing).
 
 5) Environment variables (examples — set in Easypanel, not committed)
    - DATABASE_URL=postgresql+asyncpg://user:pass@host:5432/dbname
