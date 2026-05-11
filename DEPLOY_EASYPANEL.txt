@@ -17,36 +17,45 @@ Layali API — Easypanel (deploy-backend)
    - Internal port: 8000 (must match EXPOSE in Dockerfile)
    - Public HTTPS: map host port → container 8000
 
-4) Health check (optional)
-   - Many panels default to GET `/` — this API returns 200 on `/` (no DB).
-   - You can also use: GET /health
+4) Health check (Easypanel / reverse proxy)
+   - Internal HTTP port must be 8000 (same as CMD).
+   - Probe path: GET `/` (preferred) or GET `/health` or GET `/live` or GET `/ready` — all return 200 + JSON quickly (no DB).
+   - Increase "health check timeout / grace period" to at least 60–120s on first deploy if the panel kills the container early.
+   - If the panel probes HTTPS on the public URL, ensure the certificate is valid; a bad TLS handshake can show as "unhealthy" even if the app is fine.
 
 5) If the service stays RED on first deploy
    - Easypanel often times out while the API waits for Postgres. The API now starts immediately and runs DB init in the background (service can go green while Postgres is still starting).
    - If orders fail with DB errors right after deploy, wait ~1 minute for background init, then retry.
    - Still red? Check DATABASE_URL (internal Docker hostname for Postgres, not a random public IP unless you know routing).
 
-5) Environment variables (examples — set in Easypanel, not committed)
+6) Environment variables (examples — set in Easypanel, not committed)
    - DATABASE_URL=postgresql+asyncpg://user:pass@host:5432/dbname
    - FRONTEND_ORIGIN=https://layalibeauty.shop
    - ENABLE_IP_FRAUD_CHECK=false   (recommended unless MaxMind configured)
    - TRUST_UAE_E164_WITHOUT_GEO=true
    - CORS_ALLOW_ALL=false   (set true ONLY to test if the browser error is CORS; then set false again)
 
-6) If deploy still fails
+7) If deploy still fails
    - Open GitHub → Actions → "Backend Docker build" on latest push: if CI is red, open the log (build error is there).
    - In Easypanel: open Build logs and copy the LAST 30 lines of the error.
 
-7) Common mistakes
+8) Common mistakes
    - Wrong branch (main vs deploy-backend).
    - Dockerfile path points to frontend Dockerfile by mistake.
    - Port mismatch (container listens 8000 but proxy targets 3000).
 
-8) "Red" in Easypanel — what it usually means
+9) "Red" in Easypanel — what it usually means
    - Build failed: open Build log; the last lines name the error (missing file, pip failed, wrong Dockerfile path).
    - Runtime / health failed: open Logs; look for Traceback (ImportError, wrong DATABASE_URL, connection refused to DB).
    - Service green but checkout fails in browser: rebuild frontend with NEXT_PUBLIC_API_BASE_URL = your public API URL (https://api...), or set CORS_ALLOW_ALL=true briefly to see if it is CORS.
 
-9) Quick checks (from any machine)
+10) Quick checks (from any machine)
    - curl -sS https://YOUR-API-HOST/   → should print JSON with "status":"ok"
    - curl -sS -o /dev/null -w "%{http_code}" https://YOUR-API-HOST/health
+
+11) GitHub Actions = Success but Easypanel stays RED
+   - CI only proves `docker build` works on GitHub; Easypanel builds and runs on YOUR server with YOUR env vars.
+   - Click "Redeploy" / "Pull latest" after every push; old containers keep old code.
+   - In Runtime logs, you should see: `Layali API: starting uvicorn on :8000`. If that line never appears, the container exits before uvicorn (wrong CMD override, wrong working dir, or build context).
+   - If you see the line but still red: wrong health-check path/port in Easypanel, or TLS/proxy in front of the check.
+   - (AR) الـ CI الأخضر ما كيعنيش بلي السيرفر عندك شدّ آخر image — خاصّي Redeploy و Log ديال Runtime.

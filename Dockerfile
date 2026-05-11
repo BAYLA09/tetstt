@@ -12,4 +12,5 @@ COPY . .
 
 EXPOSE 8000
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Echo helps Easypanel/Docker logs show whether we reached uvicorn (vs crashing earlier).
+CMD ["sh", "-c", "echo 'Layali API: starting uvicorn on :8000' && exec uvicorn app.main:app --host 0.0.0.0 --port 8000"]
