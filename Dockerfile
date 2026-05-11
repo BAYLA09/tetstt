@@ -10,7 +10,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
+RUN chmod +x /app/start.sh
+
+# Default PORT for local `docker run`; EasyPanel overrides PORT at runtime.
+ENV HOST=0.0.0.0 \
+    PORT=8000
+
 EXPOSE 8000
 
-# Echo helps Easypanel/Docker logs show whether we reached uvicorn (vs crashing earlier).
-CMD ["sh", "-c", "echo 'Layali API: starting uvicorn on :8000' && exec uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+CMD ["/app/start.sh"]

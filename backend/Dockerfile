@@ -11,9 +11,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
+RUN chmod +x /app/start.sh
+
+ENV HOST=0.0.0.0 \
+    PORT=8000
+
 EXPOSE 8000
 
-# Do NOT chain `alembic upgrade head` here: if Postgres is not ready yet or the DB URL
-# is wrong, the container exits before uvicorn starts → Easypanel stays RED with ~0% CPU.
 # Schema is created by FastAPI startup (`init_db` / create_all) with retries.
-CMD ["sh", "-c", "echo 'Layali API: starting uvicorn on :8000' && exec uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+CMD ["/app/start.sh"]

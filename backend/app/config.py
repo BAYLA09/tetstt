@@ -1,11 +1,21 @@
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
+from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     app_env: str = "development"
     app_name: str = "Layali Beauty API"
+    # HTTP server bind (EasyPanel sets PORT; use HOST if you need to override)
+    bind_host: str = Field(
+        default="0.0.0.0",
+        validation_alias=AliasChoices("HOST", "BIND_HOST", "UVICORN_HOST"),
+    )
+    bind_port: int = Field(
+        default=8000,
+        validation_alias=AliasChoices("PORT", "UVICORN_PORT"),
+    )
     api_base_url: str | None = None
     database_url: str = "sqlite+aiosqlite:///./layali_dev.db"
     frontend_origin: str = "https://layalibeauty.shop"
