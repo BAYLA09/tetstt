@@ -38,6 +38,8 @@ class Settings(BaseSettings):
     whitelisted_phones: str = ""
     log_level: str = "INFO"
     cors_allow_www: bool = True
+    # Emergency only: CORS_ALLOW_ALL=true → allow any Origin (diagnose "failed fetch"). Turn off after fixing.
+    cors_allow_all: bool = False
 
     @staticmethod
     def _normalize_postgres_url(url: str, *, async_driver: bool) -> str:
