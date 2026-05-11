@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductHero } from "@/components/ProductHero";
+import { ProductLeadStory } from "@/components/ProductLeadStory";
 import { products, offerTiers } from "@/lib/products";
 import { getProductContent } from "@/lib/product-content";
 
@@ -40,12 +41,17 @@ export default async function ProductPage({ params }: Props) {
   const content = getProductContent(slug);
   const tiers = offerTiers[slug];
   const related = products.filter((p) => p.sku !== product.sku).slice(0, 3);
+  const lampStoryFirst = slug === "aroma-flame-lamp";
 
   return (
     <div dir="rtl" className="pb-24 lg:pb-0">
+      {lampStoryFirst && content && <ProductLeadStory product={product} content={content} />}
 
-      {/* ①  HERO + OFFER SELECTOR */}
-      <ProductHero product={product} tiers={tiers} />
+      <ProductHero
+        product={product}
+        tiers={tiers}
+        variant={lampStoryFirst ? "commerceOnly" : "default"}
+      />
 
       {/* ②  TRUST STRIP */}
       <section className="border-b border-[var(--border-gold)] bg-white px-4 py-4">
@@ -66,7 +72,7 @@ export default async function ProductPage({ params }: Props) {
         </div>
       </section>
 
-      {content?.stat && (
+      {content?.stat && !lampStoryFirst && (
         /* ②·⁵  STAT CARD — shown between trust strip and before/after */
         <section className="bg-[var(--emerald-950)] px-4 py-14">
           <div className="container-grid">
@@ -107,7 +113,8 @@ export default async function ProductPage({ params }: Props) {
 
       {content && (<>
 
-        {/* ③  BEFORE / AFTER  ← أول سكشن */}
+        {!lampStoryFirst && (
+        /* ③  BEFORE / AFTER  ← أول سكشن */
         <section className="bg-[var(--cream-50)] px-4 py-16">
           <div className="container-grid">
             <div className="section-heading">
@@ -147,6 +154,7 @@ export default async function ProductPage({ params }: Props) {
             </div>
           </div>
         </section>
+        )}
 
         {/* ④  PROBLEMS  ← ثاني سكشن */}
         <section className="bg-white px-4 py-16">

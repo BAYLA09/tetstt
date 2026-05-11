@@ -14,6 +14,8 @@ export type Product = {
   cardImage: string;
   beforeImage?: string;
   afterImage?: string;
+  /** Wide hero: use object-contain + full-bleed on small screens in split hero. */
+  heroPanorama?: boolean;
 };
 
 export type OfferTier = {
@@ -87,6 +89,7 @@ export const products: Product[] = [
     cardImage: "/products/img-diffuser-card.jpg",
     beforeImage: "/products/before-diffuser.jpg",
     afterImage: "/products/after-family-aroma.jpg",
+    heroPanorama: true,
   },
 ];
 
