@@ -189,7 +189,7 @@ export const offerTiers: Record<string, OfferTier[]> = {
     },
     {
       sku: "LB-BUNDLE-449",
-      label: "موقد ليالي + عود + مسك",
+      label: "سيرومين من عود قصر دبي +",
       sublabel: "موقد ليالي الفاخر + عود قصر دبي + مسك المطر الأبيض",
       price: 449,
       compareAt: 697,
