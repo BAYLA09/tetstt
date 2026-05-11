@@ -3,13 +3,16 @@ from fastapi.middleware.cors import CORSMiddleware
 import asyncio
 import logging
 
+from starlette.responses import PlainTextResponse, Response
+
 from app.config import settings
 from app.db import init_db
 from app.routers import health, orders
 
 log = logging.getLogger(__name__)
 
-app = FastAPI(title=settings.app_name, version="0.1.0")
+# redirect_slashes=False: many health probes treat 307 redirects as failure (slash mismatch).
+app = FastAPI(title=settings.app_name, version="0.1.0", redirect_slashes=False)
 
 if settings.cors_allow_all:
     app.add_middleware(
@@ -36,6 +39,18 @@ async def root() -> dict[str, str]:
     return {"status": "ok"}
 
 
+@app.head("/")
+async def root_head() -> Response:
+    """Some load balancers use HEAD for liveness (no body)."""
+    return Response(status_code=200)
+
+
+@app.get("/ping")
+async def ping() -> PlainTextResponse:
+    """Minimal plaintext probe — panels that reject JSON still get HTTP 200 + ok."""
+    return PlainTextResponse("ok", media_type="text/plain")
+
+
 @app.get("/live")
 async def live() -> dict[str, str]:
     """Some PaaS panels default to /live."""
@@ -46,6 +61,16 @@ async def live() -> dict[str, str]:
 async def ready() -> dict[str, str]:
     """Some PaaS panels default to /ready (liveness only; no DB gate)."""
     return {"status": "ok"}
+
+
+@app.head("/live")
+async def live_head() -> Response:
+    return Response(status_code=200)
+
+
+@app.head("/ready")
+async def ready_head() -> Response:
+    return Response(status_code=200)
 
 
 async def _init_db_retry_background() -> None:
