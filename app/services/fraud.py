@@ -50,6 +50,14 @@ def _is_uae_mobile_cod(phone_e164: str) -> bool:
     return bool(re.fullmatch(r"9715\d{8}", d))
 
 
+def is_uae_cod_phone(phone_e164: str) -> bool:
+    """UAE COD mobile — IP/MaxMind must not block checkout for these numbers."""
+    if _is_uae_mobile_cod(phone_e164):
+        return True
+    compact = (phone_e164 or "").strip().replace(" ", "").replace("-", "")
+    return compact.startswith("+971")
+
+
 def _public_fraud_message() -> str:
     """User-facing text; technical reason stays in `reason` field."""
     return (
