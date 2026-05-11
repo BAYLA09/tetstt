@@ -119,7 +119,7 @@ export function ProductHero({ product, tiers, variant = "default" }: ProductHero
 
   if (variant === "commerceOnly") {
     return (
-      <section className="hero-gradient relative overflow-hidden px-4 pb-28 pt-8 text-white lg:pb-16 lg:pt-12">
+      <section className="hero-gradient relative overflow-hidden px-4 pb-28 pt-3 text-white lg:pb-16 lg:pt-5">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(201,150,69,0.2),transparent_32%)]" />
         <div className="container-grid relative z-10 max-w-2xl">{commerceCard}</div>
       </section>

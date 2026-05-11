@@ -3,30 +3,35 @@ import { CheckCircle2, X } from "lucide-react";
 import type { Product } from "@/lib/products";
 import type { ProductContent } from "@/lib/product-content";
 
-type Props = {
+type StoryProps = {
   product: Product;
   content: ProductContent;
 };
 
-/** Hero lifestyle shot + before/after + stat — shown above the buy card for lamp CRO flow. */
-export function ProductLeadStory({ product, content }: Props) {
+/** Wide hero only — place buy card directly underneath on the lamp page. */
+export function ProductLampHeroStrip({ product }: { product: Product }) {
+  return (
+    <div className="hero-gradient relative overflow-hidden px-0 pb-0 pt-6 lg:px-4 lg:pt-10">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(201,150,69,0.2),transparent_32%)]" />
+      <div className="relative w-screen max-w-none shrink-0 bg-[rgba(0,20,14,0.35)] mx-[calc(50%-50vw)] lg:mx-auto lg:w-full lg:max-w-[1180px] lg:overflow-hidden lg:rounded-[2.5rem] lg:bg-transparent">
+        <Image
+          src={product.image}
+          alt={product.name}
+          width={1536}
+          height={1024}
+          className="h-auto w-full object-contain"
+          priority
+          sizes="(max-width: 1024px) 100vw, min(1180px, 90vw)"
+        />
+      </div>
+    </div>
+  );
+}
+
+/** Before/after + stat — below the buy card for lamp. */
+export function ProductLampSecondaryStory({ product, content }: StoryProps) {
   return (
     <>
-      <div className="hero-gradient relative overflow-hidden px-0 pb-2 pt-6 lg:px-4 lg:pt-10">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(201,150,69,0.2),transparent_32%)]" />
-        <div className="relative w-screen max-w-none shrink-0 bg-[rgba(0,20,14,0.35)] mx-[calc(50%-50vw)] lg:mx-auto lg:w-full lg:max-w-[1180px] lg:overflow-hidden lg:rounded-[2.5rem] lg:bg-transparent">
-          <Image
-            src={product.image}
-            alt={product.name}
-            width={1536}
-            height={1024}
-            className="h-auto w-full object-contain"
-            priority
-            sizes="(max-width: 1024px) 100vw, min(1180px, 90vw)"
-          />
-        </div>
-      </div>
-
       <section className="bg-[var(--cream-50)] px-4 py-16">
         <div className="container-grid">
           <div className="section-heading">

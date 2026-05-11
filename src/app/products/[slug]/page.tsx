@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductHero } from "@/components/ProductHero";
-import { ProductLeadStory } from "@/components/ProductLeadStory";
+import { ProductLampHeroStrip, ProductLampSecondaryStory } from "@/components/ProductLeadStory";
 import { products, offerTiers } from "@/lib/products";
 import { getProductContent } from "@/lib/product-content";
 
@@ -45,13 +45,15 @@ export default async function ProductPage({ params }: Props) {
 
   return (
     <div dir="rtl" className="pb-24 lg:pb-0">
-      {lampStoryFirst && content && <ProductLeadStory product={product} content={content} />}
+      {lampStoryFirst && <ProductLampHeroStrip product={product} />}
 
       <ProductHero
         product={product}
         tiers={tiers}
         variant={lampStoryFirst ? "commerceOnly" : "default"}
       />
+
+      {lampStoryFirst && content && <ProductLampSecondaryStory product={product} content={content} />}
 
       {/* ②  TRUST STRIP */}
       <section className="border-b border-[var(--border-gold)] bg-white px-4 py-4">
