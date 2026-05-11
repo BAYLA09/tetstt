@@ -1,0 +1,16 @@
+name: Backend Docker build
+
+on:
+  push:
+    branches: [deploy-backend]
+  pull_request:
+    branches: [deploy-backend]
+
+jobs:
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Docker build (Easypanel uses same Dockerfile)
+        run: docker build -t layali-api:ci .

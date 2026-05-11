@@ -1,0 +1,33 @@
+Layali API — Easypanel (deploy-backend)
+========================================
+
+1) Git
+   - Repository: your GitHub repo (e.g. BAYLA09/tetstt)
+   - Branch: deploy-backend
+   - Path / context: repository ROOT (where Dockerfile lives)
+
+2) Build
+   - Dockerfile path: Dockerfile
+   - Do NOT set a subdirectory unless your Dockerfile is inside one.
+
+3) Run
+   - Internal port: 8000 (must match EXPOSE in Dockerfile)
+   - Public HTTPS: map host port → container 8000
+
+4) Health check (optional)
+   - HTTP GET: /health   (full URL e.g. http://127.0.0.1:8000/health inside container)
+
+5) Environment variables (examples — set in Easypanel, not committed)
+   - DATABASE_URL=postgresql+asyncpg://user:pass@host:5432/dbname
+   - FRONTEND_ORIGIN=https://layalibeauty.shop
+   - ENABLE_IP_FRAUD_CHECK=false   (recommended unless MaxMind configured)
+   - TRUST_UAE_E164_WITHOUT_GEO=true
+
+6) If deploy still fails
+   - Open GitHub → Actions → "Backend Docker build" on latest push: if CI is red, open the log (build error is there).
+   - In Easypanel: open Build logs and copy the LAST 30 lines of the error.
+
+7) Common mistakes
+   - Wrong branch (main vs deploy-backend).
+   - Dockerfile path points to frontend Dockerfile by mistake.
+   - Port mismatch (container listens 8000 but proxy targets 3000).
