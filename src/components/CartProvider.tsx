@@ -3,11 +3,12 @@
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, Minus, Plus, ShoppingBag, X } from "lucide-react";
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useCartStore } from "@/lib/cart-store";
 import { getCrossSells, getProductBySku, money, Product } from "@/lib/products";
 import { normalizeUaePhone } from "@/lib/phone";
-import { trackEvent } from "@/lib/events";
+import { createOrder } from "@/lib/api";
+import { generateEventId, getTrackingContext, trackEvent } from "@/lib/events";
 
 function MiniProduct({ product, onAdd }: { product: Product; onAdd: () => void }) {
   return (
@@ -41,21 +42,65 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [orderError, setOrderError] = useState<string | null>(null);
   const total = useMemo(() => items.reduce((sum, item) => sum + item.price * item.quantity, 0), [items]);
   const crossSells = getCrossSells(items.map((item) => item.sku));
   const normalizedPhone = normalizeUaePhone(phone);
   const canSubmit = name.trim().length >= 2 && Boolean(normalizedPhone) && items.length > 0 && !submitting;
 
+  useEffect(() => {
+    if (checkoutState === "checkout") setOrderError(null);
+  }, [checkoutState]);
+
   async function submitOrder(event: FormEvent) {
     event.preventDefault();
     if (!canSubmit || !normalizedPhone) return;
     setSubmitting(true);
+    setOrderError(null);
 
-    const orderId = `LB-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+    const ctx = getTrackingContext();
+    const purchaseEventId = generateEventId("Purchase");
     const productSummary = items.map((i) => `${i.name} ×${i.quantity}`).join(" | ");
     const itemsJson = JSON.stringify(
       items.map((i) => ({ sku: i.sku, name: i.name, quantity: i.quantity, price: i.price })),
     );
+
+    let orderId: string;
+
+    const bypassApi = process.env.NEXT_PUBLIC_ORDER_API_DISABLED === "true";
+
+    if (!bypassApi) {
+      try {
+        const result = await createOrder({
+          customer_name: name.trim(),
+          phone: normalizedPhone,
+          items,
+          currency: "AED",
+          source_url: ctx.source_url,
+          landing_page: ctx.landing_page,
+          event_ids: { Purchase: purchaseEventId },
+          tracking: ctx.tracking,
+          utm: ctx.utm,
+        });
+        orderId = result.order_id;
+      } catch (err) {
+        const msg =
+          err instanceof Error
+            ? err.message === "timeout"
+              ? "انتهت مهلة الاتصال. جرّبي مرة أخرى."
+              : err.message === "network"
+                ? "تعذر الاتصال بالخادم. تحققي من الإنترنت."
+                : err.message.startsWith("http_")
+                  ? "الخادم رفض الطلب مؤقتاً. تواصلي مع الدعم أو جرّبي لاحقاً."
+                  : err.message || "تعذر تثبيت الطلب."
+            : "تعذر تثبيت الطلب.";
+        setOrderError(msg);
+        setSubmitting(false);
+        return;
+      }
+    } else {
+      orderId = `LB-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+    }
 
     const webhook = process.env.NEXT_PUBLIC_GOOGLE_ORDERS_WEBHOOK_URL;
     if (webhook) {
@@ -80,7 +125,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    trackEvent("Purchase", { value: total });
+    trackEvent("Purchase", { value: total, event_id: purchaseEventId });
     closeCheckout();
     clearCart();
     window.location.href = `/thank-you/${orderId}`;
@@ -193,6 +238,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 </label>
               </div>
               {phone && !normalizedPhone && <p className="mt-2 text-sm text-red-700">أدخلي رقم إماراتي صحيح — مثال: 0501234567 أو +971501234567</p>}
+              {orderError && <p className="mt-2 rounded-2xl bg-red-50 px-3 py-2 text-sm font-bold text-red-800">{orderError}</p>}
               <button disabled={!canSubmit} className="mt-5 w-full rounded-full bg-[var(--emerald-950)] px-6 py-4 font-black text-[var(--gold-300)] disabled:opacity-50">
                 {submitting ? "جاري تثبيت الطلب..." : "ثبتي الطلب الآن"}
               </button>
