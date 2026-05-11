@@ -9,6 +9,7 @@ Layali API — Easypanel (deploy-backend)
 
 2) Build
    - Preferred: Dockerfile at repo root + build context = repository ROOT (same as CI).
+   - **EasyPanel error `failed to read dockerfile: open code`** — your build log shows `-f .../backend/code/` (a **directory**). Docker `-f` must be a **file**, e.g. `Dockerfile` or `.../code/Dockerfile`. In the service **Build** settings set **Dockerfile path** to `Dockerfile` (not `code`, not empty, not only a folder path). **Build context** must be the repo root that contains `Dockerfile`, `requirements.txt`, `app/`, and `start.sh`.
    - If you use Dockerfile path `backend/Dockerfile` with context `backend/`, that image
      must NOT block on Alembic before uvicorn (fixed in repo). Wrong Alembic/DB order used
      to leave the service permanently RED because the process never reached uvicorn.
