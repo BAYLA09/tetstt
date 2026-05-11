@@ -1,17 +1,19 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from __future__ import annotations
+
 import asyncio
 import logging
 
-from starlette.responses import PlainTextResponse, Response
+from fastapi import FastAPI, Response
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import PlainTextResponse
 
 from app.config import settings
 from app.db import init_db
-from app.routers import health, orders
+from app.routers import orders
 
 log = logging.getLogger(__name__)
 
-# redirect_slashes=False: many health probes treat 307 redirects as failure (slash mismatch).
+# Avoid 307 trailing-slash redirects — many health probes treat non-200 as failure.
 app = FastAPI(title=settings.app_name, version="0.1.0", redirect_slashes=False)
 
 if settings.cors_allow_all:
@@ -33,33 +35,45 @@ else:
     )
 
 
-@app.get("/")
-async def root() -> dict[str, str]:
-    """Liveness for `/` — 200 + JSON (no DB)."""
-    return {"status": "ok"}
+@app.get("/", response_class=PlainTextResponse)
+async def root() -> str:
+    return "ok"
 
 
 @app.head("/")
 async def root_head() -> Response:
-    """Some load balancers use HEAD for liveness (no body)."""
     return Response(status_code=200)
 
 
-@app.get("/ping")
-async def ping() -> PlainTextResponse:
-    """Minimal plaintext probe — panels that reject JSON still get HTTP 200 + ok."""
-    return PlainTextResponse("ok", media_type="text/plain")
+@app.get("/ping", response_class=PlainTextResponse)
+async def ping() -> str:
+    return "ok"
+
+
+@app.head("/ping")
+async def ping_head() -> Response:
+    return Response(status_code=200)
+
+
+@app.get("/health")
+@app.get("/health/")
+async def health() -> dict[str, str]:
+    return {"status": "ok"}
+
+
+@app.head("/health")
+@app.head("/health/")
+async def health_head() -> Response:
+    return Response(status_code=200)
 
 
 @app.get("/live")
 async def live() -> dict[str, str]:
-    """Some PaaS panels default to /live."""
     return {"status": "ok"}
 
 
 @app.get("/ready")
 async def ready() -> dict[str, str]:
-    """Some PaaS panels default to /ready (liveness only; no DB gate)."""
     return {"status": "ok"}
 
 
@@ -93,5 +107,4 @@ async def on_startup() -> None:
     asyncio.create_task(_init_db_retry_background())
 
 
-app.include_router(health.router)
 app.include_router(orders.router)

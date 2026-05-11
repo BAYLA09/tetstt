@@ -1,64 +1,52 @@
-Layali API — Easypanel (deploy-backend)
-========================================
+Layali Beauty API — EasyPanel (exact settings)
+===============================================
 
-1) Git
-   - Repository: your GitHub repo (e.g. BAYLA09/tetstt)
-   - Branch: deploy-backend (legacy) or layali-api or layali-backend-prod (same API code)
-   - Path / context: repository ROOT (where Dockerfile lives)
-   - Pushing code: always from the repo root (`git add`, `git commit`, `git push`). You do NOT `cd backend` to push — backend is just a folder inside the same git repo.
+Use branch: **deploy-backend** (or **layali-api** / **layali-backend-prod** — same API layout).
 
-2) Build
-   - Preferred: Dockerfile at repo root + build context = repository ROOT (same as CI).
-   - **EasyPanel error `failed to read dockerfile: open code`** — your build log shows `-f .../backend/code/` (a **directory**). Docker `-f` must be a **file**, e.g. `Dockerfile` or `.../code/Dockerfile`. In the service **Build** settings set **Dockerfile path** to `Dockerfile` (not `code`, not empty, not only a folder path). **Build context** must be the repo root that contains `Dockerfile`, `requirements.txt`, `app/`, and `start.sh`.
-   - If you use Dockerfile path `backend/Dockerfile` with context `backend/`, that image
-     must NOT block on Alembic before uvicorn (fixed in repo). Wrong Alembic/DB order used
-     to leave the service permanently RED because the process never reached uvicorn.
-   - Do NOT point the API service at the Next.js / frontend Dockerfile.
+Git
+---
+- **Repository:** your GitHub repo (e.g. BAYLA09/tetstt).
+- **Branch:** deploy-backend (recommended).
+- **Push:** always from repo root (`git push`). No `cd backend` required for git.
 
-3) Run
-   - Internal port: set EasyPanel **PORT** (env) to match the container port you publish (default image `PORT=8000`).
-   - The process listens on **0.0.0.0** and **PORT** from the environment (`start.sh` → uvicorn). Optional **HOST** env overrides bind address (default `0.0.0.0`).
-   - Public HTTPS: map host port → container **PORT** (often 8000).
+Build (critical — fixes `failed to read dockerfile: open code`)
+-----------------------------------------------------------------
+- **Build context / Root directory:** the folder that contains **`Dockerfile`**, **`requirements.txt`**, and **`app/`** (repository root after clone — NOT a bare folder named `code` unless that folder actually contains the Dockerfile file).
+- **Dockerfile path:** **`Dockerfile`** (the filename only, or path relative to context that ends with `Dockerfile`).
+- **Never** set Dockerfile path to: **`code`**, **`code/`**, or any **directory** path. Docker `-f` must point to a **file**. If EasyPanel shows `-f .../backend/code/`, the Dockerfile field is wrong — set it to **`Dockerfile`** so the full path becomes `.../code/Dockerfile` (or equivalent).
 
-4) Health check (Easypanel / reverse proxy)
-   - Internal probe port must match **PORT** (default 8000), not the public HTTPS port unless the panel documents that.
-   - Probe paths that return **200** quickly (no DB): `GET /`, `HEAD /`, `GET /health`, `HEAD /health`, `GET /health/`, `GET /ping` (plain text `ok`), `GET /live`, `HEAD /live`, `GET /ready`, `HEAD /ready`.
-   - **App works in browser but status stays red:** (1) Panel probes **HTTPS** public URL with a bad cert while the app is fine over HTTP inside the network — use **HTTP** to `127.0.0.1:$PORT` / container IP if the panel allows. (2) Probe got **307** from a trailing-slash redirect — the API sets `redirect_slashes=False` and registers `/health` and `/health/` to avoid that. (3) Probe uses **HEAD** — supported on `/`, `/health`, `/live`, `/ready`. (4) Probe expects **plain text** — use **`/ping`**. (5) Wrong internal port in the health form vs `PORT` env.
-   - Increase "health check timeout / grace period" to at least 60–120s on first deploy if the panel kills the container early.
+Expose / Domain
+----------------
+- **Host:** api.layalibeauty.shop
+- **Public Path:** /
+- **Destination Protocol:** HTTP
+- **Destination Port:** 8000
+- **Destination Path:** /
 
-5) If the service stays RED on first deploy
-   - Easypanel often times out while the API waits for Postgres. The API now starts immediately and runs DB init in the background (service can go green while Postgres is still starting).
-   - If orders fail with DB errors right after deploy, wait ~1 minute for background init, then retry.
-   - Still red? Check DATABASE_URL (internal Docker hostname for Postgres, not a random public IP unless you know routing).
+Health Check (internal — do not use public HTTPS for the probe if TLS fails)
+------------------------------------------------------------------------------
+- **Protocol:** HTTP
+- **Method:** GET
+- **Path:** /ping
+- **Port:** 8000 (must match container **PORT**; default is 8000).
+- If GET fails, try **HEAD** on **`/ping`**.
+- **Do not** use the HTTPS public domain for the **internal** health check if the panel mis-reports unhealthy while the app works in the browser.
 
-6) Environment variables (examples — set in Easypanel, not committed)
-   - DATABASE_URL=postgresql+asyncpg://user:pass@host:5432/dbname
-   - FRONTEND_ORIGIN=https://layalibeauty.shop
-   - ENABLE_IP_FRAUD_CHECK=false   (recommended unless MaxMind configured)
-   - TRUST_UAE_E164_WITHOUT_GEO=true
-   - CORS_ALLOW_ALL=false   (set true ONLY to test if the browser error is CORS; then set false again)
+Runtime env (examples)
+----------------------
+- `DATABASE_URL` — Postgres (app normalizes `postgres://` and `sslmode` for asyncpg).
+- `FRONTEND_ORIGIN` / `FRONTEND_URL` — storefront URL(s) for CORS.
+- `PORT` — optional; image defaults to **8000** if unset.
 
-7) If deploy still fails
-   - Open GitHub → Actions → "Backend Docker build" on latest push: if CI is red, open the log (build error is there).
-   - In Easypanel: open Build logs and copy the LAST 30 lines of the error.
+Notes
+-----
+- The API listens on **0.0.0.0** and **`${PORT:-8000}`** (see root `Dockerfile` `CMD`).
+- Liveness: **`GET /`** and **`HEAD /`** return **200** (body `ok` for GET `/`).
+- EasyPanel-friendly probe: **`GET /ping`** → plain text **`ok`**; **`HEAD /ping`** → **200**.
+- **`GET /health`** → JSON `{"status":"ok"}`; **`HEAD /health`** → **200** (also **`/health/`**).
+- Orders and other business routes are unchanged under **`/orders`**, etc.
 
-8) Common mistakes
-   - Wrong branch (main vs deploy-backend).
-   - Dockerfile path points to frontend Dockerfile by mistake.
-   - Port mismatch (container listens 8000 but proxy targets 3000).
-
-9) "Red" in Easypanel — what it usually means
-   - Build failed: open Build log; the last lines name the error (missing file, pip failed, wrong Dockerfile path).
-   - Runtime / health failed: open Logs; look for Traceback (ImportError, wrong DATABASE_URL, connection refused to DB).
-   - Service green but checkout fails in browser: rebuild frontend with NEXT_PUBLIC_API_BASE_URL = your public API URL (https://api...), or set CORS_ALLOW_ALL=true briefly to see if it is CORS.
-
-10) Quick checks (from any machine)
-   - curl -sS https://YOUR-API-HOST/   → should print JSON with "status":"ok"
-   - curl -sS -o /dev/null -w "%{http_code}" https://YOUR-API-HOST/health
-
-11) GitHub Actions = Success but Easypanel stays RED
-   - CI only proves `docker build` works on GitHub; Easypanel builds and runs on YOUR server with YOUR env vars.
-   - Click "Redeploy" / "Pull latest" after every push; old containers keep old code.
-   - In Runtime logs, you should see: `Layali API: starting uvicorn on :8000`. If that line never appears, the container exits before uvicorn (wrong CMD override, wrong working dir, or build context).
-   - If you see the line but still red: wrong health-check path/port in Easypanel, or TLS/proxy in front of the check.
-   - (AR) الـ CI الأخضر ما كيعنيش بلي السيرفر عندك شدّ آخر image — خاصّي Redeploy و Log ديال Runtime.
+Quick curl
+----------
+- `curl -sS http://HOST:8000/ping` → `ok`
+- `curl -sS http://HOST:8000/health` → `{"status":"ok"}`
