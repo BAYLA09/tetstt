@@ -1,7 +1,18 @@
 import type { CartItem } from "./products";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.layalibeauty.shop";
+/** When false, the browser calls the FastAPI host directly (CORS must allow the storefront). */
+const useSameOriginOrderProxy =
+  process.env.NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY !== "false";
+
+function orderRequestUrl(path: "/orders" | `/orders/${string}/upsell`): string {
+  if (!useSameOriginOrderProxy) {
+    const base = (
+      process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.layalibeauty.shop"
+    ).replace(/\/$/, "");
+    return `${base}${path}`;
+  }
+  return path === "/orders" ? "/api/orders" : `/api/orders/${path.slice("/orders/".length)}`;
+}
 
 export type OrderPayload = {
   customer_name: string;
@@ -23,7 +34,7 @@ export type OrderResponse = {
 };
 
 export async function createOrder(payload: OrderPayload): Promise<OrderResponse> {
-  const response = await fetch(`${API_BASE_URL}/orders`, {
+  const response = await fetch(orderRequestUrl("/orders"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -38,7 +49,7 @@ export async function createOrder(payload: OrderPayload): Promise<OrderResponse>
 }
 
 export async function addUpsell(orderId: string, sku: string, eventId: string) {
-  const response = await fetch(`${API_BASE_URL}/orders/${orderId}/upsell`, {
+  const response = await fetch(orderRequestUrl(`/orders/${orderId}/upsell`), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ sku, event_id: eventId, quantity: 1 }),
