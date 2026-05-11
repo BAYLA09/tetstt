@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     app_name: str = "Layali Beauty API"
     api_base_url: str | None = None
     database_url: str = "sqlite+aiosqlite:///./layali_dev.db"
-    frontend_origin: str = "http://localhost:3000"
+    frontend_origin: str = "https://layalibeauty.shop"
     frontend_url: str | None = None
     cors_origins: str | None = None
     sheet_webhook_url: str | None = None
@@ -32,9 +32,7 @@ class Settings(BaseSettings):
     maxmind_account_id: str | None = None
     maxmind_license_key: str | None = None
     enable_ip_fraud_check: bool = False
-    # With trust_uae_e164_without_geo (default true), +971 skips all IP/geo/VPN checks.
     trust_uae_e164_without_geo: bool = True
-    # If True, block on VPN/proxy/hosting traits and high IP risk when MaxMind runs.
     enable_maxmind_vpn_trait_block: bool = False
     order_allowed_country: str = "AE"
     whitelisted_phones: str = ""
@@ -77,14 +75,22 @@ class Settings(BaseSettings):
         if self.cors_origins:
             return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
 
-        origins = [
+        production = ["https://layalibeauty.shop"]
+        if self.cors_allow_www:
+            production.append("https://www.layalibeauty.shop")
+        raw = [
             self.effective_frontend_origin,
+            *production,
             "http://localhost:3000",
             "http://127.0.0.1:3000",
         ]
-        if self.cors_allow_www:
-            origins.append("https://www.layalibeauty.shop")
-        return origins
+        seen: set[str] = set()
+        out: list[str] = []
+        for origin in raw:
+            if origin and origin not in seen:
+                seen.add(origin)
+                out.append(origin)
+        return out
 
     @property
     def effective_sheet_webhook_url(self) -> str | None:
