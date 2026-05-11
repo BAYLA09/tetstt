@@ -34,6 +34,8 @@ def provider_hashes(phone: str) -> dict[str, str]:
 
 async def send_capi_events(order: dict[str, Any], user_agent: str | None, ip: str | None) -> None:
     """Best-effort CAPI dispatch. Orders must never fail because an ad API is down."""
+    if settings.disable_order_security_checks:
+        return
     payload_order = {
         **order,
         "items": [

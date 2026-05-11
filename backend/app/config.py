@@ -1,6 +1,11 @@
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
+from typing import Self
+
+from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from app.env_bool import env_bool
 
 
 class Settings(BaseSettings):
@@ -33,10 +38,31 @@ class Settings(BaseSettings):
     maxmind_license_key: str | None = None
     maxmind_max_ip_risk: int = 75
     enable_ip_fraud_check: bool = False
+    trust_uae_e164_without_geo: bool = True
+    disable_order_security_checks: bool = False
     order_allowed_country: str = "AE"
     whitelisted_phones: str = ""
     log_level: str = "INFO"
     cors_allow_www: bool = True
+
+    @model_validator(mode="after")
+    def apply_strict_bool_env(self) -> Self:
+        """Re-read critical flags from os.environ so string 'false' is never truthy."""
+        object.__setattr__(self, "enable_ip_fraud_check", env_bool("ENABLE_IP_FRAUD_CHECK", self.enable_ip_fraud_check))
+        object.__setattr__(
+            self, "trust_uae_e164_without_geo", env_bool("TRUST_UAE_E164_WITHOUT_GEO", self.trust_uae_e164_without_geo)
+        )
+        object.__setattr__(
+            self,
+            "disable_order_security_checks",
+            env_bool("DISABLE_ORDER_SECURITY_CHECKS", self.disable_order_security_checks),
+        )
+        object.__setattr__(self, "enable_capt", env_bool("ENABLE_CAPT", self.enable_capt))
+        object.__setattr__(self, "enable_meta_capt", env_bool("ENABLE_META_CAPT", self.enable_meta_capt))
+        object.__setattr__(self, "enable_tiktok_capt", env_bool("ENABLE_TIKTOK_CAPT", self.enable_tiktok_capt))
+        object.__setattr__(self, "enable_snap_capt", env_bool("ENABLE_SNAP_CAPT", self.enable_snap_capt))
+        object.__setattr__(self, "cors_allow_www", env_bool("CORS_ALLOW_WWW", self.cors_allow_www))
+        return self
 
     @staticmethod
     def _normalize_postgres_url(url: str, *, async_driver: bool) -> str:

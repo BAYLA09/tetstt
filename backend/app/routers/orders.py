@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from datetime import UTC, datetime
 from decimal import Decimal
 from typing import Annotated
@@ -13,10 +14,12 @@ from app.db import get_session
 from app.models import Order, OrderItem
 from app.products import PRODUCTS
 from app.schemas import OrderCreate, OrderResponse, UpsellCreate
-from app.services.fraud import is_uae_cod_phone, verify_order_ip
-from app.services.phone import normalize_uae_phone, phone_hash
+from app.services.fraud import verify_order_ip
+from app.services.phone import normalize_uae_phone, numeric_phone, phone_hash
 from app.services.sheet_webhook import send_order_to_sheet
 from app.services.tracking import send_capi_events
+
+log = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/orders", tags=["orders"])
 
@@ -78,14 +81,22 @@ async def create_order(
     user_agent: Annotated[str | None, Header(alias="user-agent")] = None,
     session: AsyncSession = Depends(get_session),
 ) -> OrderResponse:
+    log.info("order_submit_started path=/orders")
+    log.info(
+        "order_security_config ENABLE_IP_FRAUD_CHECK=%r(type=%s) DISABLE_ORDER_SECURITY_CHECKS=%r(type=%s) ENABLE_CAPT=%r(type=%s)",
+        settings.enable_ip_fraud_check,
+        type(settings.enable_ip_fraud_check).__name__,
+        settings.disable_order_security_checks,
+        type(settings.disable_order_security_checks).__name__,
+        settings.enable_capt,
+        type(settings.enable_capt).__name__,
+    )
     try:
         normalized_phone = normalize_uae_phone(payload.phone)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     client_ip = get_client_ip(request)
-    # UAE-only store: never run IP fraud for valid UAE mobiles (Easypanel / proxies).
-    if settings.enable_ip_fraud_check and not is_uae_cod_phone(normalized_phone):
-        await verify_order_ip(client_ip=client_ip, phone_e164=normalized_phone, request=request)
+    await verify_order_ip(client_ip=client_ip, phone_e164=normalized_phone, request=request)
     subtotal = Decimal("0")
     order_items: list[OrderItem] = []
     order_items_payload: list[dict] = []
@@ -143,8 +154,18 @@ async def create_order(
     await session.commit()
 
     sheet_payload = order_to_sheet_payload(order, order_items_payload)
-    await send_order_to_sheet(sheet_payload)
-    await send_capi_events(sheet_payload, user_agent, client_ip)
+    try:
+        await send_order_to_sheet(sheet_payload)
+    except Exception:
+        log.exception("order_sheet_webhook_failed order_id=%s", order.public_order_id)
+    try:
+        await send_capi_events(sheet_payload, user_agent, client_ip)
+    except Exception:
+        log.exception(
+            "order_capi_sidecar_failed order_id=%s phone_digits_prefix=%s",
+            order.public_order_id,
+            (numeric_phone(normalized_phone)[:6] + "…") if normalized_phone else None,
+        )
 
     return OrderResponse(
         order_id=order.public_order_id,
@@ -159,7 +180,7 @@ async def add_upsell(
     order_id: str,
     payload: UpsellCreate,
     session: AsyncSession = Depends(get_session),
-) -> UpsellResponse:
+) -> OrderResponse:
     product = PRODUCTS.get(payload.sku)
     if not product or product["price"] != Decimal("39"):
         raise HTTPException(status_code=400, detail="Invalid upsell SKU")
