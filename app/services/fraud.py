@@ -51,8 +51,10 @@ async def evaluate_order_ip(ip: str | None, phone_e164: str) -> FraudDecision:
     if is_whitelisted_phone(phone_e164):
         return FraudDecision(True, "phone_whitelisted")
 
-    if settings.trust_uae_e164_without_geo and phone_e164.startswith("+971"):
-        return FraudDecision(True, "uae_phone_trusted")
+    # UAE E.164: always skip IP / MaxMind for COD (Easypanel / proxies — unreliable client IP).
+    compact = phone_e164.strip().replace(" ", "").replace("-", "")
+    if compact.startswith("+971"):
+        return FraudDecision(True, "uae_e164_bypass")
 
     if not settings.enable_ip_fraud_check:
         return FraudDecision(True, "fraud_check_disabled")
