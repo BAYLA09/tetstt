@@ -54,7 +54,7 @@ Quick curl
 CORS + IP fraud (403 security message from storefront)
 --------------------------------------------------------
 - **CORS:** defaults include `https://layalibeauty.shop`, `https://www.layalibeauty.shop`, and `https://api.layalibeauty.shop`. Set `CORS_ORIGINS` (comma-separated) if you use another storefront host.
-- **IP / MaxMind:** any order whose phone normalizes to **+971…** (UAE mobile) **always skips** IP / MaxMind in `app/services/fraud.py` so COD works behind Easypanel even when the resolved IP is private or wrong. Non-UAE numbers still go through `ENABLE_IP_FRAUD_CHECK` when it is `true`. The image runs uvicorn with `--proxy-headers --forwarded-allow-ips='*'` so `X-Forwarded-For`, `CF-Connecting-IP`, and `X-Real-IP` are used for those checks.
+- **IP / MaxMind:** any order whose phone normalizes to **+971…** (UAE mobile) **always skips** IP / MaxMind in `backend/app/services/fraud.py` so COD works behind Easypanel even when the resolved IP is private or wrong. Non-UAE numbers still go through `ENABLE_IP_FRAUD_CHECK` when it is `true`. For those checks, configure uvicorn with `--proxy-headers` and `--forwarded-allow-ips='*'` (or equivalent) so `X-Forwarded-For`, `CF-Connecting-IP`, and `X-Real-IP` reach the app.
 - **Logs:** rejections log `order_ip_fraud_rejected` with `reason=` (e.g. `missing_or_private_ip`, `country_not_allowed:XX`).
 - **Next.js `/api/orders` proxy:** must forward `x-forwarded-for`, `x-real-ip`, and `cf-connecting-ip` from the browser to the API.
 
@@ -73,4 +73,4 @@ curl -sS -D - "https://$HOST/orders" \
   -H "X-Forwarded-For: 203.0.113.10" \
   --data '{"customer_name":"Test","phone":"+971501234567","items":[{"sku":"LB-BUNDLE-299","name":"Test","price":299,"quantity":1}],"currency":"AED","source_url":"https://layalibeauty.shop/","landing_page":"https://layalibeauty.shop/","event_ids":{},"tracking":{},"utm":{}}'
 ```
-Without `X-Forwarded-For`, some setups only see a private IP → 403 with `reason=missing_or_private_ip`.
+Without `X-Forwarded-For`, non-UAE fraud checks may only see a private IP → 403 with `reason=missing_or_private_ip`.
