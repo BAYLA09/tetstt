@@ -20,10 +20,10 @@ Layali API — Easypanel (deploy-backend)
    - Public HTTPS: map host port → container **PORT** (often 8000).
 
 4) Health check (Easypanel / reverse proxy)
-   - Internal HTTP port must be 8000 (same as CMD).
-   - Probe path: GET `/` (preferred) or GET `/health` or GET `/live` or GET `/ready` — all return 200 + JSON quickly (no DB).
+   - Internal probe port must match **PORT** (default 8000), not the public HTTPS port unless the panel documents that.
+   - Probe paths that return **200** quickly (no DB): `GET /`, `HEAD /`, `GET /health`, `HEAD /health`, `GET /health/`, `GET /ping` (plain text `ok`), `GET /live`, `HEAD /live`, `GET /ready`, `HEAD /ready`.
+   - **App works in browser but status stays red:** (1) Panel probes **HTTPS** public URL with a bad cert while the app is fine over HTTP inside the network — use **HTTP** to `127.0.0.1:$PORT` / container IP if the panel allows. (2) Probe got **307** from a trailing-slash redirect — the API sets `redirect_slashes=False` and registers `/health` and `/health/` to avoid that. (3) Probe uses **HEAD** — supported on `/`, `/health`, `/live`, `/ready`. (4) Probe expects **plain text** — use **`/ping`**. (5) Wrong internal port in the health form vs `PORT` env.
    - Increase "health check timeout / grace period" to at least 60–120s on first deploy if the panel kills the container early.
-   - If the panel probes HTTPS on the public URL, ensure the certificate is valid; a bad TLS handshake can show as "unhealthy" even if the app is fine.
 
 5) If the service stays RED on first deploy
    - Easypanel often times out while the API waits for Postgres. The API now starts immediately and runs DB init in the background (service can go green while Postgres is still starting).
