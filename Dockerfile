@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.11-slim
 
 WORKDIR /app
 
@@ -10,12 +10,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-RUN chmod +x /app/start.sh
-
-# Default PORT for local `docker run`; EasyPanel overrides PORT at runtime.
-ENV HOST=0.0.0.0 \
-    PORT=8000
-
+ENV PORT=8000
 EXPOSE 8000
 
-CMD ["/app/start.sh"]
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
