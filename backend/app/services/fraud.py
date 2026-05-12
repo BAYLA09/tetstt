@@ -44,7 +44,7 @@ def is_whitelisted_phone(phone_e164: str) -> bool:
 
 def _digits_uae_national(phone_e164: str) -> str:
     """971… national digits (no leading +)."""
-    d = numeric_phone(phone_e164 or "")
+    d = numeric_phone((phone_e164 or "").strip())
     if d.startswith("00971"):
         d = d[2:]
     return d
@@ -150,6 +150,15 @@ async def verify_order_ip(
     *,
     request: Request | None = None,
 ) -> None:
+    rid = getattr(request.state, "request_id", "-") if request else "-"
+    log.info(
+        "order_fraud_verify_enter rid=%s phone_digits_prefix=%s is_uae_national=%s disable_security=%s enable_ip_check=%s",
+        rid,
+        (numeric_phone((phone_e164 or "").strip())[:6] + "…") if phone_e164 else None,
+        is_uae_national_phone_e164(phone_e164),
+        settings.disable_order_security_checks,
+        settings.enable_ip_fraud_check,
+    )
     if settings.disable_order_security_checks:
         log.warning("order_security_bypassed_by_env DISABLE_ORDER_SECURITY_CHECKS=true")
         return
@@ -179,7 +188,8 @@ async def verify_order_ip(
     referer = (request.headers.get("referer") or "")[:160] if request else ""
     ua_len = len(request.headers.get("user-agent") or "") if request else 0
     log.warning(
-        "order_rejected_security reason=%s client_ip=%r xff=%r origin=%r referer=%r ua_len=%s phone_digits_prefix=%s",
+        "order_rejected_security rid=%s reason=%s client_ip=%r xff=%r origin=%r referer=%r ua_len=%s phone_digits_prefix=%s",
+        rid,
         decision.reason,
         client_ip,
         xff,
@@ -198,5 +208,9 @@ async def verify_order_ip(
             ),
             "reason": decision.reason,
             "code": "ORDER_SECURITY_IP",
+        },
+        headers={
+            "X-Order-Security-Reason": decision.reason,
+            "X-Order-Security-Code": "ORDER_SECURITY_IP",
         },
     )

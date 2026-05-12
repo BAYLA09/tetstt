@@ -1,6 +1,8 @@
 import logging
+import uuid
+from typing import Any
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
@@ -20,7 +22,17 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["X-Request-ID", "X-Order-Security-Reason", "X-Order-Security-Code"],
 )
+
+
+@app.middleware("http")
+async def request_id_middleware(request: Request, call_next: Any) -> Response:
+    rid = request.headers.get("x-request-id") or str(uuid.uuid4())
+    request.state.request_id = rid
+    response = await call_next(request)
+    response.headers["X-Request-ID"] = rid
+    return response
 
 
 @app.on_event("startup")

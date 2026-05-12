@@ -3,6 +3,17 @@ import { forwardClientIpHeaders, resolveOrderBackendBaseUrl } from "@/lib/order-
 
 type RouteContext = { params: Promise<{ orderId: string }> };
 
+function forwardResponseMetaHeaders(upstream: Response): Headers {
+  const headers = new Headers();
+  const ct = upstream.headers.get("content-type") || "application/json";
+  headers.set("Content-Type", ct);
+  for (const name of ["x-request-id", "x-order-security-reason", "x-order-security-code"] as const) {
+    const v = upstream.headers.get(name);
+    if (v) headers.set(name, v);
+  }
+  return headers;
+}
+
 export async function POST(req: NextRequest, ctx: RouteContext) {
   const { orderId } = await ctx.params;
   const backend = resolveOrderBackendBaseUrl();
@@ -18,6 +29,6 @@ export async function POST(req: NextRequest, ctx: RouteContext) {
   });
 
   const text = await res.text();
-  const ct = res.headers.get("content-type") || "application/json";
-  return new NextResponse(text, { status: res.status, headers: { "Content-Type": ct } });
+  const outHeaders = forwardResponseMetaHeaders(res);
+  return new NextResponse(text, { status: res.status, headers: outHeaders });
 }

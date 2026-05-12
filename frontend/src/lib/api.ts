@@ -40,13 +40,20 @@ function sanitizePayloadForLog(payload: OrderPayload): Record<string, unknown> {
   };
 }
 
-type ParsedApiDetail = { message?: string; reason?: string; code?: string };
+type ParsedApiDetail = { message?: string; reason?: string; code?: string; requestId?: string };
 
 function parseFastApiDetail(raw: string): ParsedApiDetail {
   const trimmed = raw.trim();
   if (!trimmed.startsWith("{")) return {};
   try {
-    const j = JSON.parse(trimmed) as { detail?: unknown };
+    const j = JSON.parse(trimmed) as { detail?: unknown; message?: string; reason?: string; code?: string };
+    if (typeof j.message === "string" && j.message) {
+      return {
+        message: j.message,
+        reason: typeof j.reason === "string" ? j.reason : undefined,
+        code: typeof j.code === "string" ? j.code : undefined,
+      };
+    }
     const d = j.detail;
     if (typeof d === "string" && d) return { message: d };
     if (Array.isArray(d) && d.length > 0 && typeof d[0] === "object" && d[0] !== null) {
@@ -67,15 +74,37 @@ function parseFastApiDetail(raw: string): ParsedApiDetail {
   return {};
 }
 
+function mergeOrderErrorDetail(status: number, response: Response | undefined, raw: string): ParsedApiDetail {
+  const base = parseFastApiDetail(raw);
+  if (status !== 403 || !response) return base;
+  const hr = response.headers.get("x-order-security-reason");
+  const hc = response.headers.get("x-order-security-code");
+  const reqId = response.headers.get("x-request-id");
+  if (hr) {
+    return {
+      message: base.message,
+      reason: base.reason || hr,
+      code: base.code || hc || undefined,
+      requestId: reqId || undefined,
+    };
+  }
+  return base;
+}
+
 function extractDetailReason(raw: string): string | undefined {
   return parseFastApiDetail(raw).reason;
 }
 
-function logOrderSecurityReason(status: number, raw: string): void {
+function logOrderSecurityReason(status: number, raw: string, response?: Response): void {
   if (typeof window === "undefined" || status !== 403) return;
-  const { reason, code, message } = parseFastApiDetail(raw);
-  if (reason || code || message) {
-    console.warn("[checkout] order API security detail:", { reason: reason ?? null, code: code ?? null, message: message ?? null });
+  const parsed = mergeOrderErrorDetail(status, response, raw);
+  if (parsed.reason || parsed.code || parsed.message || parsed.requestId) {
+    console.warn("[checkout] order API security detail:", {
+      reason: parsed.reason ?? null,
+      code: parsed.code ?? null,
+      message: parsed.message ?? null,
+      requestId: parsed.requestId ?? response?.headers.get("x-request-id") ?? null,
+    });
   }
 }
 
@@ -89,8 +118,8 @@ function userMessageForSecurityReason(reason: string): string {
   return "تعذر قبول الطلب لأسباب أمنية. جرّبي من شبكة أخرى أو تواصلي معنا.";
 }
 
-function orderApiUserMessage(status: number, raw: string): string {
-  const parsed = parseFastApiDetail(raw);
+function orderApiUserMessage(status: number, raw: string, response?: Response): string {
+  const parsed = mergeOrderErrorDetail(status, response, raw);
   checkoutVerboseLog("parseFastApiDetail", { status, ...parsed, rawHead: raw.slice(0, 800) });
 
   if (parsed.message) return parsed.message;
@@ -100,7 +129,7 @@ function orderApiUserMessage(status: number, raw: string): string {
 
   if (status === 403) {
     if (parsed.reason) return userMessageForSecurityReason(parsed.reason);
-    return "تعذر قبول الطلب لأسباب أمنية. جرّبي من شبكة أخرى أو تواصلي معنا.";
+    return "تعذر قبول الطلب لأسباب أمنية. جرّبي من شبكة أخرى أو تواصلي معنا. (لا يوجد تفسير من الخادم — افتحي Network → Response و Headers)";
   }
   if (status === 429) {
     return "طلبات كثيرة من نفس الجهاز. انتظري قليلاً ثم أعيدي المحاولة.";
@@ -300,13 +329,13 @@ export async function createOrder(payload: OrderPayload): Promise<OrderResponse>
     }
     throw e;
   }
-  const detailReason = extractDetailReason(rawBody);
-
   console.info("[checkout] POST /orders — response", {
     requestUrlUsed: absoluteUrlForLog(usedUrl),
     responseStatus: response.status,
     responseBody: rawBody.slice(0, 4000),
-    detailReason: detailReason ?? null,
+    detailReason: extractDetailReason(rawBody) ?? mergeOrderErrorDetail(response.status, response, rawBody).reason ?? null,
+    responseRequestId: response.headers.get("x-request-id"),
+    xOrderSecurityReason: response.headers.get("x-order-security-reason"),
   });
 
   if (!response.ok) {
@@ -316,8 +345,8 @@ export async function createOrder(payload: OrderPayload): Promise<OrderResponse>
         reason: extractDetailReason(rawBody) ?? null,
       });
     }
-    logOrderSecurityReason(response.status, rawBody);
-    throw new Error(orderApiUserMessage(response.status, rawBody));
+    logOrderSecurityReason(response.status, rawBody, response);
+    throw new Error(orderApiUserMessage(response.status, rawBody, response));
   }
 
   clearPendingOrderSnapshot();
@@ -345,18 +374,19 @@ export async function addUpsell(orderId: string, sku: string, eventId: string) {
 
   const jsonBody = JSON.stringify(body);
   const { response, rawBody, usedUrl } = await postOrderWithOptionalSameOriginFallback(path, jsonBody, "POST upsell");
-  const detailReason = extractDetailReason(rawBody);
 
   console.info("[checkout] POST upsell — response", {
     requestUrlUsed: absoluteUrlForLog(usedUrl),
     responseStatus: response.status,
     responseBody: rawBody.slice(0, 4000),
-    detailReason: detailReason ?? null,
+    detailReason: extractDetailReason(rawBody) ?? mergeOrderErrorDetail(response.status, response, rawBody).reason ?? null,
+    responseRequestId: response.headers.get("x-request-id"),
+    xOrderSecurityReason: response.headers.get("x-order-security-reason"),
   });
 
   if (!response.ok) {
-    logOrderSecurityReason(response.status, rawBody);
-    throw new Error(orderApiUserMessage(response.status, rawBody));
+    logOrderSecurityReason(response.status, rawBody, response);
+    throw new Error(orderApiUserMessage(response.status, rawBody, response));
   }
 
   return JSON.parse(rawBody) as OrderResponse;

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ipaddress
 import logging
 from datetime import UTC, datetime
 from decimal import Decimal
@@ -14,7 +15,7 @@ from app.db import get_session
 from app.models import Order, OrderItem
 from app.products import PRODUCTS
 from app.schemas import OrderCreate, OrderResponse, UpsellCreate
-from app.services.fraud import verify_order_ip
+from app.services.fraud import is_uae_national_phone_e164, verify_order_ip
 from app.services.phone import normalize_uae_phone, numeric_phone, phone_hash
 from app.services.sheet_webhook import send_order_to_sheet
 from app.services.tracking import send_capi_events
@@ -39,6 +40,24 @@ def get_client_ip(request: Request) -> str | None:
     if forwarded:
         return forwarded.split(",")[0].strip()
     return request.client.host if request.client else None
+
+
+def client_ip_kind(ip: str | None) -> str:
+    """Safe label for logs (no full IP)."""
+    if not ip or not str(ip).strip():
+        return "missing"
+    first = str(ip).split(",")[0].strip()
+    try:
+        addr = ipaddress.ip_address(first)
+        if addr.is_private:
+            return "private"
+        if addr.is_loopback:
+            return "loopback"
+        if addr.is_link_local:
+            return "link_local"
+        return "public"
+    except ValueError:
+        return "unparseable"
 
 
 def order_to_sheet_payload(order: Order, items: list[dict]) -> dict:
@@ -81,9 +100,12 @@ async def create_order(
     user_agent: Annotated[str | None, Header(alias="user-agent")] = None,
     session: AsyncSession = Depends(get_session),
 ) -> OrderResponse:
-    log.info("order_submit_started path=/orders")
+    rid = getattr(request.state, "request_id", "-")
+    log.info("order_create_enter rid=%s path=/orders method=POST items_count=%s", rid, len(payload.items))
+    log.info("order_submit_started path=/orders rid=%s", rid)
     log.info(
-        "order_security_config ENABLE_IP_FRAUD_CHECK=%r(type=%s) DISABLE_ORDER_SECURITY_CHECKS=%r(type=%s) ENABLE_CAPT=%r(type=%s)",
+        "order_security_config rid=%s ENABLE_IP_FRAUD_CHECK=%r(type=%s) DISABLE_ORDER_SECURITY_CHECKS=%r(type=%s) ENABLE_CAPT=%r(type=%s)",
+        rid,
         settings.enable_ip_fraud_check,
         type(settings.enable_ip_fraud_check).__name__,
         settings.disable_order_security_checks,
@@ -94,9 +116,26 @@ async def create_order(
     try:
         normalized_phone = normalize_uae_phone(payload.phone)
     except ValueError as exc:
+        log.info("order_phone_invalid rid=%s exc_type=ValueError", rid)
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+    nd = numeric_phone(normalized_phone)
+    phone_prefix = (nd[:6] + "…") if len(nd) >= 6 else nd + "…"
+    log.info(
+        "order_phone_normalized rid=%s phone_digits_prefix=%s phone_digit_len=%s uae_national_precheck=%s",
+        rid,
+        phone_prefix,
+        len(nd),
+        is_uae_national_phone_e164(normalized_phone),
+    )
     client_ip = get_client_ip(request)
+    log.info(
+        "order_client_network rid=%s client_ip_kind=%s has_xff=%s",
+        rid,
+        client_ip_kind(client_ip),
+        bool(request.headers.get("x-forwarded-for")),
+    )
     await verify_order_ip(client_ip=client_ip, phone_e164=normalized_phone, request=request)
+    log.info("order_fraud_gate_passed rid=%s", rid)
     subtotal = Decimal("0")
     order_items: list[OrderItem] = []
     order_items_payload: list[dict] = []

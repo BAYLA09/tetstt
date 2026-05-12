@@ -3,7 +3,8 @@ import re
 
 
 def normalize_phone(value: str) -> str:
-    digits = re.sub(r"\D", "", value or "")
+    raw = (value or "").strip()
+    digits = re.sub(r"\D", "", raw)
     if digits.startswith("00971"):
         digits = digits[2:]
 

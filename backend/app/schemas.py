@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class OrderItemIn(BaseModel):
@@ -18,6 +18,13 @@ class OrderCreate(BaseModel):
     event_ids: dict[str, str] = Field(default_factory=dict)
     tracking: dict[str, str] = Field(default_factory=dict)
     utm: dict[str, str] = Field(default_factory=dict)
+
+    @field_validator("phone", "customer_name", mode="before")
+    @classmethod
+    def strip_text_fields(cls, v: object) -> object:
+        if isinstance(v, str):
+            return v.strip()
+        return v
 
 
 class UpsellCreate(BaseModel):

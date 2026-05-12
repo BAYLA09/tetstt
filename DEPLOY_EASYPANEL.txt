@@ -64,6 +64,8 @@ curl -sS "https://api.layalibeauty.shop/version" | jq .
 
 Expect JSON: `commit_sha`, `build_time_utc`, `enable_ip_fraud_check`, `disable_order_security_checks` (booleans only — no DB URLs or keys).
 
+**POST /orders correlation:** every response includes **`X-Request-ID`**. On IP security rejection (**403**), the API adds **`X-Order-Security-Reason`** and **`X-Order-Security-Code`** (duplicate of JSON `detail` when a proxy strips the body). Match **`X-Request-ID`** to container lines **`order_create_enter`**, **`order_fraud_verify_enter`**, **`order_rejected_security`**, or **`order_fraud_gate_passed`**.
+
 **API startup logs** should contain one line:
 
 `app_startup commit_sha=… build_time_utc=…`
