@@ -1,10 +1,12 @@
-# Next.js storefront — NEXT_PUBLIC_* must exist at `next build` (Docker build-args + .env.production).
-# EasyPanel: **Rebuild** the image; a 0–2s "deploy" usually skips `docker build` or reuses a cached image.
-# If Docker **context** is the **repo root** (not this folder), use **`Dockerfile.frontend`** at repository root instead.
+# Next.js storefront — use when EasyPanel build **context** is the **repo root** (…/code/),
+# not the `frontend/` subfolder. For context=`frontend/`, use `frontend/Dockerfile` instead.
+#
+# Build:  docker build -f Dockerfile.frontend .
+# EasyPanel: Root directory = clone root · Dockerfile path = Dockerfile.frontend
 
 FROM node:20-alpine AS deps
 WORKDIR /app
-COPY package.json package-lock.json ./
+COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci
 
 FROM node:20-alpine AS builder
@@ -24,10 +26,10 @@ ENV NEXT_PUBLIC_APP_BUILD_MARKER=$NEXT_PUBLIC_APP_BUILD_MARKER
 ENV NEXT_PUBLIC_DOCKER_CACHE_BUST=$CACHE_BUST
 
 COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+COPY frontend/ .
 
-# Build-time clock + proof EasyPanel ran `docker build` (see panel build logs).
 RUN echo "==== docker_build_clock_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ) ====" && \
+    echo "dockerfile=Dockerfile.frontend context=repo_root" && \
     echo "CACHE_BUST=${CACHE_BUST}" && \
     echo "COMMIT_SHA_ARG=${COMMIT_SHA}" && \
     echo "BUILD_TIME_UTC_ARG=${BUILD_TIME_UTC}" && \
@@ -35,7 +37,6 @@ RUN echo "==== docker_build_clock_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ) ====" && \
     echo "NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY=${NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY}" && \
     echo "NEXT_PUBLIC_GIT_COMMIT_ARG=${NEXT_PUBLIC_GIT_COMMIT}"
 
-# Bake commit + build time into .env.production for `next build` (NEXT_PUBLIC_*).
 RUN set -e; \
     CMT="${NEXT_PUBLIC_GIT_COMMIT}"; \
     if [ -z "$CMT" ] || [ "$CMT" = "unknown" ]; then CMT="${COMMIT_SHA}"; fi; \
@@ -68,6 +69,4 @@ COPY --from=builder /app/next.config.ts ./next.config.ts
 
 EXPOSE 3000
 
-# Bind 0.0.0.0 here so EasyPanel/reverse-proxy health checks work even if an old
-# image had `next start` without -H in package.json or the panel overrides npm scripts.
 CMD ["sh", "-c", "echo \"next_start bind=0.0.0.0 PORT=${PORT:-3000}\" && exec ./node_modules/.bin/next start -H 0.0.0.0 -p ${PORT:-3000}"]
