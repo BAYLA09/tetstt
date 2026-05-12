@@ -1,5 +1,8 @@
 from decimal import Decimal
 
+# Lamp hero offer tiers (must match storefront `offerTiers` SKUs and prices).
+LAMP_OFFER_SKUS = frozenset({"LB-LAMP-189", "LB-LAMP-OUD-379", "LB-LAMP-TRIPLE-449"})
+
 PRODUCTS = {
     "LB-BUNDLE-299": {"name": "باقة ليالي بيوتي الفاخرة", "price": Decimal("299"), "sheet_sku": "LY-8F3K2"},
     "LB-SERUM-MUSK-59": {"name": "سيروم مسك المطر الأبيض", "price": Decimal("59"), "sheet_sku": "LY-4M7Q9"},
@@ -11,3 +14,13 @@ PRODUCTS = {
     "LB-UPSELL-MUSK-39": {"name": "سيروم مسك المطر الأبيض - عرض خاص", "price": Decimal("39"), "sheet_sku": "LY-3U8M4"},
     "LB-UPSELL-OUD-39": {"name": "سيروم عود قصر دبي - عرض خاص", "price": Decimal("39"), "sheet_sku": "LY-7O2D5"},
 }
+
+
+def lamp_bundle_prices() -> dict[str, str]:
+    """Expose tier prices for /version (AED, string for JSON)."""
+    out: dict[str, str] = {}
+    for sku in sorted(LAMP_OFFER_SKUS):
+        row = PRODUCTS.get(sku)
+        if row:
+            out[sku] = str(row["price"])
+    return out

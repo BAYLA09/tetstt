@@ -1,8 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductHero } from "@/components/ProductHero";
-import { getProduct, getProductBySku, products, type Product } from "@/lib/products";
+import { getProduct, products, type Product } from "@/lib/products";
 
 const DEFAULT_OBJECTIONS: [string, string][] = [
   ["هل الموقع موثوق؟", "الدفع عند الاستلام، رقم واضح، وتأكيد قبل الشحن. ما كاين حتى دفع أونلاين."],
@@ -130,11 +129,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const faqItems = isAroma ? AROMA_FAQ : DEFAULT_FAQ;
   const trustBullets = isAroma ? AROMA_TRUST_BULLETS : DEFAULT_TRUST_BULLETS;
 
-  const serum = getProductBySku("LB-SERUM-OUD-69");
   const related: Product[] = isAroma
-    ? serum
-      ? [serum]
-      : []
+    ? []
     : products.filter((item) => item.sku !== product.sku).slice(0, 3);
 
   return (
@@ -233,24 +229,23 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </div>
       </section>
 
-      <section className="bg-[var(--cream-50)] px-4 py-16">
-        <div className="container-grid">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <p className="section-kicker">اختيارات تكمل طلبك</p>
-              <h2 className="section-title">أضيفي لمسة ثانية للسلة.</h2>
+      {!isAroma && related.length > 0 && (
+        <section className="bg-[var(--cream-50)] px-4 py-16">
+          <div className="container-grid">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <p className="section-kicker">اختيارات تكمل طلبك</p>
+                <h2 className="section-title">أضيفي لمسة ثانية للسلة.</h2>
+              </div>
             </div>
-            <Link href="/products/aroma-flame-lamp" className="btn-secondary">
-              صفحة المنتج
-            </Link>
+            <div className="mt-10 grid gap-5 md:grid-cols-3">
+              {related.map((item) => (
+                <ProductCard key={item.sku} product={item} />
+              ))}
+            </div>
           </div>
-          <div className="mt-10 grid gap-5 md:grid-cols-3">
-            {related.map((item) => (
-              <ProductCard key={item.sku} product={item} />
-            ))}
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <section className="bg-white px-4 py-16">
         <div className="container-grid">
