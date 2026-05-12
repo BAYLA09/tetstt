@@ -1,3 +1,16 @@
+/** Bundle line on the product hero (e.g. aroma lamp + serums). */
+export type ProductOfferTier = {
+  sku: string;
+  title: string;
+  description: string;
+  price: number;
+  compareAt?: number;
+  saveLabel?: string;
+  badge?: string;
+  /** Pre-selected tier in the hero picker. */
+  default?: boolean;
+};
+
 export type Product = {
   sku: string;
   slug: string;
@@ -15,6 +28,10 @@ export type Product = {
   heroPanorama?: boolean;
   /** Hero image + story blocks render above price and add-to-cart. */
   storyBeforeCommerce?: boolean;
+  /** Optional multi-SKU picker on the hero (replaces single “current offer” price). */
+  offerTiers?: ProductOfferTier[];
+  /** Thin urgency line above the tier picker (shipping / promo). */
+  heroPromoLine?: string;
   beforeAfterStory?: {
     kicker: string;
     title: string;
@@ -99,13 +116,40 @@ export const products: Product[] = [
     name: "موقد اللهب الفاخر",
     shortName: "الموقد الفاخر",
     price: 299,
-    compareAt: 449,
     badge: "يحوّل جو البيت",
     headline: "لهب واقعي + ضباب بارد + رائحة تملأ الغرفة — بدون نار حقيقية.",
     subheading:
       "موقد إلكتروني فاخر يعطي دفء وجو راقٍ لأي غرفة. يعمل مع أي زيت عطري.",
     story: "الجهاز الذي يحوّل غرفتك من فارغة لدافئة في دقائق.",
     notes: ["لهب LED واقعي", "ناشر زيوت عطرية", "مؤقت 1h/3h/5h", "آمن مع الأطفال"],
+    heroPromoLine: "آخر 48 ساعة على عرض الشحن المجاني هذا الأسبوع",
+    offerTiers: [
+      {
+        sku: "LB-LAMP-189",
+        title: "الموقد فقط",
+        description: "جهاز موقد اللهب الفاخر — بدون سيروم",
+        price: 299,
+      },
+      {
+        sku: "LB-LAMP-OUD-379",
+        title: "الموقد + سيروم عود قصر دبي",
+        description: "موقد اللهب + عود قصر دبي 100مل — الثنائي الأمثل",
+        price: 379,
+        compareAt: 498,
+        saveLabel: "وفري 119 درهم",
+        badge: "الأكثر اختياراً",
+        default: true,
+      },
+      {
+        sku: "LB-LAMP-TRIPLE-449",
+        title: "الموقد + عود + مسك",
+        description: "موقد اللهب + عود قصر دبي + مسك المطر الأبيض",
+        price: 449,
+        compareAt: 697,
+        saveLabel: "وفري 248 درهم",
+        badge: "الأكثر توفيراً",
+      },
+    ],
     image: "/products/aroma-lamp-oud-hero.jpg",
     cardImage: "/products/img-diffuser-card.jpg",
     heroPanorama: true,
@@ -170,11 +214,31 @@ export function money(value: number) {
   return `${value} درهم`;
 }
 
+const LAMP_FAMILY_SKUS = new Set(["LB-LAMP-189", "LB-LAMP-OUD-379", "LB-LAMP-TRIPLE-449"]);
+
+export function resolveDefaultOfferTier(product: Product): ProductOfferTier | null {
+  const tiers = product.offerTiers;
+  if (!tiers?.length) return null;
+  return tiers.find((t) => t.default) ?? tiers[0] ?? null;
+}
+
+/** Line item passed to the cart / checkout for a selected hero bundle tier. */
+export function productSnapshotForOfferTier(base: Product, tier: ProductOfferTier): Product {
+  return {
+    ...base,
+    sku: tier.sku,
+    name: tier.title,
+    shortName: tier.title,
+    price: tier.price,
+    compareAt: tier.compareAt,
+  };
+}
+
 export function getCrossSells(skus: string[]) {
   const inCart = new Set(skus);
   const suggestions: Product[] = [];
   const hasBundle = inCart.has("LB-BUNDLE-299");
-  const hasLamp = inCart.has("LB-LAMP-189");
+  const hasLamp = skus.some((sku) => LAMP_FAMILY_SKUS.has(sku));
   const hasMusk = inCart.has("LB-SERUM-MUSK-59");
   const hasOud = inCart.has("LB-SERUM-OUD-69");
 
