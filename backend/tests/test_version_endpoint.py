@@ -23,6 +23,11 @@ def test_version_ok() -> None:
     assert "enable_ip_fraud_check" in data
     assert "disable_order_security_checks" in data
     assert isinstance(data["enable_ip_fraud_check"], bool)
+    assert "catalog_skus" in data
+    skus = data["catalog_skus"]
+    assert isinstance(skus, list)
+    assert "LB-LAMP-OUD-379" in skus
+    assert "LB-LAMP-TRIPLE-449" in skus
 
 
 def test_version_head() -> None:

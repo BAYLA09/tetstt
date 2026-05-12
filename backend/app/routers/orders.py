@@ -104,6 +104,7 @@ async def create_order(
     for item in payload.items:
         product = PRODUCTS.get(item.sku)
         if not product:
+            log.warning("order_unknown_sku sku=%r", item.sku)
             raise HTTPException(status_code=400, detail=f"Unknown SKU: {item.sku}")
         quantity = item.quantity
         price = product["price"]

@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class OrderItemIn(BaseModel):
@@ -6,6 +6,13 @@ class OrderItemIn(BaseModel):
     name: str | None = None
     price: float | None = None
     quantity: int = Field(default=1, ge=1, le=10)
+
+    @field_validator("sku", mode="before")
+    @classmethod
+    def normalize_sku(cls, v: object) -> str:
+        if isinstance(v, str):
+            return v.strip()
+        return str(v).strip()
 
 
 class OrderCreate(BaseModel):
@@ -26,6 +33,13 @@ class UpsellCreate(BaseModel):
     price: float | None = None
     quantity: int = Field(default=1, ge=1, le=3)
     event_id: str | None = None
+
+    @field_validator("sku", mode="before")
+    @classmethod
+    def normalize_sku(cls, v: object) -> str:
+        if isinstance(v, str):
+            return v.strip()
+        return str(v).strip()
 
 
 class OrderResponse(BaseModel):
