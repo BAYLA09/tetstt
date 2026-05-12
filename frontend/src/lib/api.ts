@@ -103,6 +103,93 @@ function absoluteUrlForLog(url: string): string {
   return url;
 }
 
+/** Slow mobile + cold API + server hooks; browser default has no clear limit. */
+const ORDER_FETCH_TIMEOUT_MS = 75_000;
+
+function createTimeoutSignal(ms: number): AbortSignal {
+  const AT = AbortSignal as typeof AbortSignal & { timeout?: (n: number) => AbortSignal };
+  if (typeof AT.timeout === "function") return AT.timeout(ms);
+  const c = new AbortController();
+  setTimeout(() => c.abort(), ms);
+  return c.signal;
+}
+
+function isAbortError(err: unknown): boolean {
+  return err instanceof DOMException && err.name === "AbortError";
+}
+
+function isLikelyTransientFetchFailure(err: unknown): boolean {
+  if (isAbortError(err)) return true;
+  if (err instanceof TypeError) return true;
+  return false;
+}
+
+function wrapOrderFetchFailure(err: unknown): Error {
+  if (isAbortError(err)) return new Error("انتهت مهلة الاتصال. جرّبي مرة أخرى.");
+  if (err instanceof TypeError) return new Error("تعذّر الاتصال بالخادم. تأكّدي من الإنترنت أو جرّبي مرة أخرى.");
+  if (err instanceof Error) return err;
+  return new Error("تعذر إرسال الطلب الآن. تأكدي من الرقم وحاولي مرة أخرى.");
+}
+
+function buildOrderFetchCandidates(path: "/orders" | `/orders/${string}/upsell`): string[] {
+  const primary = orderRequestUrl(path);
+  const out: string[] = [primary];
+  if (!useSameOriginOrderProxy && typeof window !== "undefined" && primary.startsWith("http")) {
+    out.push(path === "/orders" ? "/api/orders" : `/api/orders/${path.slice("/orders/".length)}`);
+  }
+  return out;
+}
+
+async function fetchOrderPost(url: string, jsonBody: string): Promise<{ response: Response; rawBody: string }> {
+  const signal = createTimeoutSignal(ORDER_FETCH_TIMEOUT_MS);
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: jsonBody,
+    signal,
+  });
+  const rawBody = await response.text();
+  return { response, rawBody };
+}
+
+async function postOrderWithOptionalSameOriginFallback(
+  path: "/orders" | `/orders/${string}/upsell`,
+  jsonBody: string,
+  logLabel: "POST /orders" | "POST upsell",
+): Promise<{ response: Response; rawBody: string; usedUrl: string }> {
+  const candidates = buildOrderFetchCandidates(path);
+  console.info(`[checkout] ${logLabel} — candidate URLs`, {
+    candidates: candidates.map(absoluteUrlForLog),
+    timeoutMs: ORDER_FETCH_TIMEOUT_MS,
+  });
+
+  let lastErr: unknown;
+  for (let i = 0; i < candidates.length; i++) {
+    const url = candidates[i]!;
+    try {
+      const { response, rawBody } = await fetchOrderPost(url, jsonBody);
+      if (i > 0) {
+        console.info(`[checkout] ${logLabel} — succeeded via same-origin fallback`, {
+          usedUrl: absoluteUrlForLog(url),
+        });
+      }
+      return { response, rawBody, usedUrl: url };
+    } catch (err) {
+      lastErr = err;
+      const canRetry = i < candidates.length - 1 && isLikelyTransientFetchFailure(err);
+      if (canRetry) {
+        console.warn(`[checkout] ${logLabel} — transient failure, retrying same-origin`, {
+          failedUrl: absoluteUrlForLog(url),
+          err,
+        });
+        continue;
+      }
+      throw wrapOrderFetchFailure(err);
+    }
+  }
+  throw wrapOrderFetchFailure(lastErr);
+}
+
 export type OrderPayload = {
   customer_name: string;
   phone: string;
@@ -140,16 +227,16 @@ export async function createOrder(payload: OrderPayload): Promise<OrderResponse>
     payload: sanitizePayloadForLog(payload),
   });
 
-  const response = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-
-  const rawBody = await response.text();
+  const jsonBody = JSON.stringify(payload);
+  const { response, rawBody, usedUrl } = await postOrderWithOptionalSameOriginFallback(
+    path,
+    jsonBody,
+    "POST /orders",
+  );
   const detailReason = extractDetailReason(rawBody);
 
   console.info("[checkout] POST /orders — response", {
+    requestUrlUsed: absoluteUrlForLog(usedUrl),
     responseStatus: response.status,
     responseBody: rawBody.slice(0, 4000),
     detailReason: detailReason ?? null,
@@ -182,16 +269,12 @@ export async function addUpsell(orderId: string, sku: string, eventId: string) {
     body,
   });
 
-  const response = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-
-  const rawBody = await response.text();
+  const jsonBody = JSON.stringify(body);
+  const { response, rawBody, usedUrl } = await postOrderWithOptionalSameOriginFallback(path, jsonBody, "POST upsell");
   const detailReason = extractDetailReason(rawBody);
 
   console.info("[checkout] POST upsell — response", {
+    requestUrlUsed: absoluteUrlForLog(usedUrl),
     responseStatus: response.status,
     responseBody: rawBody.slice(0, 4000),
     detailReason: detailReason ?? null,
