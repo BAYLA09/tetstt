@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductHero } from "@/components/ProductHero";
-import { products } from "@/lib/products";
+import { getProduct, getProductBySku, products, type Product } from "@/lib/products";
 
 const DEFAULT_OBJECTIONS: [string, string][] = [
   ["هل الموقع موثوق؟", "الدفع عند الاستلام، رقم واضح، وتأكيد قبل الشحن. ما كاين حتى دفع أونلاين."],
@@ -105,7 +105,7 @@ type ProductPageProps = {
 
 export async function generateMetadata({ params }: ProductPageProps) {
   const { slug } = await params;
-  const product = products.find((item) => item.slug === slug);
+  const product = getProduct(slug);
   return {
     title: product ? `${product.name} | ليالي بيوتي` : "ليالي بيوتي",
     description: product?.subheading,
@@ -114,7 +114,7 @@ export async function generateMetadata({ params }: ProductPageProps) {
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
-  const product = products.find((item) => item.slug === slug);
+  const product = getProduct(slug);
 
   if (!product) {
     notFound();
@@ -127,8 +127,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const faqItems = isAroma ? AROMA_FAQ : DEFAULT_FAQ;
   const trustBullets = isAroma ? AROMA_TRUST_BULLETS : DEFAULT_TRUST_BULLETS;
 
-  const related = isAroma
-    ? products.filter((item) => item.sku === "LB-SERUM-OUD-69")
+  const serum = getProductBySku("LB-SERUM-OUD-69");
+  const related: Product[] = isAroma
+    ? serum
+      ? [serum]
+      : []
     : products.filter((item) => item.sku !== product.sku).slice(0, 3);
 
   return (
@@ -234,8 +237,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <p className="section-kicker">اختيارات تكمل طلبك</p>
               <h2 className="section-title">أضيفي لمسة ثانية للسلة.</h2>
             </div>
-            <Link href="/collections" className="btn-secondary">
-              كل العروض
+            <Link href="/products/aroma-flame-lamp" className="btn-secondary">
+              صفحة المنتج
             </Link>
           </div>
           <div className="mt-10 grid gap-5 md:grid-cols-3">

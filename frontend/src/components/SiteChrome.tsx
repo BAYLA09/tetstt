@@ -7,8 +7,7 @@ import { BrandLogo } from "./BrandLogo";
 
 const nav = [
   { href: "/", label: "الرئيسية" },
-  { href: "/collections", label: "المجموعة" },
-  { href: "/products/luxury-bundle", label: "الباقة" },
+  { href: "/products/aroma-flame-lamp", label: "موقد ليالي" },
   { href: "/about", label: "عن ليالي" },
   { href: "/contact", label: "تواصل" },
 ];

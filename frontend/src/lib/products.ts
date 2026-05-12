@@ -55,7 +55,8 @@ export type CartItem = {
   quantity: number;
 };
 
-export const products: Product[] = [
+/** Full catalog for lookups (cart, related SKU, orders). */
+const catalogProducts: Product[] = [
   {
     sku: "LB-BUNDLE-299",
     slug: "luxury-bundle",
@@ -176,6 +177,15 @@ export const products: Product[] = [
   },
 ];
 
+/** Only these `/products/[slug]` pages are built and reachable. Expand when relaunching the full store. */
+const STOREFRONT_SLUG_ALLOWLIST = new Set<string>(["aroma-flame-lamp"]);
+
+/** Listed on home/collections and passed to `generateStaticParams`. */
+export const products: Product[] = catalogProducts.filter((p) => STOREFRONT_SLUG_ALLOWLIST.has(p.slug));
+
+/** After checkout, skip the one-time upsell modal and go straight to thank-you (single-product test flow). */
+export const SKIP_POST_ORDER_UPSELL_MODAL = true;
+
 export const upsells: Product[] = [
   {
     sku: "LB-UPSELL-MUSK-39",
@@ -206,11 +216,12 @@ export const upsells: Product[] = [
 export const PRODUCTS = products;
 
 export function getProduct(slug: string) {
-  return products.find((product) => product.slug === slug);
+  if (!STOREFRONT_SLUG_ALLOWLIST.has(slug)) return undefined;
+  return catalogProducts.find((product) => product.slug === slug);
 }
 
 export function getProductBySku(sku: string) {
-  return [...products, ...upsells].find((product) => product.sku === sku);
+  return [...catalogProducts, ...upsells].find((product) => product.sku === sku);
 }
 
 export function money(value: number) {
@@ -243,9 +254,15 @@ export function getCrossSells(skus: string[]) {
   const hasLamp = skus.some((sku) => LAMP_FAMILY_SKUS.has(sku));
   const hasMusk = inCart.has("LB-SERUM-MUSK-59");
   const hasOud = inCart.has("LB-SERUM-OUD-69");
+  const storefrontLampOnly =
+    STOREFRONT_SLUG_ALLOWLIST.size === 1 && STOREFRONT_SLUG_ALLOWLIST.has("aroma-flame-lamp");
 
   if (hasLamp && !hasOud) {
     suggestions.push(getProductBySku("LB-SERUM-OUD-69")!);
+  }
+
+  if (storefrontLampOnly) {
+    return suggestions.filter(Boolean).slice(0, 2);
   }
 
   if (hasLamp && hasOud && !hasMusk) {

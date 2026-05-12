@@ -5,7 +5,7 @@ import { CheckCircle2, Minus, Plus, ShoppingBag, X } from "lucide-react";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useCartStore } from "@/lib/cart-store";
 import { createOrder, addUpsell } from "@/lib/api";
-import { getCrossSells, getProductBySku, money, Product } from "@/lib/products";
+import { getCrossSells, getProductBySku, money, Product, SKIP_POST_ORDER_UPSELL_MODAL } from "@/lib/products";
 import { normalizeUaePhone } from "@/lib/phone";
 import { generateEventId, getTrackingContext, trackEvent } from "@/lib/events";
 
@@ -109,7 +109,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       });
       trackEvent("Purchase", { eventId: purchaseEventId, value: order.total });
       closeCheckout();
-      setUpsellOrderId(order.order_id);
+      clearCart();
+      if (SKIP_POST_ORDER_UPSELL_MODAL) {
+        window.location.href = `/thank-you/${order.order_id}`;
+      } else {
+        setUpsellOrderId(order.order_id);
+      }
     } catch (e) {
       const msg =
         e instanceof Error && e.message
@@ -155,8 +160,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                   <div className="space-y-3 rounded-3xl border border-[var(--border-gold)] bg-[var(--cream-50)] p-4">
                     <div>
                       <p className="text-xs font-bold text-[var(--gold-500)]">لرفع قيمة الطلب اليوم</p>
-                      <p className="font-black text-[var(--emerald-950)]">أضيفي ثنائي السيروم قبل التأكيد</p>
-                      <p className="mt-1 text-xs leading-6 text-[var(--muted)]">بدل طلب سيروم واحد لاحقاً، خذي الإضافة الآن مع نفس التوصيل والتأكيد.</p>
+                      <p className="font-black text-[var(--emerald-950)]">أضيفي سيروم عود قصر دبي قبل التأكيد</p>
+                      <p className="mt-1 text-xs leading-6 text-[var(--muted)]">
+                        يكمّل موقد ليالي الفاخر ويصل ضمن نفس شحنة التوصيل بعد تأكيد الطلب.
+                      </p>
                     </div>
                     {crossSells.map((product) => <MiniProduct key={product.sku} product={product} onAdd={() => addItem(product)} />)}
                   </div>
@@ -231,7 +238,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         )}
       </AnimatePresence>
 
-      {upsellOrderId && <UpsellModal orderId={upsellOrderId} onDone={finishOrder} />}
+      {SKIP_POST_ORDER_UPSELL_MODAL ? null : upsellOrderId ? <UpsellModal orderId={upsellOrderId} onDone={finishOrder} /> : null}
     </>
   );
 }
