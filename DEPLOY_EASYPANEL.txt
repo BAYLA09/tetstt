@@ -82,6 +82,30 @@ Storefront (Next.js) — EasyPanel Docker build (REQUIRED for checkout URL)
 
 **Dockerfile path:** **`Dockerfile`** (filename, not a directory).
 
+### If the build fails with `failed to read dockerfile: open code: no such file or directory`
+
+Your log shows Docker was invoked like:
+
+`docker buildx build ... -f /etc/easypanel/projects/layalibeauty/frontend/code/ ...`
+
+That means **`-f` points to a directory** (`.../code/`), not to a **file** named `Dockerfile`. EasyPanel is treating **`code`** (or the clone root) as the Dockerfile path.
+
+**Fix (this repo layout: `frontend/Dockerfile` inside the Git clone):**
+
+| EasyPanel field | Set to |
+|-----------------|--------|
+| **Build context / Root directory** | **`frontend`** (relative to repo root: the folder that contains `package.json` + `Dockerfile`) **—** if the UI only allows repo root, use **`.`** as context and see the alternative row below. |
+| **Dockerfile path** | **`Dockerfile`** only (never `code`, never `code/`, never a folder path). |
+
+**Alternative** if the panel forces build context to the **repo root** (the `code` folder):
+
+| Field | Set to |
+|-------|--------|
+| **Build context** | **`.`** or repo root (where `backend/` and `frontend/` exist) |
+| **Dockerfile path** | **`frontend/Dockerfile`** |
+
+After fixing, the build log must show `-f .../Dockerfile` (path ends with the word **`Dockerfile`**), and you should see lines like **`docker_build_clock_utc=`** or **`next_build_finished_ok`**.
+
 **Frontend Environment** (container runtime; does **not** change inlined `NEXT_PUBLIC_*` unless your panel also injects them at **build** time):
 
 ```
