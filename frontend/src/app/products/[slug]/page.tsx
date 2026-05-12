@@ -99,6 +99,9 @@ export function generateStaticParams() {
   return products.map((product) => ({ slug: product.slug }));
 }
 
+/** Slugs not in `generateStaticParams` return 404 (no on-demand pages for removed products). */
+export const dynamicParams = false;
+
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
 };
