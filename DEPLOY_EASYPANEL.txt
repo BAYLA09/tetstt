@@ -52,6 +52,8 @@ Storefront (Next.js) — EasyPanel Docker build (REQUIRED for checkout URL)
 PORT=3000
 ```
 
+Optional (build-time if you need verbose checkout logs in the browser): add **`NEXT_PUBLIC_DEBUG_CHECKOUT=true`** to **Build args** and rebuild — then `console.debug` lines under **`[checkout:verbose]`** appear (sanitized payload / parsed API errors).
+
 Optional: set **`NEXT_PUBLIC_*` here too** only if EasyPanel documents that it passes them into **`docker build --build-arg`** automatically (otherwise use Build args below).
 
 **Frontend Build args** (must reach Docker **`ARG`** before `npm run build`):
