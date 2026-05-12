@@ -5,29 +5,9 @@ import { CheckCircle2, Minus, Plus, ShoppingBag, X } from "lucide-react";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useCartStore } from "@/lib/cart-store";
 import { createOrder, addUpsell } from "@/lib/api";
-import { getCrossSells, getProductBySku, money, Product, SKIP_POST_ORDER_UPSELL_MODAL } from "@/lib/products";
+import { getProductBySku, money, SKIP_POST_ORDER_UPSELL_MODAL } from "@/lib/products";
 import { normalizeUaePhone } from "@/lib/phone";
 import { generateEventId, getTrackingContext, trackEvent } from "@/lib/events";
-
-function MiniProduct({ product, onAdd }: { product: Product; onAdd: () => void }) {
-  return (
-    <div className="rounded-2xl border border-[var(--border-gold)] bg-white p-3 shadow-[0_10px_30px_rgba(1,63,42,0.08)]">
-      <div className="flex items-center gap-3">
-        <div className="grid size-14 shrink-0 place-items-center rounded-xl bg-[radial-gradient(circle_at_top,#d9ad63,#06472f_70%)] text-xl">
-          ✦
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="font-bold text-[var(--emerald-950)]">{product.name}</p>
-          <p className="text-xs text-[var(--muted)]">{product.subheading}</p>
-          <p className="mt-1 font-bold text-[var(--gold-500)]">{money(product.price)} - يرفع قيمة الطلب بدون تردد</p>
-        </div>
-        <button onClick={onAdd} className="rounded-full bg-[var(--emerald-950)] px-3 py-2 text-xs font-bold text-[var(--gold-300)]">
-          أضيفيه
-        </button>
-      </div>
-    </div>
-  );
-}
 
 function UpsellModal({ orderId, onDone }: { orderId: string; onDone: () => void }) {
   const [seconds, setSeconds] = useState(15);
@@ -75,7 +55,7 @@ function UpsellModal({ orderId, onDone }: { orderId: string; onDone: () => void 
 }
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const { items, isCartOpen, checkoutState, addItem, removeItem, updateQuantity, closeCart, openCheckout, closeCheckout, clearCart } = useCartStore();
+  const { items, isCartOpen, checkoutState, removeItem, updateQuantity, closeCart, openCheckout, closeCheckout, clearCart } = useCartStore();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [error, setError] = useState("");
@@ -83,7 +63,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [upsellOrderId, setUpsellOrderId] = useState<string | null>(null);
   const submitGuardRef = useRef(false);
   const total = useMemo(() => items.reduce((sum, item) => sum + item.price * item.quantity, 0), [items]);
-  const crossSells = getCrossSells(items.map((item) => item.sku));
   const normalizedPhone = normalizeUaePhone(phone);
   const canSubmit = name.trim().length >= 2 && Boolean(normalizedPhone) && items.length > 0 && !submitting;
 
@@ -156,18 +135,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                   <p className="text-xs font-bold text-[var(--gold-300)]">مهم قبل التأكيد</p>
                   <p className="mt-1 text-sm leading-7">سنؤكد طلبك عبر الهاتف/واتساب قبل الشحن. الطلبات المؤكدة فقط تدخل التجهيز حتى توصلك التجربة مثل ما اخترتيها.</p>
                 </div>
-                {crossSells.length > 0 && (
-                  <div className="space-y-3 rounded-3xl border border-[var(--border-gold)] bg-[var(--cream-50)] p-4">
-                    <div>
-                      <p className="text-xs font-bold text-[var(--gold-500)]">لرفع قيمة الطلب اليوم</p>
-                      <p className="font-black text-[var(--emerald-950)]">أضيفي سيروم عود قصر دبي قبل التأكيد</p>
-                      <p className="mt-1 text-xs leading-6 text-[var(--muted)]">
-                        يكمّل موقد ليالي الفاخر ويصل ضمن نفس شحنة التوصيل بعد تأكيد الطلب.
-                      </p>
-                    </div>
-                    {crossSells.map((product) => <MiniProduct key={product.sku} product={product} onAdd={() => addItem(product)} />)}
-                  </div>
-                )}
                 {items.length === 0 ? (
                   <div className="rounded-3xl bg-[var(--cream-50)] p-8 text-center">
                     <ShoppingBag className="mx-auto mb-3 text-[var(--gold-500)]" />

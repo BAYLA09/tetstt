@@ -228,8 +228,6 @@ export function money(value: number) {
   return `${value} درهم`;
 }
 
-const LAMP_FAMILY_SKUS = new Set(["LB-LAMP-189", "LB-LAMP-OUD-379", "LB-LAMP-TRIPLE-449"]);
-
 export function resolveDefaultOfferTier(product: Product): ProductOfferTier | null {
   const tiers = product.offerTiers;
   if (!tiers?.length) return null;
@@ -245,45 +243,4 @@ export function productSnapshotForOfferTier(base: Product, tier: ProductOfferTie
     price: tier.price,
     compareAt: tier.compareAt,
   };
-}
-
-export function getCrossSells(skus: string[]) {
-  const inCart = new Set(skus);
-  const suggestions: Product[] = [];
-  const hasBundle = inCart.has("LB-BUNDLE-299");
-  const hasLamp = skus.some((sku) => LAMP_FAMILY_SKUS.has(sku));
-  const hasMusk = inCart.has("LB-SERUM-MUSK-59");
-  const hasOud = inCart.has("LB-SERUM-OUD-69");
-  const storefrontLampOnly =
-    STOREFRONT_SLUG_ALLOWLIST.size === 1 && STOREFRONT_SLUG_ALLOWLIST.has("aroma-flame-lamp");
-
-  if (hasLamp && !hasOud) {
-    suggestions.push(getProductBySku("LB-SERUM-OUD-69")!);
-  }
-
-  if (storefrontLampOnly) {
-    return suggestions.filter(Boolean).slice(0, 2);
-  }
-
-  if (hasLamp && hasOud && !hasMusk) {
-    suggestions.push(getProductBySku("LB-SERUM-MUSK-59")!);
-  }
-
-  if (hasBundle && !inCart.has("LB-SERUM-SET-99")) {
-    suggestions.push(getProductBySku("LB-SERUM-SET-99")!);
-  }
-
-  if (hasMusk && !hasOud) {
-    suggestions.push(getProductBySku("LB-SERUM-OUD-69")!);
-  }
-
-  if (hasOud && !hasMusk) {
-    suggestions.push(getProductBySku("LB-SERUM-MUSK-59")!);
-  }
-
-  if (!hasBundle) {
-    suggestions.push(getProductBySku("LB-BUNDLE-299")!);
-  }
-
-  return suggestions.filter(Boolean).slice(0, 2);
 }

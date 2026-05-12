@@ -1,7 +1,7 @@
 "use client";
 
 import { create } from "zustand";
-import { CartItem, Product, getCrossSells as getCrossSellsBySku } from "./products";
+import { CartItem, Product } from "./products";
 
 type CheckoutState = "closed" | "checkout" | "upsell";
 
@@ -77,7 +77,3 @@ export const useCartStore = create<CartStore>((set, get) => ({
   subtotal: () =>
     get().items.reduce((total, item) => total + item.price * item.quantity, 0),
 }));
-
-export function getCrossSells(items: CartItem[]): Product[] {
-  return getCrossSellsBySku(items.map((item) => item.sku));
-}
