@@ -1,12 +1,22 @@
 Layali Beauty API — EasyPanel (exact settings)
 ===============================================
 
-Use branch: **deploy-backend** (or **layali-api** / **layali-backend-prod** — same API layout).
+Git — branch name (EasyPanel **must** match GitHub)
+----------------------------------------------------
+If deploy fails at **“Download Github Archive”** / **clone** / **checkout**, the **Branch** field in EasyPanel is almost always wrong: it must be **exactly** the same string as a branch that **exists on the remote** (case-sensitive).
+
+- **Simplest:** set **Branch** to **`main`** for both **frontend** and **backend** services, and always **merge + push** your work to **`main`** before rebuilding.
+- **Legacy names** (only if you still use them on GitHub): `deploy-backend`, `layali-api`, `layali-backend-prod` — if the panel says one of these but you only push to **`main`**, either **change the panel to `main`** or **push the same commit** to that legacy branch.
+
+**Where to change it in EasyPanel:** open the service → **Source** / **Git** (wording varies) → **Branch** → save → **Rebuild** (not only Restart).
+
+Layali Beauty API — EasyPanel (exact settings)
+===============================================
 
 Git
 ---
 - **Repository:** your GitHub repo (e.g. BAYLA09/tetstt).
-- **Branch:** deploy-backend (recommended).
+- **Branch:** **`main`** (recommended). Use `deploy-backend` / `layali-api` / `layali-backend-prod` only if that branch still exists on GitHub and you push there.
 - **Push:** always from repo root (`git push`). No `cd backend` required for git.
 
 Build (critical — fixes `failed to read dockerfile: open code`)
