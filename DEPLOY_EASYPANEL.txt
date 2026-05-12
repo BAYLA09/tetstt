@@ -96,6 +96,16 @@ Use this when the build log shows the last argument is **`…/frontend/code/`** 
 
 The log should show `-f .../Dockerfile.frontend` and **`dockerfile=Dockerfile.frontend context=repo_root`** during build.
 
+### Option B2 — keep `frontend/Dockerfile` + repo-root context (build-arg only)
+
+If EasyPanel **cannot** change the Dockerfile path away from **`frontend/Dockerfile`** but the context stays the **clone root**, add this **Build arg** (same name Docker expects):
+
+```
+FRONTEND_SOURCE_DIR=frontend
+```
+
+Rebuild; logs should show **`deps FRONTEND_SOURCE_DIR=frontend`** and **`builder FRONTEND_SOURCE_DIR=frontend`**. Do **not** set this when build context is **`frontend/`** (Option A).
+
 ### If the build fails with `failed to read dockerfile: open code: no such file or directory`
 
 Your log shows Docker was invoked like:
@@ -116,9 +126,9 @@ That means **`-f` points to a directory** (`.../code/`), not to a **file** named
 | Field | Set to |
 |-------|--------|
 | **Build context** | **`.`** or repo root (where `backend/` and `frontend/` exist) |
-| **Dockerfile path** | **`Dockerfile.frontend`** (repository root; copies `frontend/package.json`, etc.) |
+| **Dockerfile path** | **`Dockerfile.frontend`** (repository root; copies `frontend/package.json`, etc.) **— or keep** **`frontend/Dockerfile`** **and add Build arg** **`FRONTEND_SOURCE_DIR=frontend`** (see Option B2 above). |
 
-Do **not** pair repo-root context with **`frontend/Dockerfile`** alone: that Dockerfile expects `package.json` at the context root, not under `frontend/`.
+Do **not** pair repo-root context with **`frontend/Dockerfile`** **without** **`FRONTEND_SOURCE_DIR=frontend`** or **`Dockerfile.frontend`**: the default `COPY` paths expect `package.json` at the context root.
 
 After fixing, the build log must show `-f .../Dockerfile` or `-f .../Dockerfile.frontend` (path ends with a **file** name), and you should see lines like **`docker_build_clock_utc=`** or **`next_build_finished_ok`**.
 
@@ -144,6 +154,12 @@ NEXT_PUBLIC_GIT_COMMIT=
 NEXT_PUBLIC_APP_BUILD_MARKER=layalibeauty-storefront
 ```
 
+If the panel uses **repo-root** build context with **`frontend/Dockerfile`** (your Docker command ends with **`…/code/`** and **`-f …/frontend/Dockerfile`**), add:
+
+```
+FRONTEND_SOURCE_DIR=frontend
+```
+
 - **`COMMIT_SHA`:** baked into **`NEXT_PUBLIC_COMMIT_SHA`** and **`NEXT_PUBLIC_GIT_COMMIT`** in `.env.production` when **`NEXT_PUBLIC_GIT_COMMIT`** is empty.
 - **`BUILD_TIME_UTC`:** optional; if empty, image build writes **`NEXT_PUBLIC_BUILD_TIME`** from the builder clock.
 - **`CACHE_BUST`:** change to any new string (e.g. `manual-2026-05-10-2`) on each forced rebuild so Docker cannot reuse a stale cached layer that skipped `next build`.
@@ -152,6 +168,7 @@ NEXT_PUBLIC_APP_BUILD_MARKER=layalibeauty-storefront
 **Rebuild:** use **Rebuild** / **Build** so Docker logs show:
 
 - `==== docker_build_clock_utc=...` (UTC timestamp when **`docker build`** ran)
+- `deps FRONTEND_SOURCE_DIR=...` / `builder FRONTEND_SOURCE_DIR=...` (when using **`FRONTEND_SOURCE_DIR`**)
 - `CACHE_BUST=...`
 - `COMMIT_SHA_ARG=...` / `next_wrote_build_identity commit=...`
 - `next_build_env NEXT_PUBLIC_API_BASE_URL=...`
@@ -171,7 +188,7 @@ These read **`NEXT_PUBLIC_*` baked at build** (`commitSha`, `gitCommit`, build t
 
 1. **Correct service:** redeploy the **storefront / frontend** app (not the API). A fast “success” on the API service does nothing for checkout JS.
 2. **Source:** if the app uses **GitHub**, ensure the **branch** matches where you pushed (usually **`main`**). If **Upload ZIP**, you must upload a **new ZIP after every code change** — the server will not pull Git.
-3. **Build context + Dockerfile:** either **context `frontend` + file `Dockerfile`**, or **context clone root + file `Dockerfile.frontend`** (fixes **`package.json: not found`** when the panel always uses repo root).
+3. **Build context + Dockerfile:** **context `frontend` + `Dockerfile`**, **or** **context clone root + `Dockerfile.frontend`**, **or** **context clone root + `frontend/Dockerfile` + build-arg `FRONTEND_SOURCE_DIR=frontend`**.
 4. **Dockerfile path:** a **file** name (`Dockerfile` or `Dockerfile.frontend` or `frontend/Dockerfile`), never a bare directory.
 5. **Build args:** include **`CACHE_BUST`** and **`NEXT_PUBLIC_*`** as above; bump **`CACHE_BUST`** when the UI looks stuck on an old bundle.
 6. **Domain attachment:** in EasyPanel, open the **domain** for `layalibeauty.shop` and confirm it routes to the **frontend** service on port **3000**. Open **`/build-info`** on that domain — if it 404s or shows old `gitCommit`, the domain may point at another container or an old image.

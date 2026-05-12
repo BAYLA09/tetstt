@@ -1,15 +1,21 @@
 # Next.js storefront — NEXT_PUBLIC_* must exist at `next build` (Docker build-args + .env.production).
 # EasyPanel: **Rebuild** the image; a 0–2s "deploy" usually skips `docker build` or reuses a cached image.
-# If Docker **context** is the **repo root** (not this folder), use **`Dockerfile.frontend`** at repository root instead.
+#
+# Build context:
+# - **Context = this folder (`frontend/`)** → leave `FRONTEND_SOURCE_DIR` unset (default `.`).
+# - **Context = repo root** (`…/code/` with `-f …/frontend/Dockerfile`) → set build-arg **`FRONTEND_SOURCE_DIR=frontend`**
+#   or use **`Dockerfile.frontend`** at repo root instead.
 
 FROM node:20-alpine AS deps
+ARG FRONTEND_SOURCE_DIR=.
 WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci
+COPY ${FRONTEND_SOURCE_DIR}/package.json ${FRONTEND_SOURCE_DIR}/package-lock.json ./
+RUN echo "deps FRONTEND_SOURCE_DIR=${FRONTEND_SOURCE_DIR}" && npm ci
 
 FROM node:20-alpine AS builder
 WORKDIR /app
 
+ARG FRONTEND_SOURCE_DIR=.
 ARG CACHE_BUST=manual
 ARG COMMIT_SHA=unknown
 ARG BUILD_TIME_UTC=
@@ -24,10 +30,11 @@ ENV NEXT_PUBLIC_APP_BUILD_MARKER=$NEXT_PUBLIC_APP_BUILD_MARKER
 ENV NEXT_PUBLIC_DOCKER_CACHE_BUST=$CACHE_BUST
 
 COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+COPY ${FRONTEND_SOURCE_DIR}/ .
 
 # Build-time clock + proof EasyPanel ran `docker build` (see panel build logs).
 RUN echo "==== docker_build_clock_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ) ====" && \
+    echo "builder FRONTEND_SOURCE_DIR=${FRONTEND_SOURCE_DIR}" && \
     echo "CACHE_BUST=${CACHE_BUST}" && \
     echo "COMMIT_SHA_ARG=${COMMIT_SHA}" && \
     echo "BUILD_TIME_UTC_ARG=${BUILD_TIME_UTC}" && \
