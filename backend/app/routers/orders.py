@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from datetime import UTC, datetime
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from typing import Annotated
 from uuid import uuid4
 from fastapi import APIRouter, Depends, Header, HTTPException, Request
@@ -22,6 +22,48 @@ from app.services.tracking import send_capi_events
 log = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/orders", tags=["orders"])
+
+# Stale API images may lack tier rows in PRODUCTS — keep in sync with app/products.py.
+_LAMP_TIER_FALLBACK_SKUS: dict[str, tuple[Decimal, str, str]] = {
+    "LB-LAMP-OUD-379": (Decimal("379"), "موقد ليالي الفاخر + سيروم عود قصر دبي", "LY-L3OU2"),
+    "LB-LAMP-TRIPLE-449": (Decimal("449"), "موقد ليالي الفاخر + سيرومين عود قصر دبي", "LY-L4TP3"),
+}
+
+# When storefront submits LB-LAMP-189 with client line price, map to bundle sheet + total (old catalog had only base SKU).
+_LAMP_BUNDLE_BY_CLIENT_PRICE: dict[Decimal, tuple[str, str]] = {
+    Decimal("299"): ("موقد ليالي الفاخر", "LY-L2MP1"),
+    Decimal("379"): ("موقد ليالي الفاخر + سيروم عود قصر دبي", "LY-L3OU2"),
+    Decimal("449"): ("موقد ليالي الفاخر + سيرومين عود قصر دبي", "LY-L4TP3"),
+}
+
+
+def _decimal_optional(v: float | None) -> Decimal | None:
+    if v is None:
+        return None
+    try:
+        return Decimal(str(v))
+    except (InvalidOperation, TypeError, ValueError):
+        return None
+
+
+def _resolve_line_price_name_sheet(*, sku: str, client_price: float | None) -> tuple[Decimal, str, str] | None:
+    """Authoritative unit price, display name, sheet SKU. None if SKU unknown."""
+    row = PRODUCTS.get(sku)
+    if row:
+        price: Decimal = row["price"]
+        name = str(row["name"])
+        sheet = str(row["sheet_sku"])
+        if sku == "LB-LAMP-189" and settings.allow_lamp_bundle_client_price:
+            cp = _decimal_optional(client_price)
+            if cp is not None and cp in _LAMP_BUNDLE_BY_CLIENT_PRICE:
+                name, sheet = _LAMP_BUNDLE_BY_CLIENT_PRICE[cp]
+                price = cp
+        return price, name, sheet
+    fb = _LAMP_TIER_FALLBACK_SKUS.get(sku)
+    if fb:
+        p, name, sheet = fb
+        return p, name, sheet
+    return None
 
 
 def format_sheet_phone(phone_e164: str) -> str:
@@ -102,8 +144,8 @@ async def create_order(
     order_items_payload: list[dict] = []
 
     for item in payload.items:
-        product = PRODUCTS.get(item.sku)
-        if not product:
+        resolved = _resolve_line_price_name_sheet(sku=item.sku, client_price=item.price)
+        if not resolved:
             log.warning("order_unknown_sku sku=%r lamp_tiers_in_catalog=%s", item.sku, LAMP_OFFER_SKUS <= set(PRODUCTS))
             extra = ""
             if (item.sku or "").startswith("LB-LAMP-"):
@@ -113,13 +155,13 @@ async def create_order(
                     "ثم افتحي `GET /version` وتأكدي أن `catalog_skus` يحتوي LB-LAMP-OUD-379 و LB-LAMP-TRIPLE-449."
                 )
             raise HTTPException(status_code=400, detail=f"Unknown SKU: {item.sku}{extra}")
+        price, line_name, sheet_sku = resolved
         quantity = item.quantity
-        price = product["price"]
         subtotal += line_total(price, quantity)
         order_items_payload.append(
             {
-                "sku": product["sheet_sku"],
-                "name": product["name"],
+                "sku": sheet_sku,
+                "name": line_name,
                 "price": float(price),
                 "quantity": quantity,
                 "is_upsell": False,
@@ -128,7 +170,7 @@ async def create_order(
         order_items.append(
             OrderItem(
                 sku=item.sku,
-                name=product["name"],
+                name=line_name,
                 unit_price=price,
                 quantity=quantity,
                 line_total=line_total(price, quantity),

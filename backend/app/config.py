@@ -44,6 +44,7 @@ class Settings(BaseSettings):
     whitelisted_phones: str = ""
     log_level: str = "INFO"
     cors_allow_www: bool = True
+    allow_lamp_bundle_client_price: bool = True
 
     @model_validator(mode="after")
     def apply_strict_bool_env(self) -> Self:
@@ -62,6 +63,11 @@ class Settings(BaseSettings):
         object.__setattr__(self, "enable_tiktok_capt", env_bool("ENABLE_TIKTOK_CAPT", self.enable_tiktok_capt))
         object.__setattr__(self, "enable_snap_capt", env_bool("ENABLE_SNAP_CAPT", self.enable_snap_capt))
         object.__setattr__(self, "cors_allow_www", env_bool("CORS_ALLOW_WWW", self.cors_allow_www))
+        object.__setattr__(
+            self,
+            "allow_lamp_bundle_client_price",
+            env_bool("ALLOW_LAMP_BUNDLE_CLIENT_PRICE", self.allow_lamp_bundle_client_price),
+        )
         return self
 
     @staticmethod

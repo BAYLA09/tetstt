@@ -235,9 +235,10 @@ export function resolveDefaultOfferTier(product: Product): ProductOfferTier | nu
 }
 
 export function productSnapshotForOfferTier(base: Product, tier: ProductOfferTier): Product {
+  const lampBaseSubmit = base.slug === "aroma-flame-lamp" && tier.sku.startsWith("LB-LAMP-");
   return {
     ...base,
-    sku: tier.sku,
+    sku: lampBaseSubmit ? "LB-LAMP-189" : tier.sku,
     name: tier.title,
     shortName: tier.title,
     price: tier.price,
