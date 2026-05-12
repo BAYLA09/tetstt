@@ -34,7 +34,7 @@ const DEFAULT_FLOW: [string, string][] = [
 const AROMA_FLOW: [string, string][] = [
   [
     "اختاري العرض",
-    "اخترِ الباقة المناسبة من الصفحة. زر الإضافة يضع العرض في سلة التسوق مباشرة.",
+    "اختاري الباقة المناسبة من الصفحة. زر الإضافة يضع العرض في سلة التسوق مباشرة.",
   ],
   [
     "راجعي السلة",
@@ -127,11 +127,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const faqItems = isAroma ? AROMA_FAQ : DEFAULT_FAQ;
   const trustBullets = isAroma ? AROMA_TRUST_BULLETS : DEFAULT_TRUST_BULLETS;
 
-  const related = products.filter((item) => item.sku !== product.sku).slice(0, 3);
+  const related = isAroma
+    ? products.filter((item) => item.sku === "LB-SERUM-OUD-69")
+    : products.filter((item) => item.sku !== product.sku).slice(0, 3);
 
   return (
     <div>
-      <ProductHero product={product} />
+      <ProductHero key={slug} product={product} />
 
       <section className="bg-[var(--cream-50)] px-4 py-16">
         <div className="container-grid">

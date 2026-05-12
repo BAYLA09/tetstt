@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CheckCircle2, ShoppingCart } from "lucide-react";
 import {
   Product,
@@ -280,7 +280,7 @@ function CommercePanel({
         className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-gold-400/60 bg-[var(--emerald-950)] px-6 py-5 text-lg font-black text-[var(--gold-300)] shadow-2xl transition hover:-translate-y-0.5 hover:bg-[var(--emerald-900)] md:w-auto md:min-w-[280px]"
       >
         <ShoppingCart className="h-5 w-5 shrink-0" aria-hidden />
-        أضيفي إلى السلة – {money(selectedTier.price)}
+        أضيفي للسلة – {money(selectedTier.price)}
       </button>
 
       <div className="mt-5 grid gap-2 text-center text-xs font-bold text-cream-100/90 md:grid-cols-3 md:text-sm">
@@ -310,10 +310,6 @@ export function ProductHero({ product }: { product: Product }) {
   const [selectedTier, setSelectedTier] = useState<ProductOfferTier | null>(() =>
     resolveDefaultOfferTier(product),
   );
-
-  useEffect(() => {
-    setSelectedTier(resolveDefaultOfferTier(product));
-  }, [product.slug]);
 
   function addOffer(line: Product) {
     const eventId = generateEventId("add_to_cart");
@@ -368,7 +364,7 @@ export function ProductHero({ product }: { product: Product }) {
                 className="flex w-full items-center justify-center gap-2 rounded-full bg-gold-500 px-5 py-4 font-black text-emerald-950"
               >
                 <ShoppingCart className="h-5 w-5" aria-hidden />
-                أضيفي إلى السلة – {money(selectedTier.price)}
+                أضيفي للسلة – {money(selectedTier.price)}
               </button>
             </div>
           ) : (
@@ -410,7 +406,7 @@ export function ProductHero({ product }: { product: Product }) {
           {tiers?.length ? (
             <>
               <ShoppingCart className="h-5 w-5" aria-hidden />
-              أضيفي إلى السلة – {money(stickyLine.price)}
+              أضيفي للسلة – {money(stickyLine.price)}
             </>
           ) : (
             <>أضيفي العرض إلى السلة - {money(product.price)}</>
