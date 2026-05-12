@@ -139,7 +139,10 @@ function CommercePanel({
 
   if (!tiers?.length) {
     return (
-      <div className="relative z-10 rounded-[2rem] border border-gold-400/25 bg-emerald-950/72 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] backdrop-blur lg:p-8">
+      <div
+        dir="rtl"
+        className="relative z-10 rounded-[2rem] border border-gold-400/25 bg-emerald-950/72 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] backdrop-blur lg:p-8"
+      >
         <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">{product.badge}</p>
         <h1 className="mt-5 text-4xl font-black leading-tight text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.75)] md:text-5xl">
           {product.name}
@@ -187,7 +190,10 @@ function CommercePanel({
   const line = productSnapshotForOfferTier(product, selectedTier);
 
   return (
-    <div className="relative z-10 rounded-[2rem] border border-gold-400/25 bg-emerald-950/72 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] backdrop-blur lg:p-8">
+    <div
+      dir="rtl"
+      className="relative z-10 rounded-[2rem] border border-gold-400/25 bg-emerald-950/72 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] backdrop-blur lg:p-8"
+    >
       <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">{product.badge}</p>
       <h1 className="mt-5 text-4xl font-black leading-tight text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.75)] md:text-5xl">
         {product.name}
@@ -207,47 +213,61 @@ function CommercePanel({
 
       <div className="mt-8 rounded-[2rem] border border-gold-400/50 bg-[var(--cream-50)] p-5 text-[var(--emerald-950)] shadow-inner">
         {product.heroPromoLine && (
-          <p className="text-center text-xs font-bold text-[var(--gold-600)] md:text-sm">{product.heroPromoLine}</p>
+          <p className="flex items-center justify-center gap-2 text-center text-xs font-bold text-amber-700 md:text-sm">
+            <span className="inline-block h-2 w-2 shrink-0 rounded-full bg-amber-500" aria-hidden />
+            {product.heroPromoLine}
+          </p>
         )}
         <p className="mt-3 text-center text-lg font-black text-[var(--emerald-950)]">اختاري العرض:</p>
         <div className="mt-4 space-y-3" role="radiogroup" aria-label="اختيار العرض">
           {tiers.map((tier) => {
             const isOn = selectedTier.sku === tier.sku;
+            const choiceBadge = tier.badge?.includes("اختيار");
             return (
-              <label
-                key={tier.sku}
-                className={`flex cursor-pointer flex-row-reverse items-start gap-3 rounded-2xl border-2 p-4 transition ${
-                  isOn
-                    ? "border-[var(--gold-500)] bg-white shadow-md"
-                    : "border-transparent bg-white/70 hover:border-[var(--gold-400)]/40"
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="offer-tier"
-                  className="mt-1 h-4 w-4 shrink-0 accent-[var(--gold-600)]"
-                  checked={isOn}
-                  onChange={() => onTierChange(tier)}
-                />
-                <span className="min-w-0 flex-1 text-right">
-                  {tier.badge && (
-                    <span className="mb-1 inline-block rounded-full bg-[var(--emerald-950)] px-2.5 py-0.5 text-xs font-bold text-[var(--gold-300)]">
-                      {tier.badge}
-                    </span>
-                  )}
-                  <span className="block font-black text-[var(--emerald-950)]">{tier.title}</span>
-                  <span className="mt-1 block text-sm leading-7 text-[var(--muted)]">{tier.description}</span>
-                  {tier.saveLabel && (
-                    <span className="mt-2 inline-block text-sm font-bold text-[var(--gold-700)]">{tier.saveLabel}</span>
-                  )}
-                  <span className="mt-2 flex flex-wrap items-baseline justify-end gap-2">
-                    {tier.compareAt != null && (
-                      <span className="text-sm text-[var(--muted)] line-through">{money(tier.compareAt)}</span>
+              <div key={tier.sku}>
+                {tier.eyebrow && (
+                  <p className="mb-1 text-right text-xs font-bold text-amber-700">{tier.eyebrow}</p>
+                )}
+                <label
+                  className={`flex w-full cursor-pointer items-start gap-3 rounded-2xl border-2 p-4 transition ${
+                    isOn
+                      ? "border-amber-500 bg-white shadow-md ring-1 ring-amber-400/40"
+                      : "border-transparent bg-white/80 hover:border-amber-200/80"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="offer-tier"
+                    className="mt-1.5 h-4 w-4 shrink-0 accent-amber-600"
+                    checked={isOn}
+                    onChange={() => onTierChange(tier)}
+                  />
+                  <span className="min-w-0 flex-1 text-right">
+                    {tier.badge && (
+                      <span
+                        className={`mb-1 inline-block rounded-full px-2.5 py-0.5 text-xs font-bold ${
+                          choiceBadge
+                            ? "bg-amber-500 text-white"
+                            : "bg-[var(--emerald-950)] text-[var(--gold-300)]"
+                        }`}
+                      >
+                        {tier.badge}
+                      </span>
                     )}
-                    <span className="text-2xl font-black text-[var(--emerald-950)]">{money(tier.price)}</span>
+                    <span className="block font-black text-[var(--emerald-950)]">{tier.title}</span>
+                    <span className="mt-1 block text-sm leading-7 text-[var(--muted)]">{tier.description}</span>
+                    {tier.saveLabel && (
+                      <span className="mt-2 inline-block text-sm font-bold text-emerald-700">{tier.saveLabel}</span>
+                    )}
+                    <span className="mt-2 flex flex-wrap items-baseline justify-end gap-2">
+                      {tier.compareAt != null && (
+                        <span className="text-sm text-[var(--muted)] line-through">{money(tier.compareAt)}</span>
+                      )}
+                      <span className="text-2xl font-black text-[var(--emerald-950)]">{money(tier.price)}</span>
+                    </span>
                   </span>
-                </span>
-              </label>
+                </label>
+              </div>
             );
           })}
         </div>
@@ -256,10 +276,10 @@ function CommercePanel({
       <button
         type="button"
         onClick={() => onAdd(line)}
-        className="mt-6 flex w-full items-center justify-center gap-2 rounded-full border-2 border-gold-400/60 bg-[var(--emerald-950)] px-6 py-5 text-lg font-black text-[var(--gold-300)] shadow-2xl transition hover:-translate-y-0.5 hover:bg-[var(--emerald-900)] md:w-auto md:min-w-[280px]"
+        className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-gold-400/60 bg-[var(--emerald-950)] px-6 py-5 text-lg font-black text-[var(--gold-300)] shadow-2xl transition hover:-translate-y-0.5 hover:bg-[var(--emerald-900)] md:w-auto md:min-w-[280px]"
       >
         <ShoppingCart className="h-5 w-5 shrink-0" aria-hidden />
-        أضيفي للسلة — {money(selectedTier.price)}
+        أضيفي للسلة – {money(selectedTier.price)}
       </button>
 
       <div className="mt-5 grid gap-2 text-center text-xs font-bold text-cream-100/90 md:grid-cols-3 md:text-sm">
@@ -308,14 +328,17 @@ export function ProductHero({ product }: { product: Product }) {
       <>
         <section className="hero-gradient relative overflow-hidden px-4 pb-10 pt-6 lg:pb-16 lg:pt-10">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(201,150,69,0.2),transparent_32%)]" />
-          <div className="container-grid relative z-10 grid items-start gap-10 lg:grid-cols-[1.05fr_0.95fr]">
-            <HeroMedia product={product} contained />
-            <CommercePanel
-              product={product}
-              selectedTier={selectedTier}
-              onTierChange={setSelectedTier}
-              onAdd={addOffer}
-            />
+          {/* dir=ltr: image physically on the left, bundle panel on the right (matches reference). Arabic stays rtl inside CommercePanel. */}
+          <div className="container-grid relative z-10" dir="ltr">
+            <div className="grid items-start gap-10 lg:grid-cols-[1.05fr_0.95fr]">
+              <HeroMedia product={product} contained />
+              <CommercePanel
+                product={product}
+                selectedTier={selectedTier}
+                onTierChange={setSelectedTier}
+                onAdd={addOffer}
+              />
+            </div>
           </div>
         </section>
         <BeforeAfterSection product={product} />
@@ -344,7 +367,7 @@ export function ProductHero({ product }: { product: Product }) {
                 className="flex w-full items-center justify-center gap-2 rounded-full bg-gold-500 px-5 py-4 font-black text-emerald-950"
               >
                 <ShoppingCart className="h-5 w-5" aria-hidden />
-                أضيفي للسلة — {money(selectedTier.price)}
+                أضيفي للسلة – {money(selectedTier.price)}
               </button>
             </div>
           ) : (
@@ -364,7 +387,7 @@ export function ProductHero({ product }: { product: Product }) {
   return (
     <section className="hero-gradient relative overflow-hidden px-4 py-12 pb-28 text-white lg:py-20 lg:pb-20">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(201,150,69,0.2),transparent_32%)]" />
-      <div className="container-grid grid items-center gap-10 lg:grid-cols-[0.9fr_1fr]">
+      <div className="container-grid grid items-center gap-10 lg:grid-cols-[0.9fr_1fr]" dir="ltr">
         <div className="order-1 lg:order-1">
           <HeroMedia product={product} />
         </div>
@@ -386,7 +409,7 @@ export function ProductHero({ product }: { product: Product }) {
           {tiers?.length ? (
             <>
               <ShoppingCart className="h-5 w-5" aria-hidden />
-              أضيفي للسلة — {money(stickyLine.price)}
+              أضيفي للسلة – {money(stickyLine.price)}
             </>
           ) : (
             <>أضيفي العرض للسلة - {money(product.price)}</>

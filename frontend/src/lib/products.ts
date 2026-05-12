@@ -7,6 +7,8 @@ export type ProductOfferTier = {
   compareAt?: number;
   saveLabel?: string;
   badge?: string;
+  /** Small line above the tier card (e.g. “ابدئي بالموقد”). */
+  eyebrow?: string;
   /** Pre-selected tier in the hero picker. */
   default?: boolean;
 };
@@ -127,13 +129,14 @@ export const products: Product[] = [
       {
         sku: "LB-LAMP-189",
         title: "الموقد فقط",
-        description: "جهاز موقد اللهب الفاخر — بدون سيروم",
+        description: "جهاز موقد اللهب الفاخر • بدون سيروم",
         price: 299,
+        eyebrow: "ابدئي بالموقد",
       },
       {
         sku: "LB-LAMP-OUD-379",
         title: "الموقد + سيروم عود قصر دبي",
-        description: "موقد اللهب + عود قصر دبي 100مل — الثنائي الأمثل",
+        description: "موقد اللهب + عود قصر دبي 100مل • الثنائي الأمثل",
         price: 379,
         compareAt: 498,
         saveLabel: "وفري 119 درهم",
