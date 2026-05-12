@@ -207,6 +207,31 @@ These read **`NEXT_PUBLIC_*` baked at build** (`commitSha`, `gitCommit`, build t
 7. **`api.layalibeauty.shop`:** must attach only to the **backend** service (port **8000**). The storefront should **not** be the target for the API host.
 8. **Stale container:** stop/remove old duplicate apps that might still bind the same hostname, or clear “use existing image” if the panel offers a **no-cache** rebuild.
 
+### Why changing the **branch name** sometimes “fixes” frontend deploy
+
+EasyPanel + Docker often cache **layers** and sometimes the **Git checkout** metadata. When you **rename the branch** (or point the service at a **new** branch name), the panel often does a **fresh clone** or a **different cache key**, so the next build is not the broken cached path — that is why it suddenly works.
+
+**Prefer this order (frontend):**
+
+1. **Bump `CACHE_BUST`** in Build args to a **new string** (e.g. `manual-2026-05-10-4`) and click **Rebuild** — same branch, no Git rename.
+2. If the panel has **Build without cache** / **no-cache**, use it once.
+3. If it still refuses a real **`next build`**, use the **new branch** trick below (same effect you already discovered).
+
+**New branch for a clean frontend deploy (copy-paste):**
+
+```bash
+git checkout main
+git pull origin main
+export FE_DEPLOY_BRANCH="deploy-fe-$(date -u +%Y%m%d-%H%M%S)"
+git checkout -b "$FE_DEPLOY_BRANCH"
+git push -u origin "$FE_DEPLOY_BRANCH"
+echo "EasyPanel → frontend service → Branch → set to: $FE_DEPLOY_BRANCH → Rebuild"
+```
+
+Then in **EasyPanel → storefront (frontend) → Source / Git → Branch**, set the printed name (e.g. **`deploy-fe-20260510-143055`**), **Save**, **Rebuild**. After the site is green, you can merge your work to **`main`** as usual; for the next routine deploy you can point Branch back to **`main`** and rely on **`CACHE_BUST`** bumps.
+
+**Long-lived alternative (optional):** keep one branch like **`frontend-live`**, always **`git merge main`** into it and rebuild — Easypanel Branch never changes; only **`CACHE_BUST`** changes when the UI looks stuck.
+
 **Interpreting symptoms**
 
 - **Deploy finishes in 1–2 seconds:** often **no `docker build`** (image pull only, restart, or wrong pipeline). Confirm build logs contain **`docker_build_clock_utc`** and **`next_build_finished_ok`**.
