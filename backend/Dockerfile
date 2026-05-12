@@ -22,6 +22,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
+# Fail build if lamp tier SKUs are missing (wrong context / stale tree copied into the image).
+RUN test -f app/products.py \
+  && grep -qF "LB-LAMP-OUD-379" app/products.py \
+  && grep -qF "LB-LAMP-TRIPLE-449" app/products.py \
+  && python -c "from decimal import Decimal; from app.products import PRODUCTS; assert PRODUCTS['LB-LAMP-OUD-379']['price']==Decimal('379') and PRODUCTS['LB-LAMP-TRIPLE-449']['price']==Decimal('449')"
+
 ENV PORT=8000
 EXPOSE 8000
 
