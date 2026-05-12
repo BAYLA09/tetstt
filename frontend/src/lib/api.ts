@@ -131,8 +131,9 @@ export async function createOrder(payload: OrderPayload): Promise<OrderResponse>
     apiBaseUrl,
     fullOrdersUrl,
     useSameOriginOrderProxy,
-    NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL ?? "(unset, using default)",
-    NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY: process.env.NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY ?? "(unset → direct API)",
+    "raw NEXT_PUBLIC_API_BASE_URL": process.env.NEXT_PUBLIC_API_BASE_URL ?? "(unset at build → code default)",
+    "raw NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY":
+      process.env.NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY ?? "(unset → direct API)",
     payload: sanitizePayloadForLog(payload),
   });
 
@@ -170,6 +171,9 @@ export async function addUpsell(orderId: string, sku: string, eventId: string) {
     apiBaseUrl,
     fullUpsellUrl: fullUrl,
     useSameOriginOrderProxy,
+    "raw NEXT_PUBLIC_API_BASE_URL": process.env.NEXT_PUBLIC_API_BASE_URL ?? "(unset at build → code default)",
+    "raw NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY":
+      process.env.NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY ?? "(unset → direct API)",
     body,
   });
 

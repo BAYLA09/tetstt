@@ -38,11 +38,49 @@ Runtime env (examples)
 - `FRONTEND_ORIGIN` / `FRONTEND_URL` — storefront URL(s) for CORS.
 - `PORT` — optional; image defaults to **8000** if unset.
 
-Storefront (Next.js) — checkout /orders URL
--------------------------------------------
-- **Default:** the browser calls **`https://api.layalibeauty.shop/orders`** directly (no same-origin proxy).
-- **`NEXT_PUBLIC_API_BASE_URL`** — optional; defaults to **`https://api.layalibeauty.shop`**. Set if the API host differs.
-- **`NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY`** — set to **`true`** only if you intentionally post to **`/api/orders`** on the storefront (Next route must proxy to the API). Omit or **`false`** for direct API calls.
+Storefront (Next.js) — EasyPanel Docker build (REQUIRED for checkout URL)
+---------------------------------------------------------------------------
+**Why:** `NEXT_PUBLIC_*` is **inlined at `next build`**. Runtime-only env on the container **does not** change the API URL in the JS bundle. A 1-second “deploy” usually means **no real `next build`** ran.
+
+**Build context / root directory:** **`frontend/`** (the folder that contains **`frontend/package.json`**, **`frontend/package-lock.json`**, and **`frontend/Dockerfile`**).
+
+**Dockerfile path:** **`Dockerfile`** (filename, not a directory).
+
+**Frontend Environment** (set in EasyPanel for the **build** / image — use **Build args** if the panel separates them):
+
+```
+NEXT_PUBLIC_API_BASE_URL=https://api.layalibeauty.shop
+NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY=false
+PORT=3000
+```
+
+**Frontend Build args** (same values if EasyPanel has a “Build arguments” field — must reach Docker `ARG`):
+
+```
+NEXT_PUBLIC_API_BASE_URL=https://api.layalibeauty.shop
+NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY=false
+```
+
+**Rebuild:** use **Rebuild** / **Build** so logs show:
+
+- `next_build_env NEXT_PUBLIC_API_BASE_URL=https://api.layalibeauty.shop`
+- `next_build_env NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY=false`
+- `next_build_finished_ok`
+
+Then **`npm run build`** output (Next compile). If those lines are missing, the image is **not** rebuilding.
+
+**Frontend Domain (reverse proxy):**
+
+- Host: `layalibeauty.shop` (and `www` if used)
+- Public path: `/`
+- Destination protocol: **HTTP**
+- Destination port: **3000**
+- Destination path: `/`
+
+**Health check (internal):** HTTP GET `/` or Next static check on port **3000** (not HTTPS public URL if the probe fails).
+
+**Browser proof after deploy:** DevTools → Console on checkout should show  
+`[checkout] POST /orders — about to fetch` with **`fullOrdersUrl`: `https://api.layalibeauty.shop/orders`** when proxy is off (default).
 
 Notes
 -----
