@@ -38,6 +38,12 @@ Runtime env (examples)
 - `FRONTEND_ORIGIN` / `FRONTEND_URL` — storefront URL(s) for CORS.
 - `PORT` — optional; image defaults to **8000** if unset.
 
+Storefront (Next.js) — checkout /orders URL
+-------------------------------------------
+- **Default:** the browser calls **`https://api.layalibeauty.shop/orders`** directly (no same-origin proxy).
+- **`NEXT_PUBLIC_API_BASE_URL`** — optional; defaults to **`https://api.layalibeauty.shop`**. Set if the API host differs.
+- **`NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY`** — set to **`true`** only if you intentionally post to **`/api/orders`** on the storefront (Next route must proxy to the API). Omit or **`false`** for direct API calls.
+
 Notes
 -----
 - The API listens on **0.0.0.0** and **`${PORT:-8000}`** (see root `Dockerfile` `CMD`).
