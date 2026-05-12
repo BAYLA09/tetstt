@@ -1,4 +1,5 @@
 import type { CartItem } from "./products";
+import { getClientBuildInfoForLog } from "./build-info-debug";
 
 const DEFAULT_ORDER_API_BASE = "https://api.layalibeauty.shop";
 
@@ -128,6 +129,8 @@ export async function createOrder(payload: OrderPayload): Promise<OrderResponse>
   const fullOrdersUrl = absoluteUrlForLog(url);
 
   console.info("[checkout] POST /orders — about to fetch", {
+    buildInfo: getClientBuildInfoForLog(),
+    window_location_href: typeof window !== "undefined" ? window.location.href : "(ssr)",
     apiBaseUrl,
     fullOrdersUrl,
     useSameOriginOrderProxy,
@@ -168,6 +171,8 @@ export async function addUpsell(orderId: string, sku: string, eventId: string) {
   const body = { sku, event_id: eventId, quantity: 1 };
 
   console.info("[checkout] POST upsell — about to fetch", {
+    buildInfo: getClientBuildInfoForLog(),
+    window_location_href: typeof window !== "undefined" ? window.location.href : "(ssr)",
     apiBaseUrl,
     fullUpsellUrl: fullUrl,
     useSameOriginOrderProxy,
