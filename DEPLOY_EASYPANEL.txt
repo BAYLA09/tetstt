@@ -113,6 +113,8 @@ These read **`NEXT_PUBLIC_*` baked at build** (commit, build time, API base URL,
 
 **Health check (internal):** HTTP GET `/` or Next static check on port **3000** (not HTTPS public URL if the probe fails).
 
+**Runtime logs:** Next prints `Local: http://localhost:3000` even when bound to **0.0.0.0**; the Docker image uses **`next start -H 0.0.0.0 -p $PORT`** so the panel can reach the container. **npm “New version available”** lines are harmless noise.
+
 **Browser proof after deploy:** open **`https://layalibeauty.shop/build-info`** (or **`/api/build-info`**) and confirm `NEXT_PUBLIC_GIT_COMMIT` / `buildTime` / `NEXT_PUBLIC_API_BASE_URL`. DevTools → Console on checkout should show **`[checkout] POST /orders — about to fetch`** with **`fullOrdersUrl`: `https://api.layalibeauty.shop/orders`**, **`useSameOriginOrderProxy`: false**, and **`buildInfo`** matching `/build-info` when proxy is off (default).
 
 Notes

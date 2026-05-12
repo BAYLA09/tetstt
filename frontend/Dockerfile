@@ -59,4 +59,6 @@ COPY --from=builder /app/next.config.ts ./next.config.ts
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "echo \"next_start PORT=${PORT:-3000}\" && exec npm run start"]
+# Bind 0.0.0.0 here so EasyPanel/reverse-proxy health checks work even if an old
+# image had `next start` without -H in package.json or the panel overrides npm scripts.
+CMD ["sh", "-c", "echo \"next_start bind=0.0.0.0 PORT=${PORT:-3000}\" && exec ./node_modules/.bin/next start -H 0.0.0.0 -p ${PORT:-3000}"]
