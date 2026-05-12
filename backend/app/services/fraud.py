@@ -42,11 +42,23 @@ def is_whitelisted_phone(phone_e164: str) -> bool:
     return phone_e164 in allowed
 
 
-def _is_uae_mobile_cod(phone_e164: str) -> bool:
-    """UAE mobile under 971 (5 + 8 digits), digits-only — survives odd Unicode/plus/spacing."""
-    d = numeric_phone(phone_e164)
+def _digits_uae_national(phone_e164: str) -> str:
+    """971… national digits (no leading +)."""
+    d = numeric_phone(phone_e164 or "")
     if d.startswith("00971"):
         d = d[2:]
+    return d
+
+
+def is_uae_national_phone_e164(phone_e164: str) -> bool:
+    """True for any normalized UAE E.164 (+971…), mobile or landline — storefront policy: no IP/MaxMind gate."""
+    d = _digits_uae_national(phone_e164)
+    return bool(d.startswith("971") and len(d) >= 11)
+
+
+def _is_uae_mobile_cod(phone_e164: str) -> bool:
+    """UAE mobile under 971 (5 + 8 digits), digits-only — survives odd Unicode/plus/spacing."""
+    d = _digits_uae_national(phone_e164)
     return bool(re.fullmatch(r"9715\d{8}", d))
 
 
@@ -76,10 +88,16 @@ async def evaluate_order_ip(ip: str | None, phone_e164: str) -> FraudDecision:
         return FraudDecision(True, "uae_e164_bypass")
 
     if _is_private_or_local_ip(ip):
-        return FraudDecision(False, "missing_or_private_ip")
+        log.warning(
+            "order_ip_missing_or_private_allow_degraded reason=missing_or_private_ip ip=%r phone_digits_prefix=%s",
+            ip,
+            (numeric_phone(phone_e164)[:6] + "…") if phone_e164 else None,
+        )
+        return FraudDecision(True, "missing_or_private_ip_allow")
 
     if not settings.maxmind_account_id or not settings.maxmind_license_key:
-        return FraudDecision(False, "maxmind_credentials_missing")
+        log.warning("order_ip_maxmind_credentials_missing_allow")
+        return FraudDecision(True, "maxmind_credentials_missing_allow")
 
     url = f"https://geoip.maxmind.com/geoip/v2.1/insights/{ip}"
     try:
@@ -91,7 +109,12 @@ async def evaluate_order_ip(ip: str | None, phone_e164: str) -> FraudDecision:
             response.raise_for_status()
             payload = response.json()
     except Exception as exc:
-        return FraudDecision(False, f"maxmind_lookup_failed:{type(exc).__name__}")
+        log.warning(
+            "order_ip_maxmind_lookup_failed_allow exc=%s ip=%r",
+            type(exc).__name__,
+            ip,
+        )
+        return FraudDecision(True, f"maxmind_lookup_failed_allow:{type(exc).__name__}")
 
     country_code = (
         payload.get("country", {}).get("iso_code")
@@ -131,6 +154,14 @@ async def verify_order_ip(
         log.warning("order_security_bypassed_by_env DISABLE_ORDER_SECURITY_CHECKS=true")
         return
 
+    # First: any UAE national number — never block checkout for IP/MaxMind on this store.
+    if is_uae_national_phone_e164(phone_e164):
+        log.info(
+            "order_ip_fraud_skipped_uae_national_phone phone_digits_prefix=%s",
+            (numeric_phone(phone_e164)[:6] + "…") if phone_e164 else None,
+        )
+        return
+
     if not settings.enable_ip_fraud_check:
         log.info("order_ip_fraud_check_disabled ENABLE_IP_FRAUD_CHECK=false")
         return
@@ -162,8 +193,10 @@ async def verify_order_ip(
         status_code=403,
         detail={
             "message": (
-                "لم يتم قبول الطلب بعد فحص أمني. إذا رقمك إماراتي صحيح، جرّبي من شبكة أخرى أو تواصلي معنا."
+                "لم يتم قبول الطلب بعد فحص أمني على الشبكة. إذا كنتِ على VPN أو شبكة غير عادية، "
+                "جرّبي بدونها أو تواصلي معنا."
             ),
             "reason": decision.reason,
+            "code": "ORDER_SECURITY_IP",
         },
     )

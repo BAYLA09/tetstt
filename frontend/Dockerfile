@@ -1,5 +1,5 @@
-# Next.js storefront — build must receive NEXT_PUBLIC_* as build-args (inlined at `next build`).
-# EasyPanel: set Build args (or Dockerfile ARG defaults below), then **Rebuild** (not only Restart).
+# Next.js storefront — NEXT_PUBLIC_* must exist at `next build` (Docker build-args + .env.production).
+# EasyPanel: **Rebuild** the image; a 0–2s "deploy" usually skips `docker build` or reuses a cached image.
 
 FROM node:20-alpine AS deps
 WORKDIR /app
@@ -9,33 +9,54 @@ RUN npm ci
 FROM node:20-alpine AS builder
 WORKDIR /app
 
+ARG CACHE_BUST=manual
+ARG COMMIT_SHA=unknown
+ARG BUILD_TIME_UTC=
 ARG NEXT_PUBLIC_API_BASE_URL=https://api.layalibeauty.shop
 ARG NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY=false
+ARG NEXT_PUBLIC_GIT_COMMIT=
+ARG NEXT_PUBLIC_APP_BUILD_MARKER=layalibeauty-storefront
 
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 ENV NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY=$NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY
+ENV NEXT_PUBLIC_APP_BUILD_MARKER=$NEXT_PUBLIC_APP_BUILD_MARKER
+ENV NEXT_PUBLIC_DOCKER_CACHE_BUST=$CACHE_BUST
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+
+# Build-time clock + proof EasyPanel ran `docker build` (see panel build logs).
+RUN echo "==== docker_build_clock_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ) ====" && \
+    echo "CACHE_BUST=${CACHE_BUST}" && \
+    echo "COMMIT_SHA_ARG=${COMMIT_SHA}" && \
+    echo "BUILD_TIME_UTC_ARG=${BUILD_TIME_UTC}" && \
+    echo "NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}" && \
+    echo "NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY=${NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY}" && \
+    echo "NEXT_PUBLIC_GIT_COMMIT_ARG=${NEXT_PUBLIC_GIT_COMMIT}"
+
+# Bake commit + build time into .env.production for `next build` (NEXT_PUBLIC_*).
+RUN set -e; \
+    CMT="${NEXT_PUBLIC_GIT_COMMIT}"; \
+    if [ -z "$CMT" ] || [ "$CMT" = "unknown" ]; then CMT="${COMMIT_SHA}"; fi; \
+    echo "NEXT_PUBLIC_GIT_COMMIT=${CMT}" >> .env.production; \
+    echo "NEXT_PUBLIC_COMMIT_SHA=${CMT}" >> .env.production; \
+    BT="${BUILD_TIME_UTC}"; \
+    if [ -z "$BT" ]; then BT=$(date -u +%Y-%m-%dT%H:%M:%SZ); fi; \
+    echo "NEXT_PUBLIC_BUILD_TIME=${BT}" >> .env.production; \
+    echo "next_wrote_build_identity commit=${CMT} time=${BT}"
 
 RUN echo "next_build_env NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL" && \
     echo "next_build_env NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY=$NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY"
 
 RUN npm run build && \
     echo "next_build_finished_ok" && \
-    ls -la .next | head -20
+    ls -la .next | head -25
 
 FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 ENV PORT=3000
-
-ARG NEXT_PUBLIC_API_BASE_URL=https://api.layalibeauty.shop
-ARG NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY=false
-
-ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
-ENV NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY=$NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY
 
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/package-lock.json ./package-lock.json
@@ -46,4 +67,6 @@ COPY --from=builder /app/next.config.ts ./next.config.ts
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "echo \"next_start PORT=${PORT:-3000}\" && exec npm run start"]
+# Bind 0.0.0.0 here so EasyPanel/reverse-proxy health checks work even if an old
+# image had `next start` without -H in package.json or the panel overrides npm scripts.
+CMD ["sh", "-c", "echo \"next_start bind=0.0.0.0 PORT=${PORT:-3000}\" && exec ./node_modules/.bin/next start -H 0.0.0.0 -p ${PORT:-3000}"]

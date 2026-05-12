@@ -14,6 +14,7 @@ export async function POST(req: NextRequest, ctx: RouteContext) {
     method: "POST",
     headers,
     body,
+    signal: AbortSignal.timeout(120_000),
   });
 
   const text = await res.text();

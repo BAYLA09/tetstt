@@ -1,9 +1,14 @@
+import logging
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.db import init_db
+from app.deployment import deploy_build_time_utc, deploy_commit_sha
 from app.routers import health, orders
+
+log = logging.getLogger(__name__)
 
 app = FastAPI(title=settings.app_name, version="0.1.0")
 
@@ -20,6 +25,14 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def on_startup() -> None:
+    log.info(
+        "app_startup commit_sha=%s build_time_utc=%s app_env=%s ENABLE_IP_FRAUD_CHECK=%s DISABLE_ORDER_SECURITY_CHECKS=%s",
+        deploy_commit_sha(),
+        deploy_build_time_utc(),
+        settings.app_env,
+        settings.enable_ip_fraud_check,
+        settings.disable_order_security_checks,
+    )
     await init_db()
 
 

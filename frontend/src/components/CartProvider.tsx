@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, Minus, Plus, ShoppingBag, X } from "lucide-react";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useCartStore } from "@/lib/cart-store";
 import { createOrder, addUpsell } from "@/lib/api";
 import { getCrossSells, getProductBySku, money, Product } from "@/lib/products";
@@ -81,6 +81,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [upsellOrderId, setUpsellOrderId] = useState<string | null>(null);
+  const submitGuardRef = useRef(false);
   const total = useMemo(() => items.reduce((sum, item) => sum + item.price * item.quantity, 0), [items]);
   const crossSells = getCrossSells(items.map((item) => item.sku));
   const normalizedPhone = normalizeUaePhone(phone);
@@ -89,6 +90,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   async function submitOrder(event: FormEvent) {
     event.preventDefault();
     if (!canSubmit || !normalizedPhone) return;
+    if (submitGuardRef.current) return;
+    submitGuardRef.current = true;
     setSubmitting(true);
     setError("");
     const purchaseEventId = generateEventId("purchase");
@@ -115,6 +118,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       setError(msg);
     } finally {
       setSubmitting(false);
+      window.setTimeout(() => {
+        submitGuardRef.current = false;
+      }, 900);
     }
   }
 

@@ -4,7 +4,11 @@ export function normalizeUaePhone(input: string): string | null {
 
   let normalized = "";
 
-  if (/^05\d{8}$/.test(digits)) {
+  // Explicit +9715XXXXXXXX (with optional spaces)
+  const compactPlus = trimmed.replace(/\s/g, "");
+  if (/^\+9715\d{8}$/.test(compactPlus)) {
+    normalized = compactPlus;
+  } else if (/^05\d{8}$/.test(digits)) {
     normalized = `+971${digits.slice(1)}`;
   } else if (/^5\d{8}$/.test(digits)) {
     normalized = `+971${digits}`;
