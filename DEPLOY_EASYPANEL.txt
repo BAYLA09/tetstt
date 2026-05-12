@@ -1,12 +1,22 @@
 Layali Beauty API — EasyPanel (exact settings)
 ===============================================
 
-Use branch: **deploy-backend** (or **layali-api** / **layali-backend-prod** — same API layout).
+Git — branch name (per service; EasyPanel **must** match GitHub)
+-----------------------------------------------------------------
+If deploy fails at **“Download Github Archive”** / **clone** / **checkout**, the **Branch** field for **that service** is often wrong: it must **exactly** match a branch that **exists on the remote** (case-sensitive).
 
-Git
+- **Storefront only:** if only the **frontend** service fails, open **that** app in EasyPanel → **Source / Git** → set **Branch** to **`main`** (or whatever branch you actually push storefront commits to) → **Rebuild**. You do **not** have to change the **backend** branch if the API still builds and deploys.
+- **API only:** same idea — adjust **Branch** only on the **backend** service if the failure is there.
+- **Both:** you can set **`main`** on frontend and backend for one simple workflow.
+
+**Legacy backend branch names** (only if they still exist on GitHub): `deploy-backend`, `layali-api`, `layali-backend-prod`. If the panel uses one of these but you only push to **`main`**, either switch that service’s **Branch** to **`main`** or push the same commits to the legacy branch.
+
+**Where to change it:** service (frontend **or** backend) → **Source** / **Git** → **Branch** → save → **Rebuild** (not only Restart).
+
+Git (backend service)
 ---
 - **Repository:** your GitHub repo (e.g. BAYLA09/tetstt).
-- **Branch:** deploy-backend (recommended).
+- **Branch:** **`main`** (recommended). Use `deploy-backend` / `layali-api` / `layali-backend-prod` only if that branch still exists on GitHub and you push there.
 - **Push:** always from repo root (`git push`). No `cd backend` required for git.
 
 Build (critical — fixes `failed to read dockerfile: open code`)
@@ -74,6 +84,8 @@ Expect JSON: `commit_sha`, `build_time_utc`, `enable_ip_fraud_check`, `disable_o
 
 Storefront (Next.js) — EasyPanel Docker build (REQUIRED for checkout URL)
 ---------------------------------------------------------------------------
+**Git branch:** same rule as the API — set **Branch** on the **frontend** service only to the branch you push (usually **`main`**). You do **not** need to touch the backend service to fix a storefront-only deploy.
+
 **Why:** `NEXT_PUBLIC_*` is **inlined at `next build`**. Runtime-only env on the container **does not** change the API URL in the JS bundle. A 1-second “deploy” usually means **no real `next build`** ran.
 
 EasyPanel often sets the Docker **build context** to the **Git clone root** (`…/code/`), not the `frontend/` folder. The storefront `package.json` lives under **`frontend/`**, so you must pick **one** of the two valid combinations below.
@@ -194,6 +206,31 @@ These read **`NEXT_PUBLIC_*` baked at build** (`commitSha`, `gitCommit`, build t
 6. **Domain attachment:** in EasyPanel, open the **domain** for `layalibeauty.shop` and confirm it routes to the **frontend** service on port **3000**. Open **`/build-info`** on that domain — if it 404s or shows old `gitCommit`, the domain may point at another container or an old image.
 7. **`api.layalibeauty.shop`:** must attach only to the **backend** service (port **8000**). The storefront should **not** be the target for the API host.
 8. **Stale container:** stop/remove old duplicate apps that might still bind the same hostname, or clear “use existing image” if the panel offers a **no-cache** rebuild.
+
+### Why changing the **branch name** sometimes “fixes” frontend deploy
+
+EasyPanel + Docker often cache **layers** and sometimes the **Git checkout** metadata. When you **rename the branch** (or point the service at a **new** branch name), the panel often does a **fresh clone** or a **different cache key**, so the next build is not the broken cached path — that is why it suddenly works.
+
+**Prefer this order (frontend):**
+
+1. **Bump `CACHE_BUST`** in Build args to a **new string** (e.g. `manual-2026-05-10-4`) and click **Rebuild** — same branch, no Git rename.
+2. If the panel has **Build without cache** / **no-cache**, use it once.
+3. If it still refuses a real **`next build`**, use the **new branch** trick below (same effect you already discovered).
+
+**New branch for a clean frontend deploy (copy-paste):**
+
+```bash
+git checkout main
+git pull origin main
+export FE_DEPLOY_BRANCH="deploy-fe-$(date -u +%Y%m%d-%H%M%S)"
+git checkout -b "$FE_DEPLOY_BRANCH"
+git push -u origin "$FE_DEPLOY_BRANCH"
+echo "EasyPanel → frontend service → Branch → set to: $FE_DEPLOY_BRANCH → Rebuild"
+```
+
+Then in **EasyPanel → storefront (frontend) → Source / Git → Branch**, set the printed name (e.g. **`deploy-fe-20260510-143055`**), **Save**, **Rebuild**. After the site is green, you can merge your work to **`main`** as usual; for the next routine deploy you can point Branch back to **`main`** and rely on **`CACHE_BUST`** bumps.
+
+**Long-lived alternative (optional):** keep one branch like **`frontend-live`**, always **`git merge main`** into it and rebuild — Easypanel Branch never changes; only **`CACHE_BUST`** changes when the UI looks stuck.
 
 **Interpreting symptoms**
 
