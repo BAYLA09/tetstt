@@ -9,6 +9,7 @@ export const metadata: Metadata = {
 export default function BuildInfoPage() {
   const data = {
     buildTime: process.env.NEXT_PUBLIC_BUILD_TIME ?? null,
+    commitSha: process.env.NEXT_PUBLIC_COMMIT_SHA ?? null,
     gitCommit: process.env.NEXT_PUBLIC_GIT_COMMIT ?? null,
     cacheBust: process.env.NEXT_PUBLIC_DOCKER_CACHE_BUST ?? null,
     appBuildMarker: process.env.NEXT_PUBLIC_APP_BUILD_MARKER ?? null,
@@ -23,7 +24,7 @@ export default function BuildInfoPage() {
     <main style={{ padding: "1.5rem", fontFamily: "ui-monospace, monospace", maxWidth: "56rem" }}>
       <h1 style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>Storefront build info</h1>
       <p style={{ marginBottom: "1rem", opacity: 0.85 }}>
-        Open after every deploy. Compare <code>NEXT_PUBLIC_GIT_COMMIT</code> / <code>buildTime</code> with Git.
+        Compare <code>commitSha</code> / <code>gitCommit</code> with Git and <code>GET https://api.layalibeauty.shop/version</code>.
       </p>
       <pre
         style={{

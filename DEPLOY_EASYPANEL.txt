@@ -27,7 +27,7 @@ Health Check (internal — do not use public HTTPS for the probe if TLS fails)
 ------------------------------------------------------------------------------
 - **Protocol:** HTTP
 - **Method:** GET
-- **Path:** /ping
+- **Path:** **`/ping`** (plain **`ok`**) or **`/health`** (JSON) or **`/version`** (JSON deploy info).
 - **Port:** 8000 (must match container **PORT**; default is 8000).
 - If GET fails, try **HEAD** on **`/ping`**.
 - **Do not** use the HTTPS public domain for the **internal** health check if the panel mis-reports unhealthy while the app works in the browser.
@@ -37,6 +37,40 @@ Runtime env (examples)
 - `DATABASE_URL` — Postgres (app normalizes `postgres://` and `sslmode` for asyncpg).
 - `FRONTEND_ORIGIN` / `FRONTEND_URL` — storefront URL(s) for CORS.
 - `PORT` — optional; image defaults to **8000** if unset.
+
+Backend Docker — build args (prove a **real** image build on EasyPanel)
+-----------------------------------------------------------------------
+Pass these as **Build arguments** (same names Docker `ARG` expects). They are **not secrets**.
+
+```
+COMMIT_SHA=<paste-current-git-sha>
+BUILD_TIME_UTC=<paste-iso8601-utc-or-leave-empty-for-docker-to-fill>
+CACHE_BUST=manual
+```
+
+- **`COMMIT_SHA`:** must match the commit you expect after merge (e.g. GitHub commit SHA). Shows in **`GET /version`** and container startup logs.
+- **`BUILD_TIME_UTC`:** optional ISO string; if empty, the Dockerfile still logs wall-clock at build start.
+- **`CACHE_BUST`:** bump every forced rebuild (e.g. `manual-2`) so BuildKit does not reuse a layer that skipped `pip install` / `uvicorn` bundle.
+
+At **runtime**, the API also reads **`GIT_SHA`**, **`GITHUB_SHA`**, or **`COMMIT_SHA`** env if your panel injects those instead of bake-time `DEPLOY_COMMIT_SHA`.
+
+Verify deployed revision (backend + frontend)
+---------------------------------------------
+**API (public):**
+
+```bash
+curl -sS "https://api.layalibeauty.shop/version" | jq .
+```
+
+Expect JSON: `commit_sha`, `build_time_utc`, `enable_ip_fraud_check`, `disable_order_security_checks` (booleans only — no DB URLs or keys).
+
+**API startup logs** should contain one line:
+
+`app_startup commit_sha=… build_time_utc=…`
+
+**Storefront:** open **`https://layalibeauty.shop/build-info`** or **`/api/build-info`** — compare **`commitSha`** / **`gitCommit`** with Git.
+
+**If deploy finishes in 0–2 seconds:** the panel is often **restarting** an old container, **pulling `:latest`** without rebuild, or using the **wrong branch / wrong repo root**. Confirm build logs show **`backend_docker_build_clock_utc`** (backend) or **`docker_build_clock_utc`** (frontend) and that **Rebuild** (not only Restart) was used.
 
 Storefront (Next.js) — EasyPanel Docker build (REQUIRED for checkout URL)
 ---------------------------------------------------------------------------
@@ -62,19 +96,22 @@ Optional: set **`NEXT_PUBLIC_*` here too** only if EasyPanel documents that it p
 NEXT_PUBLIC_API_BASE_URL=https://api.layalibeauty.shop
 NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY=false
 CACHE_BUST=manual
-NEXT_PUBLIC_GIT_COMMIT=unknown
+COMMIT_SHA=<same-sha-as-backend>
+BUILD_TIME_UTC=
+NEXT_PUBLIC_GIT_COMMIT=
 NEXT_PUBLIC_APP_BUILD_MARKER=layalibeauty-storefront
 ```
 
+- **`COMMIT_SHA`:** baked into **`NEXT_PUBLIC_COMMIT_SHA`** and **`NEXT_PUBLIC_GIT_COMMIT`** in `.env.production` when **`NEXT_PUBLIC_GIT_COMMIT`** is empty.
+- **`BUILD_TIME_UTC`:** optional; if empty, image build writes **`NEXT_PUBLIC_BUILD_TIME`** from the builder clock.
 - **`CACHE_BUST`:** change to any new string (e.g. `manual-2026-05-10-2`) on each forced rebuild so Docker cannot reuse a stale cached layer that skipped `next build`.
-- **`NEXT_PUBLIC_GIT_COMMIT`:** set to the Git SHA you expect (EasyPanel sometimes exposes `GIT_SHA` / commit — paste it here) so **`/build-info`** proves the bundle matches that commit.
+- **`NEXT_PUBLIC_GIT_COMMIT`:** optional override of commit string for the JS bundle (else **`COMMIT_SHA`** is used).
 
 **Rebuild:** use **Rebuild** / **Build** so Docker logs show:
 
 - `==== docker_build_clock_utc=...` (UTC timestamp when **`docker build`** ran)
 - `CACHE_BUST=...`
-- `NEXT_PUBLIC_GIT_COMMIT=...`
-- `next_wrote_NEXT_PUBLIC_BUILD_TIME=...`
+- `COMMIT_SHA_ARG=...` / `next_wrote_build_identity commit=...`
 - `next_build_env NEXT_PUBLIC_API_BASE_URL=...`
 - `next_build_env NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY=...`
 - `next_build_finished_ok`
@@ -86,7 +123,7 @@ Then **`npm run build`** (Next compile). If **`docker_build_clock_utc`** / **`ne
 - Human-readable: **`https://layalibeauty.shop/build-info`**
 - JSON: **`https://layalibeauty.shop/api/build-info`**
 
-These read **`NEXT_PUBLIC_*` baked at build** (commit, build time, API base URL, proxy flag, `NODE_ENV`).
+These read **`NEXT_PUBLIC_*` baked at build** (`commitSha`, `gitCommit`, build time, API base URL, proxy flag, `NODE_ENV`).
 
 **Frontend troubleshooting checklist**
 
@@ -117,20 +154,21 @@ These read **`NEXT_PUBLIC_*` baked at build** (commit, build time, API base URL,
 
 **Runtime logs:** Next prints `Local: http://localhost:3000` even when bound to **0.0.0.0**; the Docker image uses **`next start -H 0.0.0.0 -p $PORT`** so the panel can reach the container. **npm “New version available”** lines are harmless noise.
 
-**Browser proof after deploy:** open **`https://layalibeauty.shop/build-info`** (or **`/api/build-info`**) and confirm `NEXT_PUBLIC_GIT_COMMIT` / `buildTime` / `NEXT_PUBLIC_API_BASE_URL`. DevTools → Console on checkout should show **`[checkout] POST /orders — about to fetch`** with **`fullOrdersUrl`: `https://api.layalibeauty.shop/orders`**, **`useSameOriginOrderProxy`: false**, and **`buildInfo`** matching `/build-info` when proxy is off (default). If the phone cannot reach the API host, the client **retries once** via same-origin **`/api/orders`** (Next forwards to the API); look for **`succeeded via same-origin fallback`** in the console.
+**Browser proof after deploy:** open **`https://layalibeauty.shop/build-info`** (or **`/api/build-info`**) and confirm **`commitSha`** / **`gitCommit`** / `buildTime` / `NEXT_PUBLIC_API_BASE_URL`. DevTools → Console on checkout should show **`[checkout] POST /orders — about to fetch`** with **`fullOrdersUrl`: `https://api.layalibeauty.shop/orders`**, **`useSameOriginOrderProxy`: false**, and **`buildInfo`** matching `/build-info` when proxy is off (default). If the phone cannot reach the API host, the client **retries once** via same-origin **`/api/orders`** (Next forwards to the API); look for **`succeeded via same-origin fallback`** in the console.
 
 Notes
 -----
-- The API listens on **0.0.0.0** and **`${PORT:-8000}`** (see root `Dockerfile` `CMD`).
-- Liveness: **`GET /`** and **`HEAD /`** return **200** (body `ok` for GET `/`).
-- EasyPanel-friendly probe: **`GET /ping`** → plain text **`ok`**; **`HEAD /ping`** → **200**.
-- **`GET /health`** → JSON `{"status":"ok"}`; **`HEAD /health`** → **200** (also **`/health/`**).
+- The API listens on **0.0.0.0** and **`${PORT:-8000}`** (see `Dockerfile` `CMD`).
+- **`GET /version`** — JSON deploy fingerprint (`commit_sha`, `build_time_utc`, security flags). **`HEAD /version`** → **200**.
+- **`GET /ping`** → plain text **`ok`**; **`HEAD /ping`** → **200** (EasyPanel-friendly).
+- **`GET /health`** → JSON `{"status":"ok"}`; **`HEAD /health`** → **200**.
 - Orders and other business routes are unchanged under **`/orders`**, etc.
 
 Quick curl
 ----------
 - `curl -sS http://HOST:8000/ping` → `ok`
 - `curl -sS http://HOST:8000/health` → `{"status":"ok"}`
+- `curl -sS http://HOST:8000/version` → JSON with `commit_sha`, `enable_ip_fraud_check`, etc.
 
 CORS + order security (403 “أسباب أمنية” from storefront)
 ---------------------------------------------------------

@@ -1,5 +1,5 @@
 # Next.js storefront — NEXT_PUBLIC_* must exist at `next build` (Docker build-args + .env.production).
-# EasyPanel: **Rebuild** the image; a 1–2s "deploy" usually skips `docker build`.
+# EasyPanel: **Rebuild** the image; a 0–2s "deploy" usually skips `docker build` or reuses a cached image.
 
 FROM node:20-alpine AS deps
 WORKDIR /app
@@ -10,14 +10,15 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 ARG CACHE_BUST=manual
+ARG COMMIT_SHA=unknown
+ARG BUILD_TIME_UTC=
 ARG NEXT_PUBLIC_API_BASE_URL=https://api.layalibeauty.shop
 ARG NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY=false
-ARG NEXT_PUBLIC_GIT_COMMIT=unknown
+ARG NEXT_PUBLIC_GIT_COMMIT=
 ARG NEXT_PUBLIC_APP_BUILD_MARKER=layalibeauty-storefront
 
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 ENV NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY=$NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY
-ENV NEXT_PUBLIC_GIT_COMMIT=$NEXT_PUBLIC_GIT_COMMIT
 ENV NEXT_PUBLIC_APP_BUILD_MARKER=$NEXT_PUBLIC_APP_BUILD_MARKER
 ENV NEXT_PUBLIC_DOCKER_CACHE_BUST=$CACHE_BUST
 
@@ -27,15 +28,22 @@ COPY . .
 # Build-time clock + proof EasyPanel ran `docker build` (see panel build logs).
 RUN echo "==== docker_build_clock_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ) ====" && \
     echo "CACHE_BUST=${CACHE_BUST}" && \
+    echo "COMMIT_SHA_ARG=${COMMIT_SHA}" && \
+    echo "BUILD_TIME_UTC_ARG=${BUILD_TIME_UTC}" && \
     echo "NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}" && \
     echo "NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY=${NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY}" && \
-    echo "NEXT_PUBLIC_GIT_COMMIT=${NEXT_PUBLIC_GIT_COMMIT}" && \
-    echo "NEXT_PUBLIC_APP_BUILD_MARKER=${NEXT_PUBLIC_APP_BUILD_MARKER}"
+    echo "NEXT_PUBLIC_GIT_COMMIT_ARG=${NEXT_PUBLIC_GIT_COMMIT}"
 
-# Next reads .env.production during `next build` (dynamic build clock).
-RUN BT=$(date -u +%Y-%m-%dT%H:%M:%SZ) && \
-    echo "NEXT_PUBLIC_BUILD_TIME=${BT}" >> .env.production && \
-    echo "next_wrote_NEXT_PUBLIC_BUILD_TIME=${BT}"
+# Bake commit + build time into .env.production for `next build` (NEXT_PUBLIC_*).
+RUN set -e; \
+    CMT="${NEXT_PUBLIC_GIT_COMMIT}"; \
+    if [ -z "$CMT" ] || [ "$CMT" = "unknown" ]; then CMT="${COMMIT_SHA}"; fi; \
+    echo "NEXT_PUBLIC_GIT_COMMIT=${CMT}" >> .env.production; \
+    echo "NEXT_PUBLIC_COMMIT_SHA=${CMT}" >> .env.production; \
+    BT="${BUILD_TIME_UTC}"; \
+    if [ -z "$BT" ]; then BT=$(date -u +%Y-%m-%dT%H:%M:%SZ); fi; \
+    echo "NEXT_PUBLIC_BUILD_TIME=${BT}" >> .env.production; \
+    echo "next_wrote_build_identity commit=${CMT} time=${BT}"
 
 RUN echo "next_build_env NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL" && \
     echo "next_build_env NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY=$NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY"

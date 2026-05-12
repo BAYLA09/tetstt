@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 export function GET() {
   const body = {
     buildTime: process.env.NEXT_PUBLIC_BUILD_TIME ?? null,
+    commitSha: process.env.NEXT_PUBLIC_COMMIT_SHA ?? null,
     gitCommit: process.env.NEXT_PUBLIC_GIT_COMMIT ?? null,
     cacheBust: process.env.NEXT_PUBLIC_DOCKER_CACHE_BUST ?? null,
     appBuildMarker: process.env.NEXT_PUBLIC_APP_BUILD_MARKER ?? null,

@@ -4,6 +4,7 @@
 export function getClientBuildInfoForLog(): Record<string, unknown> {
   return {
     NEXT_PUBLIC_BUILD_TIME: process.env.NEXT_PUBLIC_BUILD_TIME ?? "(missing)",
+    NEXT_PUBLIC_COMMIT_SHA: process.env.NEXT_PUBLIC_COMMIT_SHA ?? "(missing)",
     NEXT_PUBLIC_GIT_COMMIT: process.env.NEXT_PUBLIC_GIT_COMMIT ?? "(missing)",
     NEXT_PUBLIC_DOCKER_CACHE_BUST: process.env.NEXT_PUBLIC_DOCKER_CACHE_BUST ?? "(missing)",
     NEXT_PUBLIC_APP_BUILD_MARKER: process.env.NEXT_PUBLIC_APP_BUILD_MARKER ?? "(missing)",
