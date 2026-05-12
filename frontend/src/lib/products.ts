@@ -1,3 +1,16 @@
+/** Bundle tier on the product hero (e.g. lamp + serums). */
+export type ProductOfferTier = {
+  sku: string;
+  title: string;
+  description: string;
+  price: number;
+  compareAt?: number;
+  saveLabel?: string;
+  badge?: string;
+  eyebrow?: string;
+  default?: boolean;
+};
+
 export type Product = {
   sku: string;
   slug: string;
@@ -15,6 +28,8 @@ export type Product = {
   heroPanorama?: boolean;
   /** Hero image + story blocks render above price and add-to-cart. */
   storyBeforeCommerce?: boolean;
+  offerTiers?: ProductOfferTier[];
+  heroPromoLine?: string;
   beforeAfterStory?: {
     kicker: string;
     title: string;
@@ -23,6 +38,8 @@ export type Product = {
     afterSrc: string;
     beforeLabel: string;
     afterLabel: string;
+    /** `warm-left`: under LTR grid, warm “after” photo first (left), cold “before” second (right). */
+    layout?: "chronological" | "warm-left";
   };
   insightStrip?: {
     imageSrc: string;
@@ -99,32 +116,61 @@ export const products: Product[] = [
     name: "موقد اللهب الفاخر",
     shortName: "الموقد الفاخر",
     price: 299,
-    compareAt: 449,
-    badge: "يحوّل جو البيت",
-    headline: "لهب واقعي + ضباب بارد + رائحة تملأ الغرفة — بدون نار حقيقية.",
+    badge: "يحوّل أجواء المنزل",
+    headline: "لهب واقعي + ضباب بارد + عطر يملأ الغرفة — من دون لهب حقيقي.",
     subheading:
-      "موقد إلكتروني فاخر يعطي دفء وجو راقٍ لأي غرفة. يعمل مع أي زيت عطري.",
-    story: "الجهاز الذي يحوّل غرفتك من فارغة لدافئة في دقائق.",
+      "موقد إلكتروني فاخر يمنح مساحتك دفئاً وهدوءاً. يعمل مع الزيوت العطرية المنزلية.",
+    story: "قطعة ترتقي بأجواء غرفتك خلال دقائق.",
     notes: ["لهب LED واقعي", "ناشر زيوت عطرية", "مؤقت 1h/3h/5h", "آمن مع الأطفال"],
+    heroPromoLine: "آخر 48 ساعة على عرض الشحن المجاني لهذا الأسبوع",
+    offerTiers: [
+      {
+        sku: "LB-LAMP-189",
+        title: "الموقد فقط",
+        description: "جهاز موقد اللهب الفاخر • بدون سيروم",
+        price: 299,
+        eyebrow: "ابدئي بالموقد",
+      },
+      {
+        sku: "LB-LAMP-OUD-379",
+        title: "الموقد + سيروم عود قصر دبي",
+        description: "موقد اللهب + عود قصر دبي 100مل • الثنائي الأمثل",
+        price: 379,
+        compareAt: 498,
+        saveLabel: "وفّري 119 درهماً",
+        badge: "الأكثر اختياراً",
+        default: true,
+      },
+      {
+        sku: "LB-LAMP-TRIPLE-449",
+        title: "الموقد + عود + مسك",
+        description: "موقد اللهب + عود قصر دبي + مسك المطر الأبيض",
+        price: 449,
+        compareAt: 697,
+        saveLabel: "وفّري 248 درهماً",
+        badge: "الأكثر توفيراً",
+      },
+    ],
     image: "/products/aroma-lamp-oud-hero.jpg",
     cardImage: "/products/img-diffuser-card.jpg",
     heroPanorama: true,
     storyBeforeCommerce: true,
     beforeAfterStory: {
       kicker: "قبل وبعد",
-      title: "بيتك يحس فاضي وبارد – حتى مع كل الديكور",
+      title: "منزلك يبدو باردًا وفارغًا — حتى مع تنسيق الديكور",
       body:
-        "الهواء الجاف، الإضاءة الباردة، والغرفة بدون روح تخليك ما تحبين الجلوس في بيتك. المشكلة مو في الأثاث — في الجو.",
+        "الهواء الجاف والإضاءة الباردة وغياب الدفء يجعلكِ تفضّلين قضاء الوقت خارج الغرفة. المشكلة ليست في الأثاث بقدر ما هي في أجواء المكان.",
       beforeSrc: "/products/before-diffuser.jpg",
       afterSrc: "/products/after-family-aroma.jpg",
       beforeLabel: "قبل",
       afterLabel: "بعد",
+      layout: "warm-left",
     },
     insightStrip: {
       imageSrc: "/products/aroma-stat-woman.jpg",
       headline:
-        "نساء في الإمارات يحسسن أن بيتهن يفتقر للدفء والجو الراقي – حتى بعد الاهتمام بالديكور.",
-      subline: "استطلاع ليالي بيوتي، الإمارات 2024",
+        "نساء في الإمارات يشعرن بأن منازلهن تحتاج إلى دفء أجواء أرقى، حتى مع اهتمامهن بكل تفاصيل الديكور.",
+      subline: "استطلاع ليالي بيوتي — دولة الإمارات العربية المتحدة، ٢٠٢٤",
     },
   },
 ];
@@ -170,11 +216,30 @@ export function money(value: number) {
   return `${value} درهم`;
 }
 
+const LAMP_FAMILY_SKUS = new Set(["LB-LAMP-189", "LB-LAMP-OUD-379", "LB-LAMP-TRIPLE-449"]);
+
+export function resolveDefaultOfferTier(product: Product): ProductOfferTier | null {
+  const tiers = product.offerTiers;
+  if (!tiers?.length) return null;
+  return tiers.find((t) => t.default) ?? tiers[0] ?? null;
+}
+
+export function productSnapshotForOfferTier(base: Product, tier: ProductOfferTier): Product {
+  return {
+    ...base,
+    sku: tier.sku,
+    name: tier.title,
+    shortName: tier.title,
+    price: tier.price,
+    compareAt: tier.compareAt,
+  };
+}
+
 export function getCrossSells(skus: string[]) {
   const inCart = new Set(skus);
   const suggestions: Product[] = [];
   const hasBundle = inCart.has("LB-BUNDLE-299");
-  const hasLamp = inCart.has("LB-LAMP-189");
+  const hasLamp = skus.some((sku) => LAMP_FAMILY_SKUS.has(sku));
   const hasMusk = inCart.has("LB-SERUM-MUSK-59");
   const hasOud = inCart.has("LB-SERUM-OUD-69");
 
