@@ -104,12 +104,16 @@ See `assets/layali_beauty_sheet_template.csv`.
 ## Product price registry in backend
 
 ```python
+# Authoritative source: backend/app/products.py — keep in sync with storefront offer tiers.
 PRODUCTS = {
-    "LB-BUNDLE-299": {"name": "باقة ليالي بيوتي الفاخرة", "price": 299},
-    "LB-SERUM-MUSK-59": {"name": "سيروم مسك المطر الأبيض", "price": 59},
-    "LB-SERUM-OUD-69": {"name": "سيروم عود قصر دبي", "price": 69},
-    "LB-SERUM-SET-99": {"name": "ثنائي السيروم الفاخر", "price": 99},
-    "LB-UPSELL-MUSK-39": {"name": "سيروم مسك المطر الأبيض - عرض خاص", "price": 39},
-    "LB-UPSELL-OUD-39": {"name": "سيروم عود قصر دبي - عرض خاص", "price": 39},
+    "LB-BUNDLE-299": ...,
+    "LB-SERUM-MUSK-59": ...,
+    "LB-SERUM-OUD-69": ...,
+    "LB-SERUM-SET-99": ...,
+    "LB-LAMP-189": ...,       # lamp only
+    "LB-LAMP-OUD-379": ...,   # lamp + oud serum
+    "LB-LAMP-TRIPLE-449": ...,  # lamp + two oud serums
+    "LB-UPSELL-MUSK-39": ...,
+    "LB-UPSELL-OUD-39": ...,
 }
 ```

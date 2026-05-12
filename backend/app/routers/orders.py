@@ -12,7 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.config import settings
 from app.db import get_session
 from app.models import Order, OrderItem
-from app.products import PRODUCTS
+from app.products import LAMP_OFFER_SKUS, PRODUCTS
 from app.schemas import OrderCreate, OrderResponse, UpsellCreate
 from app.services.fraud import verify_order_ip
 from app.services.phone import normalize_uae_phone, numeric_phone, phone_hash
@@ -104,8 +104,15 @@ async def create_order(
     for item in payload.items:
         product = PRODUCTS.get(item.sku)
         if not product:
-            log.warning("order_unknown_sku sku=%r", item.sku)
-            raise HTTPException(status_code=400, detail=f"Unknown SKU: {item.sku}")
+            log.warning("order_unknown_sku sku=%r lamp_tiers_in_catalog=%s", item.sku, LAMP_OFFER_SKUS <= set(PRODUCTS))
+            extra = ""
+            if (item.sku or "").startswith("LB-LAMP-"):
+                extra = (
+                    " — غالباً خدمة الـ API على الإنترنت **قديمة** ولم تُحدَّث بعد إضافة عروض الموقد. "
+                    "في Easypanel: أعدي **Rebuild** لخدمة **الـ backend/API** من branch `main`، "
+                    "ثم افتحي `GET /version` وتأكدي أن `catalog_skus` يحتوي LB-LAMP-OUD-379 و LB-LAMP-TRIPLE-449."
+                )
+            raise HTTPException(status_code=400, detail=f"Unknown SKU: {item.sku}{extra}")
         quantity = item.quantity
         price = product["price"]
         subtotal += line_total(price, quantity)
