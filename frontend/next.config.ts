@@ -8,7 +8,6 @@ const nextConfig: NextConfig = {
     const legacyProductPaths = [
       "/products/luxury-bundle",
       "/products/white-rain-musk-serum",
-      "/products/dubai-palace-oud-serum",
       "/products/serum-refill-set",
     ];
     return [

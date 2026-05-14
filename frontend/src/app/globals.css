@@ -314,6 +314,10 @@ html {
   box-shadow: 0 26px 60px rgba(0, 0, 0, 0.25);
 }
 
+.product-illustration.has-product-image::after {
+  display: none;
+}
+
 .price-lockup {
   display: inline-flex;
   align-items: baseline;

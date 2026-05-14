@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 const PRODUCT_HOME = "/products/aroma-flame-lamp";
-const ALLOWED_PRODUCT_SLUGS = new Set(["aroma-flame-lamp"]);
+const ALLOWED_PRODUCT_SLUGS = new Set(["aroma-flame-lamp", "dubai-palace-oud-serum"]);
 
 export function middleware(request: NextRequest) {
   const match = request.nextUrl.pathname.match(/^\/products\/([^/]+)\/?$/);

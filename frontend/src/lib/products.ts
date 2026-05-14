@@ -90,12 +90,16 @@ const catalogProducts: Product[] = [
     name: "سيروم عود قصر دبي",
     shortName: "عود قصر دبي",
     price: 69,
-    badge: "قيمة خليجية أعلى",
-    headline: "لمسة عود راقية ترفع قيمة الطلب وتعطي حضور خليجي فخم.",
-    subheading: "عود غني مستوحى من ذوق دبي لمحبات الفخامة الهادئة، وأقوى كإضافة ذكية داخل السلة.",
+    compareAt: 89,
+    badge: "زيت عود مستقل",
+    headline: "زيت عود فاخر برائحة خشبية دافئة تضيف حضوراً خليجياً واضحاً للبيت والروتين اليومي.",
+    subheading:
+      "عود قصر دبي 100مل: لمسة خشبية راقية مستوحاة من ذوق دبي، مناسب كزيت عطري مستقل أو كإضافة مع موقد ليالي.",
     story:
-      "العود يحمل قيمة عالية في الإمارات، لذلك صُمم هذا الاختيار ليبدو كإضافة راقية للطلب.",
-    notes: ["طابع فاخر", "ذوق خليجي", "مناسب للطلعات"],
+      "صفحة مستقلة لزيت عود قصر دبي حتى تكون تفاصيل الرائحة، السعر، وطريقة الطلب واضحة بدون الحاجة لشراء الموقد أولاً.",
+    notes: ["100مل", "رائحة خشبية دافئة", "مناسب للموقد", "دفع عند الاستلام"],
+    image: "/products/dubai-palace-oud-serum.svg",
+    cardImage: "/products/dubai-palace-oud-serum.svg",
   },
   {
     sku: "LB-SERUM-SET-99",
@@ -178,7 +182,7 @@ const catalogProducts: Product[] = [
 ];
 
 /** Only these `/products/[slug]` pages are built and reachable. Expand when relaunching the full store. */
-const STOREFRONT_SLUG_ALLOWLIST = new Set<string>(["aroma-flame-lamp"]);
+const STOREFRONT_SLUG_ALLOWLIST = new Set<string>(["aroma-flame-lamp", "dubai-palace-oud-serum"]);
 
 /** Listed on home/collections and passed to `generateStaticParams`. */
 export const products: Product[] = catalogProducts.filter((p) => STOREFRONT_SLUG_ALLOWLIST.has(p.slug));

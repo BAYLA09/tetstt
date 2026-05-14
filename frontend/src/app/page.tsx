@@ -88,14 +88,31 @@ export default function Home() {
         <div className="container-grid">
           <div className="section-heading">
             <p className="badge">اختيار ليالي</p>
-            <h2>منتج رئيسي واحد، وباقات واضحة داخل صفحة المنتج</h2>
+            <h2>منتجات واضحة: الموقد وزيت عود قصر دبي</h2>
             <p>
-              حافظنا على المنتج الحالي ومسار الشراء كما هو، ورتبنا العرض ليظهر مثل متجر احترافي: صورة/بطاقة،
-              اسم، وصف، سعر، وزر واضح.
+              أضفنا صفحة مستقلة لعود قصر دبي، مع الحفاظ على صفحة الموقد والباقات الحالية. كل منتج له بطاقة،
+              سعر، وصف، وزر واضح.
             </p>
           </div>
-          <div className="mt-10 grid gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(320px,0.55fr)] lg:items-stretch">
-            <ProductCard product={featuredProduct} />
+          <div className="mt-10 grid gap-6 lg:grid-cols-2">
+            {products.map((product) => (
+              <ProductCard key={product.sku} product={product} />
+            ))}
+          </div>
+          <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(320px,0.55fr)] lg:items-stretch">
+            <div className="premium-card">
+              <p className="badge">عود قصر دبي</p>
+              <h3 className="mt-4 text-3xl font-black leading-tight text-[var(--emerald-950)]">
+                صفحة مستقلة للزيت وحده
+              </h3>
+              <p className="mt-4 leading-8 text-[var(--muted)]">
+                إذا بغيتي عود قصر دبي بوحدو، دابا عندو صفحة خاصة بالسعر والوصف وزر الإضافة للسلة بدون الدخول
+                لباقة الموقد.
+              </p>
+              <Link href="/products/dubai-palace-oud-serum" className="btn-secondary mt-6">
+                افتحي صفحة عود قصر دبي
+              </Link>
+            </div>
             <div className="premium-card flex flex-col justify-between">
               <div>
                 <p className="badge">الباقات الحالية</p>

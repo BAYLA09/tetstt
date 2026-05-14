@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { CheckCircle2, ShoppingCart } from "lucide-react";
 import {
@@ -13,12 +14,26 @@ import { useCartStore } from "@/lib/cart-store";
 import { generateEventId, trackEvent } from "@/lib/events";
 
 function HeroMedia({ product, contained }: { product: Product; contained?: boolean }) {
+  const [imageFailed, setImageFailed] = useState(false);
+  const showImage = Boolean(product.image) && !imageFailed;
+
   return (
     <div
-      className={`product-illustration grid min-h-[360px] place-items-end rounded-[2.5rem] p-6 lg:min-h-[520px] ${
+      className={`product-illustration ${showImage ? "has-product-image" : ""} grid min-h-[360px] place-items-end rounded-[2.5rem] p-6 lg:min-h-[520px] ${
         contained ? "" : "lg:mx-0"
       }`}
     >
+      {showImage && (
+        <Image
+          src={product.image!}
+          alt={product.name}
+          fill
+          className="z-0 object-contain p-4 md:p-8"
+          priority
+          sizes="(max-width: 1024px) 100vw, 48vw"
+          onError={() => setImageFailed(true)}
+        />
+      )}
       <div className="relative z-10 max-w-sm rounded-[1.7rem] border border-white/10 bg-black/20 p-5 text-white shadow-2xl backdrop-blur">
         <p className="text-sm font-black text-[var(--gold-300)]">Layali Beauty</p>
         <h2 className="mt-2 text-3xl font-black">{product.shortName}</h2>
