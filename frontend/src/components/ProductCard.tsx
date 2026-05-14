@@ -7,7 +7,13 @@ import { useState } from "react";
 import { money, type Product } from "@/lib/products";
 import { useCartStore } from "@/lib/cart-store";
 
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({
+  product,
+  showAddButton = true,
+}: {
+  product: Product;
+  showAddButton?: boolean;
+}) {
   const addItem = useCartStore((state) => state.addItem);
   const [imageFailed, setImageFailed] = useState(false);
   const showImage = Boolean(product.cardImage) && !imageFailed;
@@ -67,13 +73,22 @@ export function ProductCard({ product }: { product: Product }) {
               <span>درهم</span>
             </div>
           </div>
-          <button
-            onClick={() => addItem(product)}
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-[var(--gold-500)] px-5 py-3 text-sm font-black text-[var(--emerald-950)] shadow-lg transition hover:-translate-y-0.5 hover:bg-[var(--gold-400)]"
-          >
-            <ShoppingBag className="h-4 w-4" aria-hidden />
-            أضيفي العرض
-          </button>
+          {showAddButton ? (
+            <button
+              onClick={() => addItem(product)}
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-[var(--gold-500)] px-5 py-3 text-sm font-black text-[var(--emerald-950)] shadow-lg transition hover:-translate-y-0.5 hover:bg-[var(--gold-400)]"
+            >
+              <ShoppingBag className="h-4 w-4" aria-hidden />
+              أضيفي العرض
+            </button>
+          ) : (
+            <Link
+              href={`/products/${product.slug}`}
+              className="inline-flex items-center justify-center rounded-full border border-[var(--border-gold)] px-5 py-3 text-sm font-black text-[var(--emerald-950)] transition hover:-translate-y-0.5 hover:bg-[var(--cream-50)]"
+            >
+              اكتشفي التفاصيل
+            </Link>
+          )}
         </div>
       </div>
     </article>

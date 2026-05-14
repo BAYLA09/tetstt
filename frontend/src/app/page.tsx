@@ -1,85 +1,70 @@
 import Link from "next/link";
 import { ProductCard } from "@/components/ProductCard";
-import { money, products } from "@/lib/products";
+import { products } from "@/lib/products";
 
 const pillars = [
-  ["مصمم لجفاف الإمارات", "مكيفات قوية، شمس، وتنقل يومي يخلي البشرة مشدودة وباهتة؛ الرسالة كلها مبنية على هاد المشكلة."],
-  ["إحساس نعومة مع رائحة عود", "روتين عناية بسيط يعطي لمسة ناعمة ورائحة خشبية دافئة بدون وعود طبية مبالغ فيها."],
-  ["باقات واضحة", "وحدة، جوج، أو ثلاثة بأسعار ظاهرة داخل صفحة المنتج قبل إدخال أي بيانات."],
+  ["مصمم لجو الإمارات", "المكيف، الشمس، والتنقل اليومي يخلي البشرة مشدودة وباهتة. كل رسالة في المتجر مبنية على هاد المشكلة."],
+  ["طقس عناية واضح", "عود قصر دبي هو الروتين الأساسي: إحساس نعومة ورائحة عود دافئة بدون وعود علاجية مبالغ فيها."],
+  ["اختيارات داخل صفحة المنتج", "الهوم يشرح القصة فقط. تفاصيل الكمية والسعر النهائي كتظهر بعد الدخول لصفحة المنتج."],
   ["دفع عند الاستلام", "لا يوجد دفع إلكتروني مسبق. يتم تأكيد الطلب أولاً ثم الدفع عند وصول الشحنة داخل الإمارات."],
 ];
 
 const reviews = [
-  ["مريم", "دبي", "بشرتي كتشد بزاف من المكيف. حبيت أن الصفحة شرحات المشكلة والروتين بلا مبالغة."],
-  ["نورة", "أبوظبي", "خديت جوج حيث السعر واضح، والرائحة دافئة ومناسبة بعد الشاور."],
-  ["سارة", "الشارقة", "التأكيد قبل الشحن والدفع عند الاستلام خلاني نطلب براحة."],
+  ["مريم", "دبي", "بشرتي كتشد بزاف من المكيف. حبيت أن الموقع شرح المشكلة والروتين بلا مبالغة."],
+  ["نورة", "أبوظبي", "أول مرة نحس متجر كيهضر على جو الإمارات فعلاً، ماشي كلام عام على العناية."],
+  ["سارة", "الشارقة", "التجربة واضحة: قريت، دخلت لصفحة المنتج، عاد اخترت العرض المناسب."],
 ];
 
 const steps = [
-  ["١", "اختاري كمية عود قصر دبي", "وحدة للتجربة، جوج للقيمة الأفضل، أو ثلاثة لروتين مستمر."],
-  ["٢", "راجعي السلة", "تأكدي من السعر والكمية، ثم انتقلي لنموذج التأكيد بدون دفع الآن."],
-  ["٣", "استعمليه كروتين يومي", "بعد الاستلام، استعمليه بعد الشاور أو قبل النوم لإحساس نعومة مع رائحة عود."],
+  ["١", "افهمي المشكلة", "جفاف وشد البشرة بسبب المكيف والحرارة يحتاج روتين بسيط وواضح."],
+  ["٢", "ادخلي لصفحة الروتين", "من بطاقات المنتجات تختارين عود قصر دبي أو المنتج المكمل وتقرئين التفاصيل."],
+  ["٣", "اختاري العرض هناك", "داخل صفحة المنتج فقط تظهر اختيارات الكمية والتأكيد بالدفع عند الاستلام."],
 ];
 
 const faqs = [
   ["هل الدفع عند الاستلام؟", "نعم. لا يوجد دفع الآن، يتم الدفع عند وصول الطلب."],
-  ["هل عود قصر دبي مخصص لجفاف البشرة؟", "التسويق الآن مركز على إحساس الجفاف والشد المنتشر مع المكيف والحرارة في الإمارات، بدون ادعاءات علاجية."],
-  ["لماذا تظهر أكثر من باقة؟", "باش تختاري بين وحدة 199، جوج 279، أو ثلاثة 349 حسب استعمالك واحتياجك."],
-  ["متى يتم التأكيد؟", "بعد إرسال الطلب، يتم التواصل معك لتأكيد البيانات قبل تجهيز الشحنة."],
+  ["هل هذا علاج لجفاف البشرة؟", "لا. نتحدث عن روتين عناية يعطي إحساس نعومة وراحة للبشرة المشدودة من جو الإمارات، بدون ادعاءات طبية."],
+  ["فين نختار العرض؟", "الهوم للشرح فقط. اختيارات الكمية والسعر كتكون داخل صفحة المنتج بعد ما تدخلي لها."],
+  ["متى يتم التأكيد؟", "بعد إرسال الطلب من صفحة المنتج، يتم التواصل معك لتأكيد البيانات قبل تجهيز الشحنة."],
 ];
 
 export default function Home() {
   const featuredProduct = products[0];
-  const defaultTier = featuredProduct.offerTiers?.find((tier) => tier.default) ?? featuredProduct.offerTiers?.[0];
-  const startingPrice = defaultTier?.price ?? featuredProduct.price;
 
   return (
     <div className="store-shell">
-      <section className="hero-gradient overflow-hidden">
-        <div className="container-grid grid gap-10 py-14 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:py-24">
-          <div className="order-2 lg:order-1">
-            <div className="product-illustration grid min-h-[420px] place-items-end rounded-[2.75rem] p-6 lg:min-h-[560px]">
-              <div className="relative z-10 w-full max-w-md rounded-[2rem] border border-white/10 bg-black/20 p-5 text-white backdrop-blur">
-                <p className="text-sm font-black text-[var(--gold-300)]">عرض اليوم</p>
-                <h2 className="mt-2 text-3xl font-black">{featuredProduct.shortName}</h2>
-                <p className="mt-3 leading-8 text-[var(--cream-100)]">{featuredProduct.subheading}</p>
-                <div className="mt-5 rounded-2xl bg-white p-4 text-[var(--emerald-950)]">
-                  <p className="text-xs font-black text-[var(--gold-500)]">السعر المعروض</p>
-                  <div className="price-lockup mt-1">
-                    <span>يبدأ من</span>
-                    <strong>{startingPrice}</strong>
-                    <span>درهم</span>
-                  </div>
-                </div>
+      <section className="hero-gradient overflow-hidden text-white">
+        <div className="container-grid py-16 text-center lg:py-24">
+          <p className="badge border-gold-400/50 bg-gold-400/10 text-gold-300">
+            عناية لجفاف البشرة في الإمارات
+          </p>
+          <h1 className="mx-auto mt-6 max-w-4xl text-4xl font-black leading-tight md:text-6xl">
+            بشرة مشدودة من المكيف والحر؟
+            <br />
+            ابدئي الجمال من روتين عود دافئ
+          </h1>
+          <p className="mx-auto mt-6 max-w-3xl text-lg leading-9 text-cream-100/90">
+            ليالي بيوتي مبنية على مشكلة واضحة تعيشها نساء الإمارات: مكيف طول اليوم، حرارة، وشمس.
+            نعرّفك على روتين عود قصر دبي لإحساس نعومة ورائحة راقية، وتدخلين لصفحة المنتج فقط عندما تكونين جاهزة للتفاصيل.
+          </p>
+          <div className="mx-auto mt-10 grid max-w-4xl grid-cols-2 gap-3 text-sm md:grid-cols-4">
+            {[
+              ["جفاف", "إحساس الشد"],
+              ["عود", "رائحة دافئة"],
+              ["روتين", "بعد الشاور"],
+              ["COD", "دفع عند الاستلام"],
+            ].map(([title, text]) => (
+              <div key={title} className="rounded-3xl border border-white/10 bg-white/5 p-4">
+                <p className="text-2xl font-black text-[var(--gold-300)]">{title}</p>
+                <p className="mt-1 text-xs font-bold text-cream-100/80">{text}</p>
               </div>
-            </div>
+            ))}
           </div>
-          <div className="order-1 text-white lg:order-2">
-            <p className="badge border-gold-400/50 bg-gold-400/10 text-gold-300">
-              ليالي بيوتي · عناية بجفاف البشرة في الإمارات
+          <div className="mx-auto mt-10 max-w-sm rounded-[2rem] border border-gold-400/30 bg-white/10 p-4">
+            <p className="text-sm font-black text-gold-300">ضمان وضوح الطلب</p>
+            <p className="mt-2 text-sm leading-7 text-cream-100">
+              الهوم للشرح فقط. اختيار العرض وإضافة السلة داخل صفحة المنتج.
             </p>
-            <h1 className="mt-6 max-w-3xl text-4xl font-black leading-tight md:text-6xl">
-              بشرة مشدودة من المكيف والحر؟ ابدئي روتين عود قصر دبي
-            </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-9 text-cream-100/90">
-              جو الإمارات قاسي على البشرة: مكيف طول اليوم، حرارة، وشمس. عود قصر دبي يعطيك طقس عناية ناعم
-              برائحة عود فاخرة وباقات واضحة قبل الطلب.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/products/dubai-palace-oud-serum" className="btn-primary">
-                شاهدي عروض عود قصر دبي
-              </Link>
-              <Link href="#products" className="btn-secondary border-gold-400/50 bg-white/5 text-gold-300">
-                تصفحي المنتج
-              </Link>
-            </div>
-            <div className="mt-8 grid grid-cols-2 gap-3 text-sm md:grid-cols-4">
-              {["لجفاف البشرة", "رائحة عود", "داخل الإمارات", "دفع عند الاستلام"].map((item) => (
-                <div key={item} className="rounded-2xl border border-white/10 bg-white/5 p-3 text-center text-cream-50">
-                  {item}
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       </section>
@@ -87,60 +72,16 @@ export default function Home() {
       <section id="products" className="section-padding bg-cream-50">
         <div className="container-grid">
           <div className="section-heading">
-            <p className="badge">اختيار ليالي</p>
-            <h2>عود قصر دبي هو العرض الرئيسي لجفاف البشرة</h2>
+            <p className="badge">Our Rituals</p>
+            <h2>روتينات ليالي لجفاف البشرة وأجواء البيت</h2>
             <p>
-              الستور كامل دابا مبني على مشكلة واحدة واضحة: جفاف البشرة اللي كيزيد مع مكيفات الإمارات.
-              اختاري الكمية المناسبة وخلي الموقد كمنتج مكمل للرائحة والأجواء.
+              كل بطاقة هنا تدخل لصفحة تفاصيل المنتج فقط. لا يوجد شراء مباشر في الهوم.
             </p>
           </div>
-          <div className="mt-10 grid gap-6 lg:grid-cols-2">
+          <div className="mt-10 grid gap-6 md:grid-cols-2">
             {products.map((product) => (
-              <ProductCard key={product.sku} product={product} />
+              <ProductCard key={product.sku} product={product} showAddButton={false} />
             ))}
-          </div>
-          <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(320px,0.55fr)] lg:items-stretch">
-            <div className="premium-card">
-              <p className="badge">عروض الجفاف</p>
-              <h3 className="mt-4 text-3xl font-black leading-tight text-[var(--emerald-950)]">
-                وحدة 199 · جوج 279 · ثلاثة 349
-              </h3>
-              <p className="mt-4 leading-8 text-[var(--muted)]">
-                صفحة عود قصر دبي فيها اختيار الكمية مباشرة، باش تزيدي القيمة بدون ما تبدلي checkout ولا طريقة الطلب.
-              </p>
-              <Link href="/products/dubai-palace-oud-serum" className="btn-secondary mt-6">
-                اختاري عرض الجفاف
-              </Link>
-            </div>
-            <div className="premium-card flex flex-col justify-between">
-              <div>
-                <p className="badge">الباقات الحالية</p>
-                <h3 className="mt-4 text-3xl font-black leading-tight text-[var(--emerald-950)]">
-                  اختاري العرض من صفحة المنتج نفسها
-                </h3>
-                <div className="mt-6 grid gap-3">
-                  {(featuredProduct.offerTiers ?? []).map((tier) => (
-                    <div key={tier.sku} className="rounded-2xl border border-[var(--border-gold)] bg-white p-4">
-                      <div className="flex items-start justify-between gap-4">
-                        <div>
-                          {tier.badge && (
-                            <span className="rounded-full bg-[var(--sage-100)] px-2.5 py-1 text-xs font-black text-[var(--emerald-950)]">
-                              {tier.badge}
-                            </span>
-                          )}
-                          <p className="mt-2 font-black text-[var(--emerald-950)]">{tier.title}</p>
-                          <p className="mt-1 text-sm leading-7 text-[var(--muted)]">{tier.description}</p>
-                        </div>
-                        <p className="shrink-0 text-lg font-black text-[var(--gold-500)]">{money(tier.price)}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <Link href="/products/dubai-palace-oud-serum" className="btn-primary mt-6">
-                افتحي عروض عود قصر دبي
-              </Link>
-            </div>
           </div>
         </div>
       </section>
@@ -148,9 +89,9 @@ export default function Home() {
       <section className="section-padding">
         <div className="container-grid">
           <div className="section-heading">
-            <p className="badge">لماذا ليالي</p>
-            <h2>مشكلة واحدة، عرض واضح، وروتين سهل</h2>
-            <p>كل الستور كيهضر على جفاف البشرة فالإمارات وكيفاش تختاري العرض المناسب.</p>
+            <p className="badge">Why Layali Beauty</p>
+            <h2>عناية، مو متجر عشوائي</h2>
+            <p>ليالي مبنية على أربعة أركان: مشكلة واضحة، روتين مفهوم، تجربة طلب مريحة، ودفع عند الاستلام.</p>
           </div>
           <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {pillars.map(([title, text]) => (
@@ -168,10 +109,10 @@ export default function Home() {
         <div className="container-grid">
           <div className="mx-auto max-w-3xl text-center">
             <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">
-              تجارب واضحة
+              Verified Reviews
             </p>
             <h2 className="mt-5 text-3xl font-bold md:text-5xl">
-              عميلات كيعانيو من نفس إحساس الجفاف والشد
+              عميلات قرأن القصة قبل ما يدخلن لصفحة المنتج
             </h2>
             <p className="mt-5 leading-9 text-cream-100">
               عبارات عامة حول إحساس الجفاف وتجربة الطلب. لا نعرض وعود علاجية أو نتائج طبية.
@@ -193,9 +134,9 @@ export default function Home() {
       <section className="section-padding bg-cream-50">
         <div className="container-grid">
           <div className="section-heading">
-            <p className="badge">طريقة الطلب</p>
-            <h2>من اختيار الكمية لروتين النعومة في 3 خطوات</h2>
-            <p>بدون دفع أونلاين. بدون تعقيد. اختاري العرض وثبتي الطلب عند التأكيد.</p>
+            <p className="badge">How It Works</p>
+            <h2>من القراءة للاستلام في 3 خطوات</h2>
+            <p>الهوم يشرح. صفحة المنتج تعرض الاختيارات. الدفع يكون عند الاستلام.</p>
           </div>
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             {steps.map(([number, title, text]) => (
@@ -215,20 +156,20 @@ export default function Home() {
         <div className="container-grid grid gap-10 lg:grid-cols-2 lg:items-center">
           <div>
             <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">
-              ابدئي طقسك
+              Begin Your Ritual
             </p>
             <h2 className="mt-5 text-3xl font-bold md:text-5xl">
-              ابدئي بروتين جفاف البشرة اليوم
+              عنايتك تستحق وضوح، مو ضغط شراء من الهوم
             </h2>
             <p className="mt-5 leading-9 text-cream-100">
-              إذا كانت بشرتك كتشد من المكيف والجو الجاف، اختاري عود قصر دبي بالكمية المناسبة. لا يوجد دفع الآن.
+              إذا كانت بشرتك كتشد من المكيف والجو الجاف، ادخلي لصفحة عود قصر دبي باش تقرئي التفاصيل وتختاري العرض هناك.
             </p>
-            <Link href="/products/dubai-palace-oud-serum" className="btn-primary mt-8 inline-flex">
-              انتقلي إلى عروض عود قصر دبي
+            <Link href={`/products/${featuredProduct.slug}`} className="btn-primary mt-8 inline-flex">
+              ادخلي لصفحة الروتين
             </Link>
           </div>
           <div className="grid gap-4">
-            {["وحدة 199", "جوج 279", "ثلاثة 349", "الدفع عند الاستلام"].map((item) => (
+            {["جفاف البشرة", "رائحة عود دافئة", "تأكيد قبل الشحن", "الدفع عند الاستلام"].map((item) => (
               <div key={item} className="rounded-3xl border border-gold-400/30 bg-white/5 p-5 text-gold-300">
                 {item}
               </div>
