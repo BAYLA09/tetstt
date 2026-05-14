@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
 
 export const metadata = {
-  title: "مجموعة ليالي بيوتي | عروض فاخرة بالدفع عند الاستلام",
+  title: "عروض عود قصر دبي | ليالي بيوتي",
 };
 
 export default function CollectionsPage() {
-  redirect("/products/aroma-flame-lamp");
+  redirect("/products/dubai-palace-oud-serum");
 }

@@ -8,18 +8,18 @@ import { BrandLogo } from "./BrandLogo";
 
 const nav = [
   { href: "/", label: "الرئيسية" },
-  { href: "/products/aroma-flame-lamp", label: "موقد ليالي" },
   { href: "/products/dubai-palace-oud-serum", label: "عود قصر دبي" },
+  { href: "/products/aroma-flame-lamp", label: "موقد ليالي" },
   { href: "/collections", label: "العروض" },
   { href: "/about", label: "عن ليالي" },
   { href: "/contact", label: "تواصل" },
 ];
 
 const topBarMessages = [
+  "جفاف البشرة في الإمارات؟ ابدئي بروتين عود قصر دبي",
+  "وحدة 199 · جوج 279 · ثلاثة 349",
   "الدفع عند الاستلام داخل الإمارات - لا تدفعين الآن",
-  "تأكيد الطلب قبل الشحن لتقليل الإلغاء وضمان الجدية",
-  "عرض اليوم محجوز حسب السعر الظاهر في صفحة المنتج والسلة",
-  "تجربة ليالي بيوتي: تغليف فاخر، رائحة راقية، ودعم واتساب",
+  "تأكيد الطلب قبل الشحن وسعر واضح قبل السلة",
 ];
 
 export function SiteHeader() {
@@ -115,10 +115,11 @@ export function Footer() {
             <BrandLogo />
           </Link>
           <p className="mt-5 max-w-md text-sm leading-7 text-[var(--cream-100)]">
-            ليالي بيوتي تجربة عناية عربية فاخرة للمرأة التي تحب الرائحة الراقية، الوضوح، والدفع عند الاستلام داخل الإمارات.
+            ليالي بيوتي تجربة عناية عربية تركّز على جفاف البشرة في الإمارات: روتين عود قصر دبي،
+            عروض واضحة، والدفع عند الاستلام.
           </p>
           <div className="mt-5 flex flex-wrap gap-2 text-xs font-bold text-[var(--gold-300)]">
-            {["دفع عند الاستلام", "تأكيد قبل الشحن", "تجربة مرتبة"].map((item) => (
+            {["لجفاف البشرة", "وحدة 199", "دفع عند الاستلام"].map((item) => (
               <span key={item} className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">
                 {item}
               </span>
