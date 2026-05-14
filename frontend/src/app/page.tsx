@@ -73,7 +73,7 @@ export default function Home() {
         <div className="container-grid">
           <div className="section-heading">
             <p className="badge">Our Rituals</p>
-            <h2>روتينات ليالي لجفاف البشرة وأجواء البيت</h2>
+            <h2>روتينات ليالي لجفاف البشرة وجو المكيف</h2>
             <p>
               كل بطاقة هنا تدخل لصفحة تفاصيل المنتج فقط. لا يوجد شراء مباشر في الهوم.
             </p>

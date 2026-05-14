@@ -9,7 +9,7 @@ import { BrandLogo } from "./BrandLogo";
 const nav = [
   { href: "/", label: "الرئيسية" },
   { href: "/products/dubai-palace-oud-serum", label: "عود قصر دبي" },
-  { href: "/products/aroma-flame-lamp", label: "موقد ليالي" },
+  { href: "/products/aroma-flame-lamp", label: "موقد الجو الجاف" },
   { href: "/collections", label: "العروض" },
   { href: "/about", label: "عن ليالي" },
   { href: "/contact", label: "تواصل" },
