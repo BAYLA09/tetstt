@@ -1,71 +1,81 @@
 import Link from "next/link";
 import { ProductCard } from "@/components/ProductCard";
-import { products } from "@/lib/products";
+import { money, products } from "@/lib/products";
 
 const pillars = [
-  ["علامة عناية راقية", "تجربة ليالي مبنية على عرض واضح للموقد، تغليف أنيق، وتأكيد قبل الشحن."],
-  ["دفع عند الاستلام", "لا تدفعين الآن. نثبت الطلب أولاً ونتواصل معك قبل التجهيز."],
-  ["مناسب لأجواء البيت في الإمارات", "لهب LED وضباب بارد وعطر يملأ الغرفة — من دون نار حقيقية."],
-  ["إضافة اختيارية في السلة", "قد تُقترح لكِ سيروم عود قصر دبي مع الموقد ضمن نفس التوصيل."],
+  ["عرض واضح", "صفحة واحدة تشرح المنتج، الباقات، وطريقة التأكيد قبل الشحن بدون تشتيت."],
+  ["دفع عند الاستلام", "لا يوجد دفع إلكتروني مسبق. يتم الدفع عند وصول الطلب وبعد تأكيده."],
+  ["تجربة منزلية راقية", "موقد عطر وإضاءة يضيف دفئاً للمساحة بدون نار حقيقية أو تعقيد."],
+  ["سلة منظمة", "اختاري الباقة ثم راجعي السلة قبل إدخال الاسم ورقم الهاتف الإماراتي."],
 ];
 
 const reviews = [
-  ["مريم", "دبي", "حبيت أن الطلب واضح من أول خطوة. ما في دفع أونلاين، والتأكيد قبل الشحن خلاني أثق أكثر."],
-  ["نورة", "أبوظبي", "الستايل فخم والتفاصيل قبل التأكيد كانت مريحة."],
-  ["سارة", "الشارقة", "ما حسيت أنه متجر عشوائي. كل شيء مرتب: العرض، السلة، والتواصل قبل التوصيل."],
+  ["مريم", "دبي", "حبيت أن السعر والباقة واضحين قبل ما أكتب بياناتي."],
+  ["نورة", "أبوظبي", "الصفحة مرتبة، والسلة توضّح أنه ما في دفع قبل الاستلام."],
+  ["سارة", "الشارقة", "التأكيد قبل الشحن خلاني أحس أن الطلب جدي ومفهوم."],
 ];
 
 const steps = [
-  ["١", "اختاري عرض الموقد", "من صفحة موقد ليالي الفاخر اختاري الباقة التي تناسبك، ثم أضيفيها إلى السلة."],
-  ["٢", "ثبّتي الطلب بدون دفع مسبق", "اكتبي الاسم الكامل ورقم الموبايل الإماراتي. الدفع عند الاستلام، والفريق يتواصل للتأكيد قبل الشحن."],
-  ["٣", "استلمي بعد التأكيد", "بعد تأكيد الطلب عبر الهاتف، تُجهَّز الشحنة وتوصل داخل الإمارات."],
+  ["١", "اختاري الباقة", "افتحي صفحة موقد ليالي واختاري العرض المناسب من الخيارات المعروضة."],
+  ["٢", "راجعي السلة", "تأكدي من السعر والكمية، ثم انتقلي لنموذج التأكيد بدون دفع الآن."],
+  ["٣", "استلمي وادفعي", "فريق التأكيد يتواصل قبل الشحن، والدفع يكون عند الاستلام داخل الإمارات."],
 ];
 
 const faqs = [
   ["هل الدفع عند الاستلام؟", "نعم. لا يوجد دفع الآن، يتم الدفع عند وصول الطلب."],
-  ["هل المنتج أو السعر تغيّر؟", "لا. العرض المعروض هو موقد ليالي الفاخر بالخيارات الظاهرة في الصفحة؛ قد نحدّث الصياغة لتحسين الوضوح."],
-  ["لماذا قد تظهر إضافة في السلة؟", "لأن بعض العميلات يفضّلن إكمال الطلب بسيروم عود قصر دبي مع الموقد في نفس الشحنة."],
+  ["هل المنتج أو السعر تغيّر؟", "لا. أبقينا المنتج والباقات الحالية كما هي، وتم تحسين عرض الواجهة فقط."],
+  ["لماذا تظهر أكثر من باقة؟", "لأن صفحة المنتج تعرض خيارات مختلفة لنفس موقد ليالي مع إضافات اختيارية."],
   ["متى يتم التأكيد؟", "بعد إرسال الطلب، يتم التواصل معك لتأكيد البيانات قبل تجهيز الشحنة."],
 ];
 
 export default function Home() {
+  const featuredProduct = products[0];
+  const defaultTier = featuredProduct.offerTiers?.find((tier) => tier.default) ?? featuredProduct.offerTiers?.[0];
+  const startingPrice = defaultTier?.price ?? featuredProduct.price;
+
   return (
-    <>
+    <div className="store-shell">
       <section className="hero-gradient overflow-hidden">
-        <div className="container-grid grid gap-10 py-16 lg:grid-cols-[1fr_0.85fr] lg:items-center lg:py-24">
+        <div className="container-grid grid gap-10 py-14 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:py-24">
           <div className="order-2 lg:order-1">
-            <div className="product-visual min-h-[420px]">
-              <span className="absolute left-10 top-8 text-5xl text-gold-300">☾</span>
-              <div className="relative z-10 rounded-[2rem] border border-gold-400/40 bg-emerald-900/80 p-8 text-center shadow-2xl">
-                <p className="text-sm text-gold-300">ليالي بيوتي</p>
-                <div className="mx-auto mt-6 h-52 w-40 rounded-t-full border border-gold-400/50 bg-gradient-to-b from-gold-300/70 to-cream-100/90 shadow-xl" />
-                <p className="mt-6 text-2xl font-semibold text-gold-300">
-                  موقد ليالي الفاخر
-                </p>
+            <div className="product-illustration grid min-h-[420px] place-items-end rounded-[2.75rem] p-6 lg:min-h-[560px]">
+              <div className="relative z-10 w-full max-w-md rounded-[2rem] border border-white/10 bg-black/20 p-5 text-white backdrop-blur">
+                <p className="text-sm font-black text-[var(--gold-300)]">عرض اليوم</p>
+                <h2 className="mt-2 text-3xl font-black">{featuredProduct.shortName}</h2>
+                <p className="mt-3 leading-8 text-[var(--cream-100)]">{featuredProduct.subheading}</p>
+                <div className="mt-5 rounded-2xl bg-white p-4 text-[var(--emerald-950)]">
+                  <p className="text-xs font-black text-[var(--gold-500)]">السعر المعروض</p>
+                  <div className="price-lockup mt-1">
+                    <span>يبدأ من</span>
+                    <strong>{startingPrice}</strong>
+                    <span>درهم</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
           <div className="order-1 text-white lg:order-2">
             <p className="badge border-gold-400/50 bg-gold-400/10 text-gold-300">
-              ليالي بيوتي · الدفع عند الاستلام
+              ليالي بيوتي · متجر منظم بالدفع عند الاستلام
             </p>
-            <h1 className="mt-6 max-w-3xl text-4xl font-bold leading-tight md:text-6xl">
-              موقد ليالي الفاخر — أجواء البيت بثقة ووضوح
+            <h1 className="mt-6 max-w-3xl text-4xl font-black leading-tight md:text-6xl">
+              أجواء بيت أهدأ مع تجربة طلب واضحة من أول نقرة
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-9 text-cream-100/90">
-              لهب واقعي وضباب بارد ورائحة تملأ الغرفة، مع الدفع عند الاستلام داخل الإمارات وتأكيد الطلب قبل الشحن.
+              موقد ليالي الفاخر يجمع الإضاءة الهادئة، الضباب البارد، والرائحة المنزلية في صفحة شراء مرتبة:
+              باقات واضحة، سعر ظاهر، وسلة سهلة قبل التأكيد.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/products/aroma-flame-lamp" className="btn-primary">
-                اطلبي موقد ليالي الآن
-              </Link>
-              <Link href="/products/aroma-flame-lamp" className="btn-secondary border-gold-400/50 text-gold-300">
                 شاهدي العروض والأسعار
+              </Link>
+              <Link href="#products" className="btn-secondary border-gold-400/50 bg-white/5 text-gold-300">
+                تصفحي المنتج
               </Link>
             </div>
             <div className="mt-8 grid grid-cols-2 gap-3 text-sm md:grid-cols-4">
-              {["الدفع عند الاستلام", "تأكيد قبل الشحن", "تغليف أنيق", "إضافات ذكية"].map((item) => (
-                <div key={item} className="rounded-2xl border border-gold-400/25 bg-white/5 p-3 text-center text-cream-50">
+              {["دفع عند الاستلام", "تأكيد قبل الشحن", "داخل الإمارات", "سلة منظمة"].map((item) => (
+                <div key={item} className="rounded-2xl border border-white/10 bg-white/5 p-3 text-center text-cream-50">
                   {item}
                 </div>
               ))}
@@ -74,20 +84,47 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section-padding bg-cream-50">
+      <section id="products" className="section-padding bg-cream-50">
         <div className="container-grid">
           <div className="section-heading">
-            <p className="badge">طقوس ليالي</p>
-            <h2>عرض واحد واضح — موقد ليالي الفاخر</h2>
+            <p className="badge">اختيار ليالي</p>
+            <h2>منتج رئيسي واحد، وباقات واضحة داخل صفحة المنتج</h2>
             <p>
-              اختاري مستوى العرض من الصفحة: الموقد فقط، أو مع سيروم عود قصر دبي، أو مع عبوتين للتجديد. ثم أكملي
-              الطلب بالدفع عند الاستلام.
+              حافظنا على المنتج الحالي ومسار الشراء كما هو، ورتبنا العرض ليظهر مثل متجر احترافي: صورة/بطاقة،
+              اسم، وصف، سعر، وزر واضح.
             </p>
           </div>
-          <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {products.map((product) => (
-              <ProductCard key={product.sku} product={product} />
-            ))}
+          <div className="mt-10 grid gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(320px,0.55fr)] lg:items-stretch">
+            <ProductCard product={featuredProduct} />
+            <div className="premium-card flex flex-col justify-between">
+              <div>
+                <p className="badge">الباقات الحالية</p>
+                <h3 className="mt-4 text-3xl font-black leading-tight text-[var(--emerald-950)]">
+                  اختاري العرض من صفحة المنتج نفسها
+                </h3>
+                <div className="mt-6 grid gap-3">
+                  {(featuredProduct.offerTiers ?? []).map((tier) => (
+                    <div key={tier.sku} className="rounded-2xl border border-[var(--border-gold)] bg-white p-4">
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          {tier.badge && (
+                            <span className="rounded-full bg-[var(--sage-100)] px-2.5 py-1 text-xs font-black text-[var(--emerald-950)]">
+                              {tier.badge}
+                            </span>
+                          )}
+                          <p className="mt-2 font-black text-[var(--emerald-950)]">{tier.title}</p>
+                          <p className="mt-1 text-sm leading-7 text-[var(--muted)]">{tier.description}</p>
+                        </div>
+                        <p className="shrink-0 text-lg font-black text-[var(--gold-500)]">{money(tier.price)}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <Link href="/products/aroma-flame-lamp" className="btn-primary mt-6">
+                افتحي صفحة موقد ليالي
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -96,8 +133,8 @@ export default function Home() {
         <div className="container-grid">
           <div className="section-heading">
             <p className="badge">لماذا ليالي</p>
-            <h2>علامة عناية، مو متجر يبيع أي شيء</h2>
-            <p>أربع نقاط تخلي العميلة تفهم لماذا الطلب يستحق التأكيد والاستلام.</p>
+            <h2>واجهة أوضح لقرار شراء أسرع وأكثر ثقة</h2>
+            <p>أربع نقاط تجعل التجربة مفهومة من الهيدر إلى السلة.</p>
           </div>
           <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {pillars.map(([title, text]) => (
@@ -118,11 +155,10 @@ export default function Home() {
               تجارب واضحة
             </p>
             <h2 className="mt-5 text-3xl font-bold md:text-5xl">
-              عميلات يطلبن لأن التجربة واضحة، مو لأن الإعلان صرخ عليهن
+              متجر مرتب يشرح قبل أن يطلب بيانات العميلة
             </h2>
             <p className="mt-5 leading-9 text-cream-100">
-              مراجعات صياغية جاهزة للاستبدال بمراجعات حقيقية بعد أول دفعات.
-              لا نستخدم وعود طبية أو شهادات غير موجودة.
+              هذه عبارات عامة حول تجربة الطلب والوضوح، وليست ادعاءات علاجية أو نتائج غير مثبتة.
             </p>
           </div>
           <div className="mt-10 grid gap-5 md:grid-cols-3">
@@ -143,7 +179,7 @@ export default function Home() {
           <div className="section-heading">
             <p className="badge">طريقة الطلب</p>
             <h2>من السلة لباب بيتك في 3 خطوات</h2>
-            <p>بدون دفع أونلاين. بدون تعقيد. طلب واضح يقلل الإلغاء ويرفع فرصة الاستلام.</p>
+            <p>بدون دفع أونلاين. بدون تعقيد. طلب واضح من الاختيار حتى الاستلام.</p>
           </div>
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             {steps.map(([number, title, text]) => (
@@ -166,18 +202,17 @@ export default function Home() {
               ابدئي طقسك
             </p>
             <h2 className="mt-5 text-3xl font-bold md:text-5xl">
-              طلبك يستحق وضوح وفخامة، مو وعود كثيرة
+              ابدئي من صفحة منتج واحدة واضحة
             </h2>
             <p className="mt-5 leading-9 text-cream-100">
-              ثبتي طلبك الآن بالدفع عند الاستلام. إذا كان الرقم صحيحاً،
-              فريقنا يتواصل للتأكيد قبل الشحن حتى توصلك ليالي كتجربة مرتبة.
+              اختاري الباقة المناسبة، أضيفيها للسلة، ثم ثبتي الطلب بالاسم ورقم الهاتف فقط. لا يوجد دفع الآن.
             </p>
             <Link href="/products/aroma-flame-lamp" className="btn-primary mt-8 inline-flex">
               انتقلي إلى صفحة الموقد
             </Link>
           </div>
           <div className="grid gap-4">
-            {["الدفع عند الاستلام", "تأكيد الطلب قبل الشحن", "إضافات ذكية في السلة", "تغليف وتجربة راقية"].map((item) => (
+            {["الدفع عند الاستلام", "تأكيد الطلب قبل الشحن", "باقات واضحة السعر", "واجهة مناسبة للجوال"].map((item) => (
               <div key={item} className="rounded-3xl border border-gold-400/30 bg-white/5 p-5 text-gold-300">
                 {item}
               </div>
@@ -203,6 +238,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }

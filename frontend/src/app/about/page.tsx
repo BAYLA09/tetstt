@@ -22,7 +22,7 @@ export default function AboutPage() {
               تناسب عميلة الإمارات.
             </p>
           </div>
-          <div className="card-premium bg-white/8 p-8 text-cream-50">
+          <div className="card-premium bg-white/10 p-8 text-cream-50">
             <Sparkles className="h-10 w-10 text-gold-300" />
             <p className="mt-6 text-2xl font-bold">فخامة هادئة تليق بيومك.</p>
             <p className="mt-3 leading-8 text-cream-100">

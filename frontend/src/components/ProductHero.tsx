@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 import { CheckCircle2, ShoppingCart } from "lucide-react";
 import {
@@ -14,37 +13,24 @@ import { useCartStore } from "@/lib/cart-store";
 import { generateEventId, trackEvent } from "@/lib/events";
 
 function HeroMedia({ product, contained }: { product: Product; contained?: boolean }) {
-  if (!product.image) {
-    return (
-      <div className="placeholder-art min-h-[420px] rounded-[2.5rem] lg:mx-0">
-        <span>{product.shortName}</span>
-      </div>
-    );
-  }
-
-  const panorama = product.heroPanorama === true && !contained;
-
-  const frameClass = panorama
-    ? "relative w-screen max-w-none shrink-0 bg-[rgba(0,20,14,0.4)] mx-[calc(50%-50vw)] lg:mx-auto lg:w-full lg:max-w-[1180px] lg:overflow-hidden lg:rounded-[2.5rem] lg:bg-transparent"
-    : "relative min-h-[320px] overflow-hidden rounded-[2rem] border border-gold-400/20 bg-black/20 lg:min-h-[420px] lg:rounded-[2.5rem]";
-
-  const imageClass = panorama
-    ? "h-auto w-full object-contain"
-    : "h-full min-h-[320px] w-full object-cover lg:min-h-[420px]";
-
   return (
-    <div className={frameClass}>
-      <Image
-        src={product.image}
-        alt={product.name}
-        width={1536}
-        height={1024}
-        className={imageClass}
-        priority
-        sizes={
-          panorama ? "(max-width: 1024px) 100vw, 45vw" : "(max-width: 1024px) 100vw, 48vw"
-        }
-      />
+    <div
+      className={`product-illustration grid min-h-[360px] place-items-end rounded-[2.5rem] p-6 lg:min-h-[520px] ${
+        contained ? "" : "lg:mx-0"
+      }`}
+    >
+      <div className="relative z-10 max-w-sm rounded-[1.7rem] border border-white/10 bg-black/20 p-5 text-white shadow-2xl backdrop-blur">
+        <p className="text-sm font-black text-[var(--gold-300)]">Layali Beauty</p>
+        <h2 className="mt-2 text-3xl font-black">{product.shortName}</h2>
+        <p className="mt-3 text-sm leading-7 text-[var(--cream-100)]">{product.headline}</p>
+        <div className="mt-4 grid grid-cols-2 gap-2 text-xs font-bold text-[var(--gold-300)]">
+          {product.notes.slice(0, 4).map((note) => (
+            <span key={note} className="rounded-full border border-white/10 bg-white/10 px-3 py-2 text-center">
+              {note}
+            </span>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -78,14 +64,10 @@ function BeforeAfterSection({ product }: { product: Product }) {
               key={`${col.src}-${col.label}`}
               className="overflow-hidden rounded-2xl border border-[var(--border-gold)] bg-white shadow-sm"
             >
-              <div className="relative aspect-[4/3] w-full bg-[var(--cream-100)]">
-                <Image
-                  src={col.src}
-                  alt={col.label}
-                  fill
-                  className="object-contain"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
+              <div className="product-illustration grid aspect-[4/3] w-full place-items-center p-6">
+                <div className="relative z-10 rounded-full border border-white/10 bg-white/10 px-5 py-3 text-center text-sm font-black text-white backdrop-blur">
+                  {col.label}
+                </div>
               </div>
               <figcaption className="px-3 py-2 text-center text-sm font-bold text-[var(--emerald-950)]">
                 {col.label}
@@ -105,15 +87,11 @@ function InsightStrip({ product }: { product: Product }) {
   return (
     <section className="border-y border-[var(--border-gold)] bg-white px-4 py-12">
       <div className="relative mx-[calc(50%-50vw)] w-screen max-w-none px-0 lg:mx-auto lg:w-full lg:max-w-[1180px]">
-        <div className="overflow-hidden bg-[var(--emerald-950)] lg:rounded-2xl">
-          <Image
-            src={strip.imageSrc}
-            alt={strip.headline}
-            width={1536}
-            height={1024}
-            className="h-auto w-full object-contain"
-            sizes="100vw"
-          />
+        <div className="product-illustration grid min-h-[280px] place-items-center px-5 py-12 lg:rounded-2xl">
+          <div className="relative z-10 max-w-3xl rounded-[2rem] border border-white/10 bg-black/20 p-6 text-center text-white backdrop-blur">
+            <p className="text-sm font-black text-[var(--gold-300)]">Layali Insight</p>
+            <p className="mt-3 text-2xl font-black leading-snug">{strip.headline}</p>
+          </div>
         </div>
         <div className="container-grid pt-6">
           <p className="text-xl font-black leading-snug text-[var(--emerald-950)] md:text-2xl">{strip.headline}</p>
@@ -150,7 +128,7 @@ function CommercePanel({
         <p className="mt-5 text-xl font-semibold leading-9 text-cream-50 drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)]">
           {product.headline}
         </p>
-        <div className="mt-5 grid gap-2 rounded-2xl border border-gold-400/25 bg-white/8 p-4 text-sm font-bold text-cream-50 md:grid-cols-3">
+        <div className="mt-5 grid gap-2 rounded-2xl border border-gold-400/25 bg-white/10 p-4 text-sm font-bold text-cream-50 md:grid-cols-3">
           {["تأكيد قبل الشحن", "الدفع عند الاستلام", "عرض محجوز لهذا الأسبوع"].map((item) => (
             <span key={item} className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 shrink-0 text-gold-300" />
@@ -203,7 +181,7 @@ function CommercePanel({
         {product.headline}
       </p>
 
-      <div className="mt-5 grid gap-2 rounded-2xl border border-gold-400/25 bg-white/8 p-4 text-sm font-bold text-cream-50 md:grid-cols-3">
+      <div className="mt-5 grid gap-2 rounded-2xl border border-gold-400/25 bg-white/10 p-4 text-sm font-bold text-cream-50 md:grid-cols-3">
         {["تأكيد قبل الشحن", "الدفع عند الاستلام", "عرض محجوز لهذا الأسبوع"].map((item) => (
           <span key={item} className="flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4 shrink-0 text-gold-300" />

@@ -122,48 +122,48 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         {isCartOpen && (
           <div className="fixed inset-0 z-50">
             <button aria-label="إغلاق السلة" className="absolute inset-0 bg-black/50" onClick={closeCart} />
-            <motion.aside initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", damping: 28 }} className="absolute right-0 top-0 flex h-full w-full max-w-md flex-col bg-white shadow-2xl">
+            <motion.aside initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", damping: 28 }} className="absolute right-0 top-0 flex h-full w-full max-w-lg flex-col overflow-hidden bg-white shadow-2xl lg:rounded-l-[2rem]">
               <div className="flex items-center justify-between bg-[var(--emerald-950)] p-5 text-white">
                 <div>
                   <p className="text-sm text-[var(--gold-300)]">طلبك محفوظ الآن</p>
                   <h2 className="text-xl font-black">سلة ليالي بيوتي</h2>
                 </div>
-                <button onClick={closeCart} className="rounded-full border border-white/20 p-2"><X /></button>
+                <button onClick={closeCart} className="rounded-full border border-white/20 bg-white/5 p-2 transition hover:bg-white/10"><X /></button>
               </div>
-              <div className="flex-1 space-y-4 overflow-y-auto p-5">
-                <div className="rounded-3xl bg-[var(--emerald-950)] p-4 text-white">
-                  <p className="text-xs font-bold text-[var(--gold-300)]">مهم قبل التأكيد</p>
+              <div className="flex-1 space-y-4 overflow-y-auto bg-[var(--cream-50)] p-5">
+                <div className="rounded-3xl border border-[var(--border-gold)] bg-white p-4 text-[var(--emerald-950)] shadow-sm">
+                  <p className="text-xs font-bold text-[var(--gold-500)]">مهم قبل التأكيد</p>
                   <p className="mt-1 text-sm leading-7">سنؤكد طلبك عبر الهاتف/واتساب قبل الشحن. الطلبات المؤكدة فقط تدخل التجهيز حتى توصلك التجربة مثل ما اخترتيها.</p>
                 </div>
                 {items.length === 0 ? (
-                  <div className="rounded-3xl bg-[var(--cream-50)] p-8 text-center">
+                  <div className="rounded-3xl border border-dashed border-[var(--border-gold)] bg-white p-8 text-center">
                     <ShoppingBag className="mx-auto mb-3 text-[var(--gold-500)]" />
                     <p className="font-bold">السلة فارغة حالياً</p>
                   </div>
                 ) : items.map((item) => (
-                  <div key={item.sku} className="rounded-2xl border border-[var(--border-gold)] p-4">
+                  <div key={item.sku} className="rounded-3xl border border-[var(--border-gold)] bg-white p-4 shadow-sm">
                     <div className="flex justify-between gap-3">
                       <div>
                         <p className="font-black text-[var(--emerald-950)]">{item.name}</p>
                         <p className="mt-1 text-sm text-[var(--muted)]">{money(item.price)}</p>
                       </div>
-                      <button onClick={() => removeItem(item.sku)} className="text-sm text-red-700">حذف</button>
+                      <button onClick={() => removeItem(item.sku)} className="text-sm font-bold text-red-700">حذف</button>
                     </div>
-                    <div className="mt-3 flex items-center gap-2">
-                      <button onClick={() => updateQuantity(item.sku, item.quantity - 1)} className="rounded-full border p-2"><Minus size={14} /></button>
+                    <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-[var(--border-gold)] bg-[var(--cream-50)] p-1">
+                      <button onClick={() => updateQuantity(item.sku, item.quantity - 1)} className="rounded-full bg-white p-2 shadow-sm"><Minus size={14} /></button>
                       <span className="min-w-8 text-center font-bold">{item.quantity}</span>
-                      <button onClick={() => updateQuantity(item.sku, item.quantity + 1)} className="rounded-full border p-2"><Plus size={14} /></button>
+                      <button onClick={() => updateQuantity(item.sku, item.quantity + 1)} className="rounded-full bg-white p-2 shadow-sm"><Plus size={14} /></button>
                     </div>
                   </div>
                 ))}
               </div>
-              <div className="border-t border-[var(--border-gold)] bg-[var(--cream-50)] p-5">
+              <div className="border-t border-[var(--border-gold)] bg-white p-5">
                 <div className="mb-3 flex justify-between text-lg font-black">
                   <span>الإجمالي</span>
                   <span>{money(total)}</span>
                 </div>
                 <p className="mb-4 flex items-center gap-2 text-sm text-[var(--emerald-950)]"><CheckCircle2 size={16} /> الدفع عند الاستلام - لا تدفعين الآن</p>
-                <button disabled={!items.length} onClick={openCheckout} className="w-full rounded-full bg-[var(--gold-500)] px-6 py-4 font-black text-[var(--emerald-950)] disabled:opacity-50">ثبتي الطلب للتأكيد</button>
+                <button disabled={!items.length} onClick={openCheckout} className="w-full rounded-full bg-[var(--gold-500)] px-6 py-4 font-black text-[var(--emerald-950)] shadow-lg transition hover:-translate-y-0.5 hover:bg-[var(--gold-400)] disabled:translate-y-0 disabled:opacity-50">ثبتي الطلب للتأكيد</button>
               </div>
             </motion.aside>
           </div>
@@ -180,7 +180,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                   <h2 className="text-2xl font-black text-[var(--emerald-950)]">اكتبي بياناتك ونثبت لك الطلب</h2>
                   <p className="mt-2 text-sm leading-7 text-[var(--muted)]">لا يوجد دفع الآن. سنراجع الرقم ونتواصل معك لتأكيد الشحنة قبل التجهيز حتى تقل الأخطاء والتأخير.</p>
                 </div>
-                <button type="button" onClick={closeCheckout} className="rounded-full border p-2"><X /></button>
+                <button type="button" onClick={closeCheckout} className="rounded-full border border-[var(--border-gold)] p-2"><X /></button>
               </div>
               <div className="mb-5 rounded-2xl bg-[var(--cream-50)] p-4">
                 <div className="flex justify-between font-black"><span>ملخص الطلب</span><span>{money(total)}</span></div>
