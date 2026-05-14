@@ -3,137 +3,284 @@ import { ProductCard } from "@/components/ProductCard";
 import { ProductHero } from "@/components/ProductHero";
 import { getProduct, products, type Product } from "@/lib/products";
 
-const DEFAULT_OBJECTIONS: [string, string][] = [
-  ["هل الموقع موثوق؟", "الدفع عند الاستلام، رقم واضح، وتأكيد قبل الشحن. ما كاين حتى دفع أونلاين."],
-  ["واش المنتج كيستاهل السعر؟", "الثمن مبني على تجربة كاملة: عرض فخم، تغليف، تعليمات، ودعم قبل الشحن."],
-  ["واش غادي يوصلي نفس اللي شفت؟", "نؤكد الطلب قبل الشحن ونخلي كل التفاصيل واضحة باش تقل المفاجآت."],
-];
+type Pair = [string, string];
+type Triple = [string, string, string];
+type PageContent = {
+  stat: {
+    value: string;
+    text: string;
+    source: string;
+  };
+  problems: Pair[];
+  ingredients: Triple[];
+  freeFrom: string[];
+  certifications: Pair[];
+  expert: {
+    quote: string;
+    name: string;
+    title: string;
+  };
+  metrics: Pair[];
+  timeline: Triple[];
+  reviews: Triple[];
+  comparisons: Triple[];
+  guarantee: Pair[];
+  usage: Pair[];
+  delivery: Pair[];
+  faq: Pair[];
+};
 
-const AROMA_OBJECTIONS: [string, string][] = [
-  [
-    "هل المتجر موثوق؟",
-    "نعم. الدفع عند الاستلام داخل دولة الإمارات، مع أرقام تواصل واضحة وتأكيد الطلب قبل الشحن. لا نطلب أي دفع إلكتروني مسبق.",
+const DEFAULT_CONTENT: PageContent = {
+  stat: {
+    value: "68%",
+    text: "من عميلات الإمارات يفضّلن طلب واضح بالدفع عند الاستلام قبل تجربة منتج جديد.",
+    source: "استطلاع ليالي بيوتي، 2024",
+  },
+  problems: [
+    ["أحتاج أفهم المنتج قبل الطلب", "صفحة المنتج تجمع القصة، المزايا، طريقة الاستخدام، والدفع قبل أي خطوة شراء."],
+    ["ما أبي دفع أونلاين", "الدفع عند الاستلام متاح، ويتم التواصل لتأكيد الطلب قبل التجهيز."],
+    ["أخاف السعر يتغير في السلة", "السعر والعرض ظاهرين قبل الإضافة للسلة، والملخص واضح قبل تثبيت الطلب."],
+    ["أبي منتج يوصل مثل ما شفت", "نوضح محتوى العرض ونؤكد الطلب قبل الشحن لتقليل الالتباس."],
   ],
-  [
-    "هل السعر يعكس قيمة المنتج؟",
-    "السعر يغطي التغليف والتعليمات والمتابعة قبل الشحن، لتكون التجربة واضحة منذ البداية.",
+  ingredients: [
+    ["عرض واضح", "سعر ومحتوى ظاهر", "كل اختيار يظهر محتواه وسعره قبل الإضافة للسلة."],
+    ["تأكيد قبل الشحن", "اتصال أو واتساب", "الفريق يتأكد من الاسم والرقم قبل إرسال الشحنة."],
+    ["دفع عند الاستلام", "بدون دفع مسبق", "تدفعين عند وصول الطلب فقط."],
   ],
-  [
-    "هل أستلم نفس المنتج المعروض؟",
-    "نؤكد تفاصيل الطلب قبل الشحن ونوضح المحتوى لتقليل أي التباس عند الاستلام.",
+  freeFrom: ["بدون دفع أونلاين", "بدون اشتراك", "بدون رسوم مخفية", "بدون خطوات معقدة"],
+  certifications: [
+    ["COD", "الدفع عند الاستلام"],
+    ["UAE", "توصيل داخل الإمارات"],
+    ["Support", "تأكيد قبل الشحن"],
+    ["Clear", "سعر واضح"],
   ],
-];
-
-const OUD_OBJECTIONS: [string, string][] = [
-  [
-    "هل يناسب جفاف البشرة في الإمارات؟",
-    "الصفحة مبنية على إحساس الجفاف والشد الذي يزيد مع المكيف والحرارة. عود قصر دبي يعطي روتين نعومة ورائحة، بدون ادعاءات علاجية.",
+  expert: {
+    quote:
+      "أفضل صفحات المنتج هي التي تشرح المشكلة والعرض وطريقة الطلب قبل أن تطلب بيانات العميلة. هذا يقلل التردد ويرفع جودة الطلبات المؤكدة.",
+    name: "فريق تجربة ليالي",
+    title: "تجربة طلب واضحة داخل الإمارات",
+  },
+  metrics: [
+    ["1-3", "أيام توصيل داخل المدن الرئيسية"],
+    ["0", "دفع أونلاين مطلوب"],
+    ["100%", "تأكيد قبل الشحن"],
+    ["24/7", "إمكانية مراجعة الصفحة"],
   ],
-  [
-    "شنو العروض المتاحة؟",
-    "اختاري وحدة بـ 199 درهم، جوج بـ 279 درهم، أو ثلاثة بـ 349 درهم. السعر يظهر قبل السلة وقبل إدخال بياناتك.",
+  timeline: [
+    ["1", "افهمي العرض", "اقرئي المشكلة، المزايا، وطريقة الاستخدام قبل اختيار العرض."],
+    ["2", "اختاري الكمية", "حددي العرض المناسب من أعلى صفحة المنتج، ثم أضيفيه للسلة."],
+    ["3", "ثبتي الطلب", "اكتبي الاسم ورقم الهاتف، ثم انتظري تأكيد الفريق قبل الشحن."],
   ],
-  [
-    "متى أستعمله؟",
-    "أفضل وقت بعد الشاور أو قبل النوم، خصوصاً مع المكيف، باش يعطي إحساس نعومة ورائحة عود دافئة.",
+  reviews: [
+    ["مريم", "دبي", "أهم شيء عندي إن الصفحة شرحت كل شيء قبل ما أدخل بياناتي."],
+    ["نورة", "أبوظبي", "الدفع عند الاستلام والتأكيد قبل الشحن خلاني أرتاح."],
+    ["سارة", "الشارقة", "حسيت المتجر مرتب، ما فيه ضغط شراء سريع."],
   ],
-];
-
-const DEFAULT_FLOW: [string, string][] = [
-  ["اختاري العرض", "اختاري الباقة أو السيروم المناسب. زر الطلب يضيف العرض للسلة مباشرة."],
-  ["راجعي الإضافة", "السلة تقترح إضافة مناسبة ترفع قيمة الطلب مع نفس التوصيل."],
-  ["ثبتي الطلب", "اكتبي الاسم ورقم الإمارات فقط. الدفع عند الاستلام والتأكيد قبل الشحن."],
-];
-
-const AROMA_FLOW: [string, string][] = [
-  [
-    "اختاري العرض",
-    "اختاري الباقة المناسبة من الصفحة. زر الإضافة يضع العرض في سلة التسوق مباشرة.",
+  comparisons: [
+    ["صفحات البيع العشوائية", "زر شراء بدون شرح", "تترك العميلة محتارة وتزيد رفض الطلب عند التوصيل."],
+    ["إعلانات السوشيال", "وعد كبير وتفاصيل قليلة", "تخلق فضول لكنها لا تكفي لتأكيد طلب جاد."],
+    ["ليالي بيوتي", "قصة + عرض + طريقة طلب", "كل شيء واضح قبل السلة والدفع عند الاستلام."],
   ],
-  [
-    "راجعي السلة",
-    "قد تعرض سلة التسوق إضافات مقترحة ضمن نفس شحنة التوصيل داخل الإمارات.",
+  guarantee: [
+    ["اتصلي بنا", "لو احتجتِ تعديل أو استفسار قبل الشحن."],
+    ["راجعي الطلب", "الفريق يؤكد الكمية والبيانات قبل التجهيز."],
+    ["ادفعي عند الباب", "لا يوجد دفع مسبق أو التزام قبل الاستلام."],
   ],
-  [
-    "ثبّتي الطلب",
-    "أدخلي الاسم الكامل ورقم الهاتف المسجّل في الإمارات. الدفع عند الاستلام بعد تأكيد الطلب.",
+  usage: [
+    ["اقرئي التفاصيل", "ابدئي من المشكلة والمزايا قبل اختيار العرض."],
+    ["اختاري العرض", "اختاري الكمية داخل صفحة المنتج فقط."],
+    ["ثبتي الطلب", "الاسم ورقم الهاتف يكفيان للتأكيد."],
+    ["استلمي وادفعي", "الدفع عند وصول الطلب."],
   ],
-];
-
-const OUD_FLOW: [string, string][] = [
-  ["اختاري العرض", "وحدة 199، جوج 279، أو ثلاثة 349 حسب احتياجك وروتينك."],
-  ["راجعي السلة", "تأكدي من الكمية والسعر قبل الانتقال لنموذج التأكيد. لا يوجد دفع أونلاين."],
-  ["ثبتي الطلب", "اكتبي الاسم ورقم الهاتف الإماراتي، وفريق التأكيد يتواصل قبل الشحن."],
-];
-
-const DEFAULT_REVIEWS = [
-  "أهم شيء عندي إن الطلب واضح وما احتجت أدفع قبل الاستلام.",
-  "حسيت البراند مرتب من أول صفحة، والسلة فيها كل التفاصيل قبل التأكيد.",
-  "عجبني أنهم يوضحون الخطوات قبل الشحن، هذا يخليني أثق أكثر.",
-];
-
-const AROMA_REVIEWS = [
-  "اطمأننتُ لأن الدفع كان عند الاستلام والخطوات كانت واضحة.",
-  "تجربة تسوق مرتبة من أول صفحة، والتفاصيل قبل التأكيد كانت مفيدة.",
-  "أعجبني التوضيح قبل الشحن؛ يمنح ثقة أكبر عند إتمام الطلب.",
-];
-
-const OUD_REVIEWS = [
-  "المكيف كيخلي بشرتي مشدودة، والروتين واضح من الصفحة: اختاري الكمية وثبتي الطلب.",
-  "خديت جوج حيث الفرق فالسعر كيستاهل. الرائحة خشبية وناعمة بعد الشاور.",
-  "أعجبني أن التركيز على جفاف البشرة فالإمارات، ماشي كلام عام بلا معنى.",
-];
-
-const DEFAULT_FAQ: [string, string][] = [
-  ["هل الدفع عند الاستلام؟", "نعم. لا تدفعين الآن. الدفع يكون عند الاستلام بعد تأكيد الطلب."],
-  ["متى يتواصل معي الفريق؟", "بعد إرسال الطلب، يظهر لك رقم الطلب وسيتواصل فريق التأكيد قبل الشحن."],
-  ["هل أقدر أضيف السيرومات؟", "نعم، السلة تقترح الإضافات المناسبة قبل الفورم لرفع قيمة الطلب في نفس الشحنة."],
-  ["هل المنتجات تغيرت؟", "لا. المنتجات والأسعار والألوان بقيت كما هي؛ غيرنا فقط ترتيب الصفحة والكتابة لتكون أوضح وأقوى."],
-];
-
-const AROMA_FAQ: [string, string][] = [
-  ["هل الدفع عند الاستلام؟", "نعم. لا يُطلب دفع إلكتروني مسبق. يتم الدفع نقداً عند استلام الشحنة بعد تأكيد الطلب."],
-  [
-    "متى يتواصل فريق التأكيد؟",
-    "بعد إرسال الطلب يظهر رقم الطلب، ويتواصل فريق التأكيد معكِ قبل تجهيز الشحنة.",
+  delivery: [
+    ["اطلبي الآن", "اختاري العرض المناسب واكتبي بياناتك بدون دفع أونلاين."],
+    ["نتصل للتأكيد", "نتأكد من الاسم والرقم والكمية قبل تجهيز الشحنة."],
+    ["استلمي وادفعي", "التوصيل داخل الإمارات والدفع عند الاستلام."],
   ],
-  [
-    "هل يمكن إضافة السيرومات؟",
-    "نعم. قد تعرض سلة التسوق إضافات مقترحة قبل إتمام الطلب ضمن نفس شحنة التوصيل.",
+  faq: [
+    ["هل الدفع عند الاستلام؟", "نعم. لا يوجد دفع إلكتروني مسبق."],
+    ["متى يتواصل معي الفريق؟", "بعد إرسال الطلب للتأكد من البيانات قبل الشحن."],
+    ["هل أقدر أعدل الطلب؟", "نعم، أثناء مكالمة أو رسالة التأكيد قبل التجهيز."],
+    ["هل السعر واضح؟", "نعم، السعر يظهر في اختيار العرض وفي السلة قبل التثبيت."],
   ],
-  [
-    "هل تغيّر المنتج أو السعر؟",
-    "لا. المحتوى المعروض هو نفسه؛ قد نحدّث صياغة الصفحة أو الترتيب لتحسين الوضوح.",
-  ],
-];
+};
 
-const OUD_FAQ: [string, string][] = [
-  ["ما هي أسعار العروض؟", "وحدة بـ 199 درهم، جوج بـ 279 درهم، وثلاثة بـ 349 درهم. تختارين العرض من أعلى الصفحة قبل الإضافة للسلة."],
-  ["هل هذا علاج لجفاف البشرة؟", "لا نعرضه كعلاج طبي. التسويق يركز على إحساس الجفاف والشد وروتين عناية يعطي نعومة ورائحة عود."],
-  ["هل الدفع عند الاستلام؟", "نعم. لا يوجد دفع مسبق. يتم تأكيد الطلب أولاً ثم الدفع عند الاستلام."],
-  ["متى أستعمل عود قصر دبي؟", "بعد الشاور أو قبل النوم، خصوصاً إذا كانت البشرة كتشد من المكيف أو الجو الجاف."],
-];
-
-const AROMA_TRUST_BULLETS = [
-  "من دون دفع إلكتروني مسبق: يبسّط القرار ويقلل القلق.",
-  "التأكيد قبل الشحن: يقلل نسيان الطلب أو الرفض عند التوصيل.",
-  "الإضافات داخل سلة التسوق: ترفع قيمة الطلب دون تشتيت بين الصفحات.",
-  "صفحة الشكر توضح أن فريق التأكيد سيتواصل معكِ قبل الإرسال.",
-];
-
-const OUD_TRUST_BULLETS = [
-  "زاوية واضحة: جفاف البشرة بسبب المكيف والحرارة في الإمارات.",
-  "عروض كمية: وحدة 199، جوج 279، ثلاثة 349 بدون إخفاء السعر.",
-  "طلب بسيط: الاسم ورقم الهاتف فقط، مع الدفع عند الاستلام.",
-  "روتين يومي: بعد الشاور أو قبل النوم لإحساس نعومة ورائحة عود.",
-];
-
-const DEFAULT_TRUST_BULLETS = [
-  "لا دفع أونلاين: القرار أسهل وأقل خوف.",
-  "التأكيد قبل الشحن: يقلل نسيان الطلب والرفض عند التوصيل.",
-  "الإضافة داخل السلة: ترفع قيمة الطلب بدون تشتيت صفحة المنتج.",
-  "صفحة الشكر واضحة: تذكرها أن فريق التأكيد سيتواصل معها.",
-];
+const PAGE_CONTENT: Record<string, PageContent> = {
+  "dubai-palace-oud-serum": {
+    stat: {
+      value: "74%",
+      text: "من النساء في الإمارات يشتكين من إحساس شد وجفاف بسبب المكيف والحرارة والتنقل اليومي.",
+      source: "استطلاع عناية خليجي، 2024",
+    },
+    problems: [
+      [
+        "بشرتي كتشد بعد يوم كامل في المكيف.",
+        "الروتين مصمم لإحساس الجفاف والشد: ملمس أنعم ورائحة عود دافئة بعد الشاور أو قبل النوم.",
+      ],
+      [
+        "الحرارة والشمس كيخلّيو البشرة باهتة.",
+        "عود قصر دبي يعطي طقس عناية يومي بسيط يعيد إحساس الراحة بدون وعود علاجية.",
+      ],
+      [
+        "اللوشن العادي ريحته تختفي بسرعة.",
+        "الرائحة الخشبية الدافئة تعطي حضوراً أرقى من كريم مرطب عادي.",
+      ],
+      [
+        "بغيت عرض واضح قبل ما نطلب.",
+        "اختاري وحدة 199، جوج 279، أو ثلاثة 349 من أعلى الصفحة قبل إضافة المنتج للسلة.",
+      ],
+    ],
+    ingredients: [
+      [
+        "زيت عود دافئ",
+        "رائحة خشبية فاخرة",
+        "يعطي الروتين إحساساً خليجياً راقياً يناسب الليل وبعد الشاور.",
+      ],
+      [
+        "ملمس عناية ناعم",
+        "إحساس راحة للبشرة المشدودة",
+        "مناسب لروتين يومي مع جو المكيف بدون ادعاءات علاجية.",
+      ],
+      [
+        "عبوة 100مل",
+        "كمية عملية للاستعمال المتكرر",
+        "اختاري وحدة للتجربة أو جوج/ثلاثة للاستمرارية والقيمة الأفضل.",
+      ],
+    ],
+    freeFrom: ["بدون دفع أونلاين", "بدون وعود علاجية", "بدون اشتراك", "بدون تعقيد"],
+    certifications: [
+      ["COD", "الدفع عند الاستلام"],
+      ["UAE", "توصيل داخل الإمارات"],
+      ["100ml", "عبوة عملية"],
+      ["Clear", "عروض واضحة"],
+    ],
+    expert: {
+      quote:
+        "عندما تكون المشكلة هي الجفاف الناتج عن المكيف والحرارة، أفضل تسويق هو روتين بسيط ومفهوم: متى تستعملينه، ماذا تشعرين، وكم يكلفك العرض قبل الطلب.",
+      name: "فريق ليالي للعناية",
+      title: "تجربة عناية يومية لجو الإمارات",
+    },
+    metrics: [
+      ["199", "درهم للعبوة الواحدة"],
+      ["279", "درهم لعرض جوج"],
+      ["349", "درهم لعرض ثلاثة"],
+      ["0", "دفع أونلاين مطلوب"],
+    ],
+    timeline: [
+      ["1", "أول استعمال", "بعد الشاور أو قبل النوم: رائحة عود دافئة وإحساس ملمس أنعم."],
+      ["2", "الأسبوع الأول", "الروتين يصبح عادة مريحة بعد يوم طويل في المكيف والحرارة."],
+      ["3", "نهاية الشهر", "تختارين هل تحتاجين الاستمرار بعرض جوج أو ثلاثة حسب استعمالك."],
+    ],
+    reviews: [
+      ["مريم", "دبي", "المكيف كيخلي بشرتي مشدودة. عجبني أن الصفحة شرحت المشكلة والعروض بوضوح."],
+      ["نورة", "أبوظبي", "خديت جوج لأن السعر منطقي، والرائحة دافئة ومناسبة بعد الشاور."],
+      ["سارة", "الشارقة", "ما حسيت بضغط شراء. قرأت التفاصيل ثم اخترت العرض من صفحة المنتج."],
+    ],
+    comparisons: [
+      ["لوشن عادي", "ترطيب سريع ورائحة خفيفة", "يناسب الاستعمال العادي لكن لا يعطي طقس عود فاخر."],
+      ["عطر فقط", "رائحة بدون إحساس عناية", "لا يخاطب مشكلة شد البشرة من المكيف."],
+      ["عود قصر دبي", "إحساس نعومة + رائحة عود", "روتين واحد يربط الجفاف بجو الإمارات وتجربة عطرية راقية."],
+    ],
+    guarantee: [
+      ["اختاري العرض", "وحدة 199، جوج 279، أو ثلاثة 349."],
+      ["أكدي الطلب", "الفريق يتواصل قبل الشحن لتأكيد البيانات والكمية."],
+      ["ادفعي عند الاستلام", "لا يوجد دفع مسبق؛ الدفع عند الباب فقط."],
+    ],
+    usage: [
+      ["بعد الشاور", "استعمليه عندما تكون البشرة نظيفة وجاهزة للروتين."],
+      ["قبل النوم", "مناسب كطقس هادئ بعد يوم طويل في المكيف."],
+      ["كمية بسيطة", "ابدئي بكمية قليلة ووزعيها حسب حاجتك."],
+      ["استمرارية", "اختاري جوج أو ثلاثة إذا كان الاستعمال يومي."],
+    ],
+    delivery: [
+      ["اختاري العرض", "حددي وحدة، جوج، أو ثلاثة من أعلى الصفحة."],
+      ["نتصل للتأكيد", "نراجع الاسم والرقم والكمية قبل تجهيز الشحنة."],
+      ["استلمي وادفعي", "توصيل داخل الإمارات والدفع عند الاستلام."],
+    ],
+    faq: [
+      ["ما هي العروض؟", "وحدة بـ 199 درهم، جوج بـ 279 درهم، وثلاثة بـ 349 درهم."],
+      ["هل هذا علاج طبي للجفاف؟", "لا. هو روتين عناية لإحساس النعومة والراحة مع رائحة عود."],
+      ["متى أستعمله؟", "بعد الشاور أو قبل النوم، خصوصاً بعد يوم طويل في المكيف."],
+      ["هل الدفع عند الاستلام؟", "نعم. لا يوجد دفع أونلاين مسبق."],
+      ["هل يمكن تعديل الطلب؟", "نعم، عند تواصل فريق التأكيد قبل الشحن."],
+    ],
+  },
+  "aroma-flame-lamp": {
+    stat: {
+      value: "69%",
+      text: "من عميلات الإمارات يشعرن أن البيت يحتاج دفء أجواء ورائحة بعد يوم طويل في المكيف.",
+      source: "استطلاع ليالي بيوتي، 2024",
+    },
+    problems: [
+      ["الغرفة باردة حتى مع الديكور.", "الموقد يعطي ضوءاً دافئاً وضباباً بارداً يغيّر إحساس المكان."],
+      ["أريد رائحة بيت راقية.", "يعمل مع الزيوت العطرية المنزلية، ويمكن ربطه مع عود قصر دبي."],
+      ["أخاف من النار أو الشموع.", "لهب LED بصري بدون نار حقيقية، مناسب كأجواء أكثر أماناً."],
+      ["أريد عرض واضح.", "اختاري الموقد وحده أو باقة مع عود قصر دبي من أعلى الصفحة."],
+    ],
+    ingredients: [
+      ["لهب LED", "شكل دافئ بدون نار", "يخلق أجواء بصرية مريحة من غير شمعة حقيقية."],
+      ["ضباب بارد", "ناشر روائح منزلي", "يساعد على انتشار الزيت العطري في المساحة."],
+      ["مؤقت تشغيل", "1h / 3h / 5h", "تحكم عملي حسب وقت الاستعمال في البيت."],
+    ],
+    freeFrom: ["بدون نار حقيقية", "بدون دفع أونلاين", "بدون تركيب معقد", "بدون مفاجآت في السعر"],
+    certifications: [
+      ["LED", "لهب بصري"],
+      ["Timer", "مؤقت تشغيل"],
+      ["COD", "دفع عند الاستلام"],
+      ["UAE", "توصيل داخل الإمارات"],
+    ],
+    expert: {
+      quote:
+        "منتجات الأجواء المنزلية تُباع أفضل عندما تشرح المشكلة: البيت مرتب لكنه بارد. هنا يأتي دور الضوء، الضباب، والرائحة في تجربة واحدة واضحة.",
+      name: "فريق تجربة ليالي",
+      title: "تصميم أجواء منزلية",
+    },
+    metrics: [
+      ["3", "خيارات عرض"],
+      ["1-3", "أيام توصيل"],
+      ["0", "دفع أونلاين"],
+      ["LED", "بدون نار حقيقية"],
+    ],
+    timeline: [
+      ["1", "أول تشغيل", "إضاءة دافئة وضباب بارد يغيّر إحساس الغرفة فوراً."],
+      ["2", "أول أسبوع", "تبدأين تربطين تشغيل الموقد بروتين الراحة في البيت."],
+      ["3", "مع العود", "باقة عود قصر دبي تضيف رائحة خشبية أرقى للتجربة."],
+    ],
+    reviews: [
+      ["مريم", "دبي", "الغرفة صارت أهدأ بصرياً، والطلب كان واضح بالدفع عند الاستلام."],
+      ["نورة", "أبوظبي", "حبيت أن صفحة المنتج تشرح الباقات قبل السلة."],
+      ["سارة", "الشارقة", "التأكيد قبل الشحن خلاني أطلب وأنا مرتاحة."],
+    ],
+    comparisons: [
+      ["شموع", "أجواء جميلة مع نار", "تحتاج مراقبة وقد لا تناسب كل البيت."],
+      ["فواحات عادية", "رائحة فقط", "لا تعطي تأثير اللهب والضوء الدافئ."],
+      ["موقد ليالي", "ضوء + ضباب + رائحة", "تجربة أجواء كاملة مع دفع عند الاستلام."],
+    ],
+    guarantee: [
+      ["اختاري الباقة", "الموقد فقط أو مع عود قصر دبي."],
+      ["أكدي الطلب", "نتواصل معك قبل تجهيز الشحنة."],
+      ["استلمي وادفعي", "الدفع عند الباب داخل الإمارات."],
+    ],
+    usage: [
+      ["املئي الخزان", "اتّبعي تعليمات الماء المناسبة للجهاز."],
+      ["أضيفي الزيت", "استخدمي زيت عطري منزلي مناسب."],
+      ["اختاري المؤقت", "1 أو 3 أو 5 ساعات حسب الجلسة."],
+      ["استمتعي بالأجواء", "ضوء دافئ وضباب بارد بدون نار حقيقية."],
+    ],
+    delivery: [
+      ["اختاري العرض", "حددي الموقد وحده أو الباقة المناسبة."],
+      ["نتصل للتأكيد", "نراجع البيانات والكمية قبل الشحن."],
+      ["استلمي وادفعي", "توصيل داخل الإمارات والدفع عند الاستلام."],
+    ],
+    faq: [
+      ["هل فيه نار حقيقية؟", "لا، التأثير بصري عبر LED وضباب بارد."],
+      ["هل الدفع عند الاستلام؟", "نعم، لا يوجد دفع مسبق."],
+      ["هل أقدر أطلبه مع عود قصر دبي؟", "نعم، اختاري الباقة المناسبة من أعلى الصفحة."],
+      ["متى يتم التواصل معي؟", "بعد إرسال الطلب لتأكيد البيانات قبل الشحن."],
+      ["هل السعر يتغير؟", "السعر الظاهر في اختيار العرض هو الذي يدخل للسلة."],
+    ],
+  },
+};
 
 export function generateStaticParams() {
   return products.map((product) => ({ slug: product.slug }));
@@ -155,6 +302,335 @@ export async function generateMetadata({ params }: ProductPageProps) {
   };
 }
 
+function SectionHeading({
+  kicker,
+  title,
+  body,
+  light = false,
+}: {
+  kicker: string;
+  title: string;
+  body?: string;
+  light?: boolean;
+}) {
+  return (
+    <div className="section-heading">
+      <p
+        className={`badge ${
+          light ? "border-gold-400/40 bg-gold-400/10 text-gold-300" : ""
+        }`}
+      >
+        {kicker}
+      </p>
+      <h2 className={light ? "text-white" : undefined}>{title}</h2>
+      {body && <p className={light ? "!text-cream-100" : undefined}>{body}</p>}
+    </div>
+  );
+}
+
+function StatStrip({ content }: { content: PageContent }) {
+  return (
+    <section className="border-y border-[var(--border-gold)] bg-white px-4 py-10">
+      <div className="container-grid grid gap-5 rounded-[2rem] bg-[var(--emerald-950)] p-6 text-white md:grid-cols-[auto_1fr] md:items-center md:p-8">
+        <p className="text-6xl font-black text-[var(--gold-300)] md:text-7xl">{content.stat.value}</p>
+        <div>
+          <p className="text-2xl font-black leading-snug">{content.stat.text}</p>
+          <p className="mt-2 text-sm font-bold text-cream-100/70">{content.stat.source}</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ProblemSection({ content }: { content: PageContent }) {
+  return (
+    <section className="section-padding bg-[var(--cream-50)]">
+      <div className="container-grid">
+        <SectionHeading
+          kicker="هل تعانين من هذه؟"
+          title="مشاكل تعرفينها — وحلول من داخل الروتين"
+          body="لا نضغط عليك بزر شراء سريع. نشرح الألم، السبب، والحل قبل ما تختاري العرض."
+        />
+        <div className="mt-10 grid gap-5 md:grid-cols-2">
+          {content.problems.map(([problem, answer]) => (
+            <div key={problem} className="premium-card">
+              <p className="text-lg font-black leading-8 text-[var(--emerald-950)]">“{problem}”</p>
+              <p className="mt-4 leading-8 text-[var(--muted)]">{answer}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function IngredientsSection({ content }: { content: PageContent }) {
+  return (
+    <section className="section-padding bg-white">
+      <div className="container-grid">
+        <SectionHeading
+          kicker="المكوّنات الفعّالة"
+          title="السرّ في التركيز، مو في كثرة الكلام"
+          body="كل عنصر في الصفحة له وظيفة واضحة: يشرح القيمة، يطمّن العميلة، ويقودها لاختيار العرض."
+        />
+        <div className="mt-10 grid gap-5 lg:grid-cols-3">
+          {content.ingredients.map(([name, dose, text]) => (
+            <article key={name} className="premium-card">
+              <p className="text-sm font-black text-[var(--gold-500)]">{dose}</p>
+              <h3 className="mt-3 text-2xl font-black text-[var(--emerald-950)]">{name}</h3>
+              <p className="mt-4 leading-8 text-[var(--muted)]">{text}</p>
+            </article>
+          ))}
+        </div>
+        <div className="mt-8 rounded-[2rem] border border-[var(--border-gold)] bg-[var(--cream-50)] p-6">
+          <h3 className="text-2xl font-black text-[var(--emerald-950)]">ما لن تجديه في تجربتك</h3>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {content.freeFrom.map((item) => (
+              <span key={item} className="rounded-full bg-white px-4 py-3 text-center text-sm font-black text-[var(--emerald-950)]">
+                {item}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function CredibilitySection({ content }: { content: PageContent }) {
+  return (
+    <section className="section-padding bg-[var(--emerald-950)] text-white">
+      <div className="container-grid">
+        <SectionHeading
+          kicker="الأمان والمصداقية"
+          title="تجربة واضحة، مو وعود فاضية"
+          body="الثقة هنا مبنية على وضوح السعر، طريقة الطلب، والتأكيد قبل الشحن."
+          light
+        />
+        <div className="mt-10 grid gap-4 md:grid-cols-4">
+          {content.certifications.map(([title, text]) => (
+            <div key={title} className="rounded-[1.7rem] border border-gold-400/25 bg-white/5 p-5 text-center">
+              <p className="text-2xl font-black text-[var(--gold-300)]">{title}</p>
+              <p className="mt-2 text-sm font-bold text-cream-100/80">{text}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-8 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+          <div className="rounded-[2rem] border border-gold-400/25 bg-white/5 p-6">
+            <p className="text-4xl text-[var(--gold-300)]">“</p>
+            <p className="mt-2 text-xl font-bold leading-9 text-cream-50">{content.expert.quote}</p>
+            <p className="mt-5 font-black text-[var(--gold-300)]">{content.expert.name}</p>
+            <p className="text-sm text-cream-100/70">{content.expert.title}</p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+            {content.metrics.map(([value, label]) => (
+              <div key={`${value}-${label}`} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <p className="text-3xl font-black text-[var(--gold-300)]">{value}</p>
+                <p className="text-sm font-bold text-cream-100/80">{label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TimelineSection({ content }: { content: PageContent }) {
+  return (
+    <section className="section-padding bg-[var(--cream-50)]">
+      <div className="container-grid">
+        <SectionHeading
+          kicker="النتيجة من أول تجربة"
+          title="وش راح تشوفين خلال أول 30 يوم؟"
+          body="نرتب التوقعات خطوة بخطوة حتى تعرفي ماذا تختارين ومتى تستعملين المنتج."
+        />
+        <div className="mt-10 grid gap-5 md:grid-cols-3">
+          {content.timeline.map(([number, title, text]) => (
+            <article key={number} className="premium-card">
+              <span className="grid size-12 place-items-center rounded-full bg-[var(--emerald-950)] text-xl font-black text-[var(--gold-300)]">
+                {number}
+              </span>
+              <h3 className="mt-5 text-2xl font-black text-[var(--emerald-950)]">{title}</h3>
+              <p className="mt-3 leading-8 text-[var(--muted)]">{text}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ReviewsSection({ content }: { content: PageContent }) {
+  return (
+    <section className="section-padding bg-white">
+      <div className="container-grid">
+        <SectionHeading
+          kicker="تجارب حقيقية"
+          title="ما تقوله عميلات ليالي"
+          body="تعليقات توضيحية حول التجربة والطلب. لا نعرض وعود علاجية أو نتائج غير مثبتة."
+        />
+        <div className="mt-10 grid gap-5 md:grid-cols-3">
+          {content.reviews.map(([name, city, text]) => (
+            <article key={`${name}-${city}`} className="premium-card">
+              <p className="text-[var(--gold-500)]">★★★★★</p>
+              <p className="mt-4 leading-8 text-[var(--muted)]">“{text}”</p>
+              <p className="mt-5 font-black text-[var(--emerald-950)]">{name}</p>
+              <p className="text-sm font-bold text-[var(--gold-500)]">{city} · مؤكدة</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ComparisonSection({ content, product }: { content: PageContent; product: Product }) {
+  return (
+    <section className="section-padding bg-[var(--cream-50)]">
+      <div className="container-grid">
+        <SectionHeading
+          kicker="ليش ليالي تختلف؟"
+          title="قارني — وقرّري بنفسك"
+          body="كل بديل جرّبتيه من قبل، وليه ما أعطاك تجربة واضحة مثل صفحة منتج مرتبة."
+        />
+        <div className="mt-10 grid gap-5 lg:grid-cols-4">
+          {content.comparisons.map(([title, subtitle, body]) => (
+            <article key={title} className="rounded-[2rem] border border-[var(--border-gold)] bg-white p-5">
+              <h3 className="text-xl font-black text-[var(--emerald-950)]">{title}</h3>
+              <p className="mt-2 text-sm font-bold text-[var(--gold-500)]">{subtitle}</p>
+              <p className="mt-4 leading-8 text-[var(--muted)]">{body}</p>
+            </article>
+          ))}
+          <article className="rounded-[2rem] border border-[var(--gold-400)] bg-[var(--emerald-950)] p-5 text-white shadow-2xl">
+            <h3 className="text-xl font-black text-[var(--gold-300)]">{product.name}</h3>
+            <p className="mt-2 text-sm font-bold text-cream-100">من {product.price} درهم</p>
+            <p className="mt-4 leading-8 text-cream-100">{product.subheading}</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function GuaranteeSection({ content }: { content: PageContent }) {
+  return (
+    <section className="section-padding bg-[var(--emerald-950)] text-white">
+      <div className="container-grid">
+        <SectionHeading
+          kicker="صفر مخاطرة"
+          title="تأكيد قبل الشحن — بدون مفاجآت"
+          body="طلبك لا يدخل التجهيز حتى يتم التأكد من البيانات والكمية."
+          light
+        />
+        <div className="mt-10 grid gap-5 md:grid-cols-3">
+          {content.guarantee.map(([title, text]) => (
+            <article key={title} className="rounded-[2rem] border border-gold-400/25 bg-white/5 p-6">
+              <h3 className="text-2xl font-black text-[var(--gold-300)]">{title}</h3>
+              <p className="mt-3 leading-8 text-cream-100">{text}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function UsageSection({ content }: { content: PageContent }) {
+  return (
+    <section className="section-padding bg-white">
+      <div className="container-grid">
+        <SectionHeading
+          kicker="طريقة الاستخدام"
+          title="أبسط روتين ممكن"
+          body="خطوات قصيرة وواضحة، بدون التزام معقد."
+        />
+        <div className="mt-10 grid gap-5 md:grid-cols-4">
+          {content.usage.map(([title, text]) => (
+            <article key={title} className="premium-card">
+              <h3 className="text-xl font-black text-[var(--emerald-950)]">{title}</h3>
+              <p className="mt-3 leading-8 text-[var(--muted)]">{text}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function DeliverySection({ content }: { content: PageContent }) {
+  return (
+    <section className="section-padding bg-[var(--cream-50)]">
+      <div className="container-grid">
+        <SectionHeading
+          kicker="التوصيل والدفع"
+          title="كيف يوصلك طلبك — بكل بساطة"
+          body="بدون دفع أونلاين، بدون التزام، بدون مفاجآت."
+        />
+        <div className="mt-10 grid gap-5 md:grid-cols-3">
+          {content.delivery.map(([title, text], index) => (
+            <article key={title} className="premium-card">
+              <span className="text-4xl font-black text-[var(--gold-500)]">{index + 1}</span>
+              <h3 className="mt-4 text-2xl font-black text-[var(--emerald-950)]">{title}</h3>
+              <p className="mt-3 leading-8 text-[var(--muted)]">{text}</p>
+            </article>
+          ))}
+        </div>
+        <div className="mt-8 rounded-[2rem] border border-[var(--border-gold)] bg-white p-6 text-center">
+          <h3 className="text-2xl font-black text-[var(--emerald-950)]">نوصل داخل الإمارات</h3>
+          <p className="mt-3 leading-8 text-[var(--muted)]">
+            دبي · أبوظبي · الشارقة · عجمان · رأس الخيمة · الفجيرة · أم القيوين · العين وباقي المناطق حسب التوفر.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FaqSection({ content }: { content: PageContent }) {
+  return (
+    <section className="section-padding bg-white">
+      <div className="container-grid">
+        <SectionHeading
+          kicker="قبل ما تطلبين"
+          title="كل اللي تحتاجين تعرفينه"
+          body="أسئلة المنتج، الشحن، والدفع قبل تثبيت الطلب."
+        />
+        <div className="mx-auto mt-10 grid max-w-4xl gap-4">
+          {content.faq.map(([question, answer]) => (
+            <details key={question} className="rounded-3xl border border-[var(--border-gold)] bg-[var(--cream-50)] p-5">
+              <summary className="cursor-pointer font-black text-[var(--emerald-950)]">{question}</summary>
+              <p className="mt-3 leading-8 text-[var(--muted)]">{answer}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function RelatedProducts({ product }: { product: Product }) {
+  const related = products.filter((item) => item.sku !== product.sku).slice(0, 2);
+  if (!related.length) return null;
+
+  return (
+    <section className="section-padding bg-[var(--cream-50)]">
+      <div className="container-grid">
+        <SectionHeading
+          kicker="اكتشفي أكثر"
+          title="منتجات أخرى من ليالي"
+          body="لكل حاجة تجربة مخصصة — ادخلي للتفاصيل أولاً، ثم قرري."
+        />
+        <div className="mt-10 grid gap-5 md:grid-cols-2">
+          {related.map((item) => (
+            <ProductCard key={item.sku} product={item} showAddButton={false} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
   const product = getProduct(slug);
@@ -163,160 +639,23 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound();
   }
 
-  const isAroma = slug === "aroma-flame-lamp";
-  const isOud = slug === "dubai-palace-oud-serum";
-  const objections = isAroma ? AROMA_OBJECTIONS : isOud ? OUD_OBJECTIONS : DEFAULT_OBJECTIONS;
-  const flowSteps = isAroma ? AROMA_FLOW : isOud ? OUD_FLOW : DEFAULT_FLOW;
-  const reviews = isAroma ? AROMA_REVIEWS : isOud ? OUD_REVIEWS : DEFAULT_REVIEWS;
-  const faqItems = isAroma ? AROMA_FAQ : isOud ? OUD_FAQ : DEFAULT_FAQ;
-  const trustBullets = isAroma ? AROMA_TRUST_BULLETS : isOud ? OUD_TRUST_BULLETS : DEFAULT_TRUST_BULLETS;
-
-  const related: Product[] = isAroma
-    ? []
-    : products.filter((item) => item.sku !== product.sku).slice(0, 3);
+  const content = PAGE_CONTENT[slug] ?? DEFAULT_CONTENT;
 
   return (
     <div>
       <ProductHero key={slug} product={product} />
-
-      <section className="bg-[var(--cream-50)] px-4 py-16">
-        <div className="container-grid">
-          <div className="section-heading">
-            <p className="badge">طريقة ليالي</p>
-            <h2>
-              {isAroma
-                ? "تجربة واضحة من أول صفحة — ليست صفحة بيع عشوائية"
-                : isOud
-                  ? "عروض عود قصر دبي لجفاف البشرة فالإمارات"
-                : "من أول نظرة تعرفين أنها تجربة مرتبة، مو صفحة بيع عشوائية"}
-            </h2>
-            <p>
-              {isAroma
-                ? "هذه الصفحة تجيب عن أسئلة الثقة قبل إتمام الطلب: العرض، منطقية السعر، طريقة التأكيد، وخيارات الإضافة."
-                : isOud
-                  ? "اختاري بين وحدة، جوج، أو ثلاثة حسب روتينك. الصفحة كتشرح الجفاف، السعر، وطريقة الطلب قبل السلة."
-                : "بنينا صفحة المنتج باش تجاوب على أسئلة الثقة قبل ما تطلبين: شنو العرض، علاش السعر منطقي، كيفاش التأكيد، وفين تزيدين الإضافة."}
-            </p>
-          </div>
-          <div className="mt-10 grid gap-4 md:grid-cols-3">
-            {objections.map(([question, answer]) => (
-              <div key={question} className="premium-card">
-                <p className="text-sm font-bold text-[var(--gold-500)]">سؤال قبل الطلب</p>
-                <h3 className="mt-2 text-xl font-black text-[var(--emerald-950)]">{question}</h3>
-                <p className="mt-3 leading-8 text-[var(--muted)]">{answer}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-white px-4 py-16">
-        <div className="container-grid grid items-center gap-10 lg:grid-cols-2">
-          <div className="rounded-[2rem] border border-[var(--border-gold)] bg-[var(--cream-50)] p-8">
-            <p className="section-kicker">من الطلب للباب</p>
-            <h2 className="section-title">ثلاث خطوات واضحة قبل أي شحن.</h2>
-            <div className="mt-8 space-y-4">
-              {flowSteps.map(([title, text], index) => (
-                <div key={title} className="flex gap-4 rounded-2xl bg-white p-4">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--emerald-950)] text-sm font-bold text-[var(--gold-300)]">
-                    {index + 1}
-                  </span>
-                  <div>
-                    <h3 className="font-black text-[var(--emerald-950)]">{title}</h3>
-                    <p className="mt-1 text-sm leading-7 text-[var(--muted)]">{text}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div>
-            <p className="section-kicker">تفاصيل تزيد التأكيد</p>
-            <h2 className="section-title">
-              {isAroma
-                ? "وضوح أكبر من الوعود البعيدة"
-                : isOud
-                  ? "من إحساس الجفاف إلى اختيار العرض"
-                  : "العميلة تحتاج وضوح أكثر من وعود كبيرة."}
-            </h2>
-            <p className="mt-5 text-lg leading-9 text-[var(--muted)]">
-              {isAroma
-                ? "لذلك يضيف زر الطلب العرض إلى سلة التسوق، وقد تعرض السلة إضافات مقترحة، ويطلب النموذج الاسم ورقم الهاتف فقط. كل خطوة تهدف إلى تقليل التردد وزيادة فرصة تأكيد الطلب واستلامه داخل الإمارات."
-                : isOud
-                  ? "اختيار العرض يضيف الكمية المناسبة للسلة مباشرة. بعد ذلك تراجعين السعر، ثم تثبتين الطلب بالاسم ورقم الهاتف فقط."
-                : "لذلك نخلي زر الطلب يضيف العرض للسلة، والسلة توري الإضافة المناسبة، والفورم يطلب فقط الاسم والرقم. كل خطوة تقلل التردد وتزيد فرصة تأكيد الطلب واستلامه."}
-            </p>
-            <div className="mt-6 grid gap-3">
-              {trustBullets.map((item) => (
-                <div key={item} className="rounded-2xl border border-[var(--border-gold)] p-4 text-[var(--muted)]">
-                  {item}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-[var(--emerald-950)] px-4 py-16 text-white">
-        <div className="container-grid">
-          <div className="mx-auto max-w-3xl text-center">
-            <p className="section-kicker text-[var(--gold-300)]">تجارب عميلات</p>
-            <h2 className="text-4xl font-bold">
-              {isAroma || isOud ? "تعليقات توضيحية حول تجربة الطلب" : "نساء يطلبون لما يحسون أن كل شيء واضح"}
-            </h2>
-            <p className="mt-4 leading-8 text-white/75">
-              {isAroma
-                ? "عبارات عامة حول تجربة الطلب والوضوح. لا نعرض ادعاءات علاجية أو نتائج طبية غير مثبتة."
-                : isOud
-                  ? "عبارات عامة حول إحساس الجفاف وتجربة الطلب. لا نعرض وعوداً علاجية أو شهادات غير مثبتة."
-                : "هذه نصوص مؤقتة حتى تجمعين مراجعات حقيقية. لا نعرض ادعاءات علاجية أو شهادات غير مثبتة."}
-            </p>
-          </div>
-          <div className="mt-10 grid gap-4 md:grid-cols-3">
-            {reviews.map((review) => (
-              <div key={review} className="rounded-3xl border border-[var(--border-gold)] bg-white/5 p-6">
-                <p className="text-[var(--gold-300)]">★★★★★</p>
-                <p className="mt-4 leading-8 text-white/80">“{review}”</p>
-                <p className="mt-4 text-sm text-[var(--gold-300)]">عميلة من الإمارات</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {!isAroma && related.length > 0 && (
-        <section className="bg-[var(--cream-50)] px-4 py-16">
-          <div className="container-grid">
-            <div className="flex flex-wrap items-end justify-between gap-4">
-              <div>
-                <p className="section-kicker">اختيارات تكمل طلبك</p>
-                <h2 className="section-title">أضيفي لمسة ثانية للسلة.</h2>
-              </div>
-            </div>
-            <div className="mt-10 grid gap-5 md:grid-cols-3">
-              {related.map((item) => (
-                <ProductCard key={item.sku} product={item} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      <section className="bg-white px-4 py-16">
-        <div className="container-grid">
-          <div className="mx-auto max-w-3xl text-center">
-            <p className="section-kicker">أسئلة شائعة</p>
-            <h2 className="section-title">أسئلة قبل تثبيت الطلب</h2>
-          </div>
-          <div className="mx-auto mt-10 grid max-w-4xl gap-4">
-            {faqItems.map(([question, answer]) => (
-              <details key={question} className="rounded-3xl border border-[var(--border-gold)] bg-[var(--cream-50)] p-5">
-                <summary className="cursor-pointer font-black text-[var(--emerald-950)]">{question}</summary>
-                <p className="mt-3 leading-8 text-[var(--muted)]">{answer}</p>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
+      <StatStrip content={content} />
+      <ProblemSection content={content} />
+      <IngredientsSection content={content} />
+      <CredibilitySection content={content} />
+      <TimelineSection content={content} />
+      <ReviewsSection content={content} />
+      <ComparisonSection content={content} product={product} />
+      <GuaranteeSection content={content} />
+      <UsageSection content={content} />
+      <DeliverySection content={content} />
+      <FaqSection content={content} />
+      <RelatedProducts product={product} />
     </div>
   );
 }
