@@ -3,16 +3,16 @@ import { ProductCard } from "@/components/ProductCard";
 import { products } from "@/lib/products";
 
 const pillars = [
-  ["مصمم لجو الإمارات", "المكيف، الشمس، والتنقل اليومي يخلي البشرة مشدودة وباهتة. كل رسالة في المتجر مبنية على هاد المشكلة."],
+  ["مصمم لجو الإمارات", "المكيف، الشمس، والمشاوير اليومية تخلي البشرة مشدودة وباهتة. كل رسالة في المتجر مبنية على هالمشكلة."],
   ["طقس عناية واضح", "عود قصر دبي هو الروتين الأساسي: إحساس نعومة ورائحة عود دافئة بدون وعود علاجية مبالغ فيها."],
-  ["اختيارات داخل صفحة المنتج", "الهوم يشرح القصة فقط. تفاصيل الكمية والسعر النهائي كتظهر بعد الدخول لصفحة المنتج."],
-  ["دفع عند الاستلام", "لا يوجد دفع إلكتروني مسبق. يتم تأكيد الطلب أولاً ثم الدفع عند وصول الشحنة داخل الإمارات."],
+  ["اختيارات داخل صفحة المنتج", "الصفحة الرئيسية تشرح القصة فقط. تفاصيل الكمية والسعر النهائي تظهر بعد الدخول لصفحة المنتج."],
+  ["دفع عند الاستلام", "ما فيه دفع إلكتروني مسبق. يتم تأكيد الطلب أولاً ثم الدفع عند وصول الشحنة داخل الإمارات."],
 ];
 
 const reviews = [
-  ["مريم", "دبي", "بشرتي كتشد بزاف من المكيف. حبيت أن الموقع شرح المشكلة والروتين بلا مبالغة."],
-  ["نورة", "أبوظبي", "أول مرة نحس متجر كيهضر على جو الإمارات فعلاً، ماشي كلام عام على العناية."],
-  ["سارة", "الشارقة", "التجربة واضحة: قريت، دخلت لصفحة المنتج، عاد اخترت العرض المناسب."],
+  ["مريم", "دبي", "بشرتي تشد وايد من المكيف. عجبني إن الموقع شرح المشكلة والروتين بدون مبالغة."],
+  ["نورة", "أبوظبي", "أول مرة أحس متجر يتكلم عن جو الإمارات فعلاً، مب كلام عام عن العناية."],
+  ["سارة", "الشارقة", "التجربة واضحة: قريت، دخلت صفحة المنتج، وبعدها اخترت العرض المناسب."],
 ];
 
 const steps = [
@@ -22,9 +22,9 @@ const steps = [
 ];
 
 const faqs = [
-  ["هل الدفع عند الاستلام؟", "نعم. لا يوجد دفع الآن، يتم الدفع عند وصول الطلب."],
+  ["هل الدفع عند الاستلام؟", "نعم. ما فيه دفع الآن، يتم الدفع عند وصول الطلب."],
   ["هل هذا علاج لجفاف البشرة؟", "لا. نتحدث عن روتين عناية يعطي إحساس نعومة وراحة للبشرة المشدودة من جو الإمارات، بدون ادعاءات طبية."],
-  ["فين نختار العرض؟", "الهوم للشرح فقط. اختيارات الكمية والسعر كتكون داخل صفحة المنتج بعد ما تدخلي لها."],
+  ["وين أختار العرض؟", "الصفحة الرئيسية للشرح فقط. اختيارات الكمية والسعر تكون داخل صفحة المنتج بعد ما تدخلين لها."],
   ["متى يتم التأكيد؟", "بعد إرسال الطلب من صفحة المنتج، يتم التواصل معك لتأكيد البيانات قبل تجهيز الشحنة."],
 ];
 
@@ -51,8 +51,8 @@ export default function Home() {
             {[
               ["جفاف", "إحساس الشد"],
               ["عود", "رائحة دافئة"],
-              ["روتين", "بعد الشاور"],
-              ["COD", "دفع عند الاستلام"],
+              ["روتين", "بعد الاستحمام"],
+              ["دفع", "عند الاستلام"],
             ].map(([title, text]) => (
               <div key={title} className="rounded-3xl border border-white/10 bg-white/5 p-4">
                 <p className="text-2xl font-black text-[var(--gold-300)]">{title}</p>
@@ -63,7 +63,7 @@ export default function Home() {
           <div className="mx-auto mt-10 max-w-sm rounded-[2rem] border border-gold-400/30 bg-white/10 p-4">
             <p className="text-sm font-black text-gold-300">ضمان وضوح الطلب</p>
             <p className="mt-2 text-sm leading-7 text-cream-100">
-              الهوم للشرح فقط. اختيار العرض وإضافة السلة داخل صفحة المنتج.
+              الصفحة الرئيسية للشرح فقط. اختيار العرض وإضافة السلة داخل صفحة المنتج.
             </p>
           </div>
         </div>
@@ -72,10 +72,10 @@ export default function Home() {
       <section id="products" className="section-padding bg-cream-50">
         <div className="container-grid">
           <div className="section-heading">
-            <p className="badge">Our Rituals</p>
+            <p className="badge">روتينات ليالي</p>
             <h2>روتينات ليالي لجفاف البشرة وجو المكيف</h2>
             <p>
-              كل بطاقة هنا تدخل لصفحة تفاصيل المنتج فقط. لا يوجد شراء مباشر في الهوم.
+              كل بطاقة هنا تدخل لصفحة تفاصيل المنتج فقط. ما فيه شراء مباشر في الصفحة الرئيسية.
             </p>
           </div>
           <div className="mt-10 grid gap-6 md:grid-cols-2">
@@ -89,8 +89,8 @@ export default function Home() {
       <section className="section-padding">
         <div className="container-grid">
           <div className="section-heading">
-            <p className="badge">Why Layali Beauty</p>
-            <h2>عناية، مو متجر عشوائي</h2>
+            <p className="badge">ليش ليالي؟</p>
+            <h2>عناية، مب متجر عشوائي</h2>
             <p>ليالي مبنية على أربعة أركان: مشكلة واضحة، روتين مفهوم، تجربة طلب مريحة، ودفع عند الاستلام.</p>
           </div>
           <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
@@ -109,7 +109,7 @@ export default function Home() {
         <div className="container-grid">
           <div className="mx-auto max-w-3xl text-center">
             <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">
-              Verified Reviews
+              تجارب عميلات
             </p>
             <h2 className="mt-5 text-3xl font-bold md:text-5xl">
               عميلات قرأن القصة قبل ما يدخلن لصفحة المنتج
@@ -134,9 +134,9 @@ export default function Home() {
       <section className="section-padding bg-cream-50">
         <div className="container-grid">
           <div className="section-heading">
-            <p className="badge">How It Works</p>
+            <p className="badge">طريقة الطلب</p>
             <h2>من القراءة للاستلام في 3 خطوات</h2>
-            <p>الهوم يشرح. صفحة المنتج تعرض الاختيارات. الدفع يكون عند الاستلام.</p>
+            <p>الصفحة الرئيسية تشرح. صفحة المنتج تعرض الاختيارات. الدفع يكون عند الاستلام.</p>
           </div>
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             {steps.map(([number, title, text]) => (
@@ -156,13 +156,13 @@ export default function Home() {
         <div className="container-grid grid gap-10 lg:grid-cols-2 lg:items-center">
           <div>
             <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">
-              Begin Your Ritual
+              ابدئي روتينج
             </p>
             <h2 className="mt-5 text-3xl font-bold md:text-5xl">
-              عنايتك تستحق وضوح، مو ضغط شراء من الهوم
+              عنايتج تستحق وضوح، مب ضغط شراء من الصفحة الرئيسية
             </h2>
             <p className="mt-5 leading-9 text-cream-100">
-              إذا كانت بشرتك كتشد من المكيف والجو الجاف، ادخلي لصفحة عود قصر دبي باش تقرئي التفاصيل وتختاري العرض هناك.
+              إذا كانت بشرتج تشد من المكيف والجو الجاف، ادخلي صفحة عود قصر دبي عشان تقرين التفاصيل وتختارين العرض هناك.
             </p>
             <Link href={`/products/${featuredProduct.slug}`} className="btn-primary mt-8 inline-flex">
               ادخلي لصفحة الروتين

@@ -41,11 +41,11 @@ function UpsellModal({ orderId, onDone }: { orderId: string; onDone: () => void 
       <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="max-w-md rounded-[2rem] border border-[var(--border-gold)] bg-[var(--emerald-950)] p-6 text-center text-white shadow-2xl">
         <p className="mx-auto mb-3 grid size-16 place-items-center rounded-full bg-[var(--gold-500)] text-3xl text-[var(--emerald-950)]">✦</p>
         <p className="text-sm font-bold text-[var(--gold-300)]">عرض خاص يظهر مرة واحدة فقط</p>
-        <h3 className="mt-2 text-2xl font-black">أضيفي لمسة عود فاخرة بـ 39 درهم</h3>
+        <h3 className="mt-2 text-2xl font-black">ضيفي لمسة عود فاخرة بـ 39 درهم</h3>
         <p className="mt-3 text-sm leading-7 text-white/75">أكثر إضافة تزيد إحساس الفخامة في الطلب، بسعر خاص فقط قبل تجهيز الشحنة. ينتهي خلال {seconds} ثانية.</p>
         <div className="mt-5 grid gap-3">
           <button disabled={busy} onClick={accept} className="rounded-full bg-[var(--gold-500)] px-5 py-4 font-black text-[var(--emerald-950)]">
-            {busy ? "جاري الإضافة..." : "أضيفيه لطلبي بـ 39 درهم"}
+            {busy ? "جاري الإضافة..." : "ضيفيه لطلبي بـ 39 درهم"}
           </button>
           <button onClick={onDone} className="text-sm font-bold text-white/75">لا شكراً، أكملي طلبي</button>
         </div>
@@ -178,7 +178,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 <div>
                   <p className="text-sm font-bold text-[var(--gold-500)]">خطوة التأكيد - الدفع عند الاستلام</p>
                   <h2 className="text-2xl font-black text-[var(--emerald-950)]">اكتبي بياناتك ونثبت لك الطلب</h2>
-                  <p className="mt-2 text-sm leading-7 text-[var(--muted)]">لا يوجد دفع الآن. سنراجع الرقم ونتواصل معك لتأكيد الشحنة قبل التجهيز حتى تقل الأخطاء والتأخير.</p>
+                  <p className="mt-2 text-sm leading-7 text-[var(--muted)]">ما فيه دفع الآن. بنراجع الرقم ونتواصل معك لتأكيد الشحنة قبل التجهيز حتى تقل الأخطاء والتأخير.</p>
                 </div>
                 <button type="button" onClick={closeCheckout} className="rounded-full border border-[var(--border-gold)] p-2"><X /></button>
               </div>
@@ -191,10 +191,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                   <input value={name} onChange={(e) => setName(e.target.value)} dir="rtl" className="rounded-2xl border border-[var(--border-gold)] px-4 py-3 text-right outline-none placeholder:text-right focus:ring-2 focus:ring-[var(--gold-400)]" placeholder="مثال: فاطمة علي" />
                 </label>
                 <label className="grid gap-2 text-sm font-bold text-[var(--emerald-950)]">رقم الهاتف الإماراتي
-                  <input value={phone} onChange={(e) => setPhone(e.target.value)} dir="rtl" inputMode="tel" className="rounded-2xl border border-[var(--border-gold)] px-4 py-3 text-right outline-none placeholder:text-right focus:ring-2 focus:ring-[var(--gold-400)]" placeholder="05XXXXXXXX" />
+                  <input value={phone} onChange={(e) => setPhone(e.target.value)} dir="rtl" inputMode="tel" className="rounded-2xl border border-[var(--border-gold)] px-4 py-3 text-right outline-none placeholder:text-right focus:ring-2 focus:ring-[var(--gold-400)]" placeholder="05 123 4567" />
                 </label>
               </div>
-              {phone && !normalizedPhone && <p className="mt-2 text-sm text-red-700">أدخلي رقم موبايل إماراتي صحيح.</p>}
+              {phone && !normalizedPhone && <p className="mt-2 text-sm text-red-700">أدخلي رقم هاتف إماراتي صحيح.</p>}
               {error && <p className="mt-3 rounded-xl bg-red-50 p-3 text-sm text-red-700">{error}</p>}
               <button disabled={!canSubmit} className="mt-5 w-full rounded-full bg-[var(--emerald-950)] px-6 py-4 font-black text-[var(--gold-300)] disabled:opacity-50">
                 {submitting ? "جاري تثبيت الطلب..." : "ثبتي الطلب الآن"}

@@ -35,7 +35,7 @@ function HeroMedia({ product, contained }: { product: Product; contained?: boole
         />
       )}
       <div className="relative z-10 max-w-sm rounded-[1.7rem] border border-white/10 bg-black/20 p-5 text-white shadow-2xl backdrop-blur">
-        <p className="text-sm font-black text-[var(--gold-300)]">Layali Beauty</p>
+        <p className="text-sm font-black text-[var(--gold-300)]">ليالي بيوتي</p>
         <h2 className="mt-2 text-3xl font-black">{product.shortName}</h2>
         <p className="mt-3 text-sm leading-7 text-[var(--cream-100)]">{product.headline}</p>
         <div className="mt-4 grid grid-cols-2 gap-2 text-xs font-bold text-[var(--gold-300)]">
@@ -104,7 +104,7 @@ function InsightStrip({ product }: { product: Product }) {
       <div className="relative mx-[calc(50%-50vw)] w-screen max-w-none px-0 lg:mx-auto lg:w-full lg:max-w-[1180px]">
         <div className="product-illustration grid min-h-[280px] place-items-center px-5 py-12 lg:rounded-2xl">
           <div className="relative z-10 max-w-3xl rounded-[2rem] border border-white/10 bg-black/20 p-6 text-center text-white backdrop-blur">
-            <p className="text-sm font-black text-[var(--gold-300)]">Layali Insight</p>
+            <p className="text-sm font-black text-[var(--gold-300)]">رؤية ليالي</p>
             <p className="mt-3 text-2xl font-black leading-snug">{strip.headline}</p>
           </div>
         </div>
@@ -162,7 +162,7 @@ function CommercePanel({
             )}
           </div>
           <p className="mt-3 text-sm font-semibold leading-7 text-cream-100">
-            لا دفع مسبق عبر الإنترنت. نؤكد طلبكِ بالاتصال قبل تجهيز الشحن، لتصلك التجربة كما اخترتِها على
+            ما فيه دفع إلكتروني مسبق. نؤكد طلبكِ بالاتصال قبل تجهيز الشحن، لتصلك التجربة كما اخترتِها على
             الموقع.
           </p>
         </div>
@@ -278,7 +278,7 @@ function CommercePanel({
 
       <div className="mt-5 grid gap-2 text-center text-xs font-bold text-cream-100/90 md:grid-cols-3 md:text-sm">
         {[
-          ["الدفع عند الاستلام", "من دون دفع إلكتروني مسبق"],
+          ["الدفع عند الاستلام", "بدون دفع إلكتروني مسبق"],
           ["تأكيد قبل الشحن", "يتم الاتصال قبل إرسال الشحنة"],
           ["التوصيل خلال 1–3 أيام", "حسب المنطقة داخل الإمارات"],
         ].map(([t, s]) => (
@@ -290,7 +290,7 @@ function CommercePanel({
       </div>
 
       <p className="mt-4 text-sm font-semibold leading-7 text-cream-100">
-        لا دفع مسبق عبر الإنترنت. نؤكد طلبكِ بالاتصال قبل تجهيز الشحن، لتصلك التجربة كما اخترتِها في هذه
+        ما فيه دفع إلكتروني مسبق. نؤكد طلبكِ بالاتصال قبل تجهيز الشحن، لتصلك التجربة كما اخترتِها في هذه
         الصفحة.
       </p>
     </div>

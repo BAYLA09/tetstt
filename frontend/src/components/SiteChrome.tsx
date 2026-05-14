@@ -17,7 +17,7 @@ const nav = [
 
 const topBarMessages = [
   "جفاف البشرة في الإمارات؟ ابدئي بروتين عود قصر دبي",
-  "وحدة 199 · جوج 279 · ثلاثة 349",
+  "عبوة 199 · عبوتين 279 · ثلاث عبوات 349",
   "الدفع عند الاستلام داخل الإمارات - لا تدفعين الآن",
   "تأكيد الطلب قبل الشحن وسعر واضح قبل السلة",
 ];
@@ -119,7 +119,7 @@ export function Footer() {
             عروض واضحة، والدفع عند الاستلام.
           </p>
           <div className="mt-5 flex flex-wrap gap-2 text-xs font-bold text-[var(--gold-300)]">
-            {["لجفاف البشرة", "وحدة 199", "دفع عند الاستلام"].map((item) => (
+            {["لجفاف البشرة", "عبوة 199", "دفع عند الاستلام"].map((item) => (
               <span key={item} className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">
                 {item}
               </span>
@@ -147,7 +147,7 @@ export function Footer() {
         </div>
       </div>
       <div className="border-t border-white/10 py-4 text-center text-xs text-[var(--cream-100)]">
-        © {new Date().getFullYear()} Layali Beauty. جميع الحقوق محفوظة.
+        © {new Date().getFullYear()} ليالي بيوتي. جميع الحقوق محفوظة.
       </div>
     </footer>
   );

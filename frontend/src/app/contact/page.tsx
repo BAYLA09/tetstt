@@ -16,7 +16,7 @@ export default function ContactPage() {
           </div>
           <div className="grid gap-4">
             {[
-              ["واتساب", "تواصلي معنا لتأكيد عرض وحدة، جوج، أو ثلاثة.", MessageCircle],
+              ["واتساب", "تواصلي معنا لتأكيد عرض عبوة، عبوتين، أو ثلاث عبوات.", MessageCircle],
               ["هاتف", "أدخلي رقمك في الطلب وسنتواصل معك قبل الشحن.", Phone],
             ].map(([title, text, Icon]) => (
               <div className="panel flex gap-4 p-6" key={title as string}>

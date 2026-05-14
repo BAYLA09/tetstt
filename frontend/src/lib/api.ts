@@ -151,7 +151,7 @@ function isLikelyTransientFetchFailure(err: unknown): boolean {
 
 function wrapOrderFetchFailure(err: unknown): Error {
   if (isAbortError(err)) return new Error("انتهت مهلة الاتصال. جرّبي مرة أخرى.");
-  if (err instanceof TypeError) return new Error("تعذّر الاتصال بالخادم. تأكّدي من الإنترنت أو جرّبي مرة أخرى.");
+  if (err instanceof TypeError) return new Error("تعذّر الاتصال بالخادم. تأكّدي من الشبكة أو جرّبي مرة ثانية.");
   if (err instanceof Error) return err;
   return new Error("تعذر إرسال الطلب الآن. تأكدي من الرقم وحاولي مرة أخرى.");
 }
