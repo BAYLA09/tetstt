@@ -201,7 +201,7 @@ const catalogProducts: Product[] = [
         badge: "الأكثر توفيراً",
       },
     ],
-    image: "/products/aroma-lamp-insight-before-after-products.png",
+    image: "/products/aroma-lamp-hero-dry-skin-background.png",
     cardImage: "/products/layali-flame-lamp-hero.png",
     heroPanorama: true,
     heroMediaShowCaption: false,
