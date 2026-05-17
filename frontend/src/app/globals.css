@@ -44,20 +44,6 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  .topbar-track {
-    animation: none;
-  }
-}
-
 ::selection {
   background: var(--gold-400);
   color: var(--emerald-950);
@@ -79,6 +65,14 @@ html {
 
 .topbar-track {
   animation: topbar-scroll 28s linear infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topbar-track {
+    animation: none;
+    will-change: auto;
+  }
 }
 
 @keyframes topbar-scroll {
@@ -110,15 +104,21 @@ html {
   position: absolute;
   inset: 0;
   z-index: -1;
-  background:
-    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-  background-size: 72px 72px;
-  mask-image: linear-gradient(to bottom, black, transparent 85%);
+  pointer-events: none;
+  background: radial-gradient(ellipse 85% 55% at 50% 0%, rgba(255, 255, 255, 0.05), transparent 58%);
 }
 
 .section-padding {
   padding-block: clamp(4rem, 7vw, 6.5rem);
+}
+
+/**
+ * Skip layout/paint for off-screen sections (major scroll win on long PDPs).
+ * `contain-intrinsic-size` keeps scrollbar length stable while sections are skipped.
+ */
+.section-cv {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 520px;
 }
 
 .section-heading {

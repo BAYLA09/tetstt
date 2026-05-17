@@ -344,7 +344,7 @@ function SectionHeading({
 
 function StatStrip({ content }: { content: PageContent }) {
   return (
-    <section className="border-y border-[var(--border-gold)] bg-white px-4 py-10">
+    <section className="border-y border-[var(--border-gold)] bg-white px-4 py-10 section-cv">
       <div className="container-grid grid gap-5 rounded-[2rem] bg-[var(--emerald-950)] p-6 text-white md:grid-cols-[auto_1fr] md:items-center md:p-8">
         <p className="text-6xl font-black text-[var(--gold-300)] md:text-7xl">{content.stat.value}</p>
         <div>
@@ -364,7 +364,7 @@ function CodReassuranceStrip() {
     ["تجهيز فاخر", "تغليف أنيق وتوصيل داخل الإمارات."],
   ];
   return (
-    <section className="border-y border-[var(--border-gold)] bg-[var(--surface-warm)] px-4 py-8">
+    <section className="border-y border-[var(--border-gold)] bg-[var(--surface-warm)] px-4 py-8 section-cv">
       <div className="container-grid grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {items.map(([title, text]) => (
           <div key={title} className="rounded-2xl border border-[var(--border-gold)] bg-white p-4 text-center shadow-sm">
@@ -379,7 +379,7 @@ function CodReassuranceStrip() {
 
 function ProblemSection({ content }: { content: PageContent }) {
   return (
-    <section className="section-padding bg-[var(--cream-50)]">
+    <section className="section-padding bg-[var(--cream-50)] section-cv">
       <div className="container-grid">
         <SectionHeading
           kicker="هل تحسين بهالأشياء؟"
@@ -401,7 +401,7 @@ function ProblemSection({ content }: { content: PageContent }) {
 
 function IngredientsSection({ content }: { content: PageContent }) {
   return (
-    <section className="section-padding bg-white">
+    <section className="section-padding bg-white section-cv">
       <div className="container-grid">
         <SectionHeading
           kicker="المكوّنات اللي تفرق"
@@ -434,7 +434,7 @@ function IngredientsSection({ content }: { content: PageContent }) {
 
 function CredibilitySection({ content }: { content: PageContent }) {
   return (
-    <section className="section-padding bg-[var(--emerald-950)] text-white">
+    <section className="section-padding bg-[var(--emerald-950)] text-white section-cv">
       <div className="container-grid">
         <SectionHeading
           kicker="الأمان والمصداقية"
@@ -492,7 +492,7 @@ function TimelineSection({ content, slug }: { content: PageContent; slug: string
           };
 
   return (
-    <section className="section-padding bg-[var(--cream-50)]">
+    <section className="section-padding bg-[var(--cream-50)] section-cv">
       <div className="container-grid">
         <SectionHeading kicker={meta.kicker} title={meta.title} body={meta.body} />
         <div className="mt-10 grid gap-5 md:grid-cols-3">
@@ -513,7 +513,7 @@ function TimelineSection({ content, slug }: { content: PageContent; slug: string
 
 function ReviewsSection({ content }: { content: PageContent }) {
   return (
-    <section className="section-padding bg-white">
+    <section className="section-padding bg-white section-cv">
       <div className="container-grid">
         <SectionHeading
           kicker="تجارب حقيقية"
@@ -537,7 +537,7 @@ function ReviewsSection({ content }: { content: PageContent }) {
 
 function ComparisonSection({ content, product }: { content: PageContent; product: Product }) {
   return (
-    <section className="section-padding bg-[var(--cream-50)]">
+    <section className="section-padding bg-[var(--cream-50)] section-cv">
       <div className="container-grid">
         <SectionHeading
           kicker="ليش ليالي تختلف؟"
@@ -565,7 +565,7 @@ function ComparisonSection({ content, product }: { content: PageContent; product
 
 function FulfillmentSection({ content }: { content: PageContent }) {
   return (
-    <section className="section-padding bg-[var(--emerald-950)] text-white">
+    <section className="section-padding bg-[var(--emerald-950)] text-white section-cv">
       <div className="container-grid">
         <SectionHeading
           kicker="تأكيد · تجهيز · توصيل"
@@ -603,7 +603,7 @@ function FulfillmentSection({ content }: { content: PageContent }) {
 
 function FaqSection({ content }: { content: PageContent }) {
   return (
-    <section className="section-padding bg-white">
+    <section className="section-padding bg-white section-cv">
       <div className="container-grid">
         <SectionHeading
           kicker="قبل ما تطلبين"
@@ -628,7 +628,7 @@ function RelatedProducts({ product }: { product: Product }) {
   if (!related.length) return null;
 
   return (
-    <section className="section-padding bg-[var(--cream-50)]">
+    <section className="section-padding bg-[var(--cream-50)] section-cv">
       <div className="container-grid">
         <SectionHeading
           kicker="اكتشفي أكثر"

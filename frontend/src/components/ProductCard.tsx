@@ -34,7 +34,7 @@ export function ProductCard({
           </div>
         ) : (
           <div className="product-illustration grid h-72 place-items-end rounded-[1.5rem] p-6">
-            <div className="relative z-10 w-full rounded-2xl border border-white/10 bg-white/10 p-4 text-center backdrop-blur-sm">
+            <div className="relative z-10 w-full rounded-2xl border border-white/10 bg-black/45 p-4 text-center">
               <p className="text-xs font-black text-[var(--gold-300)]">{product.badge}</p>
               <p className="mt-1 text-2xl font-black text-white">{product.shortName}</p>
             </div>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { CheckCircle2, MessageCircle, PhoneCall, Sparkles, Truck } from "lucide-react";
 import { money } from "@/lib/products";
 import { readLastCheckoutSnapshot } from "@/lib/order-confirmation-storage";
@@ -40,26 +40,23 @@ function maskPhoneDisplay(phone: string): string {
   return `${d.slice(0, 3)}···${d.slice(-4)}`;
 }
 
+function checkoutSnapshotFromSearch(search: URLSearchParams): ReturnType<typeof readLastCheckoutSnapshot> {
+  const skusRaw = search.get("s");
+  const skus = skusRaw ? skusRaw.split(",").filter(Boolean) : [];
+  const fromUrl = {
+    name: search.get("n")?.trim() || "",
+    phone: search.get("p")?.trim() || "",
+    total: Number(search.get("t")) || 0,
+    skus,
+    savedAt: Date.now(),
+  };
+  if (fromUrl.name && fromUrl.phone) return fromUrl;
+  return readLastCheckoutSnapshot();
+}
+
 export function ThankYouClient({ orderId }: { orderId: string }) {
   const search = useSearchParams();
-  const [snapshot, setSnapshot] = useState<ReturnType<typeof readLastCheckoutSnapshot>>(null);
-
-  useEffect(() => {
-    const skusRaw = search.get("s");
-    const skus = skusRaw ? skusRaw.split(",").filter(Boolean) : [];
-    const fromUrl = {
-      name: search.get("n")?.trim() || "",
-      phone: search.get("p")?.trim() || "",
-      total: Number(search.get("t")) || 0,
-      skus,
-      savedAt: Date.now(),
-    };
-    if (fromUrl.name && fromUrl.phone) {
-      setSnapshot(fromUrl);
-      return;
-    }
-    setSnapshot(readLastCheckoutSnapshot());
-  }, [search]);
+  const snapshot = useMemo(() => checkoutSnapshotFromSearch(search), [search]);
 
   const name = snapshot?.name?.trim() || "";
   const phone = snapshot?.phone?.trim() || "";

@@ -8,12 +8,13 @@ export function ProductStickyNav({ slug }: { slug: string }) {
   function scrollToOffer() {
     const el = document.getElementById(PRODUCT_OFFER_ANCHOR_ID);
     if (!el) return;
-    el.scrollIntoView({ behavior: "smooth", block: "start" });
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    el.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
   }
 
   return (
     <div
-      className="fixed inset-x-0 bottom-0 z-50 border-t border-[var(--border-gold)] bg-[rgba(25,55,47,0.97)] px-3 py-3 shadow-[0_-18px_50px_rgba(0,0,0,0.35)] backdrop-blur-md"
+      className="fixed inset-x-0 bottom-0 z-50 border-t border-[var(--border-gold)] bg-[var(--emerald-950)] px-3 py-3 shadow-[0_-12px_40px_rgba(0,0,0,0.22)]"
       role="region"
       aria-label="تثبيت الطلب"
     >

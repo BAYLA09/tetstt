@@ -36,7 +36,7 @@ function HeroMedia({ product, contained }: { product: Product; contained?: boole
           onError={() => setImageFailed(true)}
         />
       )}
-      <div className="relative z-10 max-w-sm rounded-[1.7rem] border border-white/10 bg-black/20 p-5 text-white shadow-2xl backdrop-blur">
+      <div className="relative z-10 max-w-sm rounded-[1.7rem] border border-white/10 bg-black/55 p-5 text-white shadow-2xl">
         <p className="text-sm font-black text-[var(--gold-300)]">ليالي بيوتي</p>
         <h2 className="mt-2 text-3xl font-black">{product.shortName}</h2>
         <p className="mt-3 text-sm leading-7 text-[var(--cream-100)]">{product.headline}</p>
@@ -68,7 +68,7 @@ function BeforeAfterSection({ product }: { product: Product }) {
       ];
 
   return (
-    <section className="bg-[var(--cream-50)] px-4 py-14">
+    <section className="bg-[var(--cream-50)] px-4 py-14 section-cv">
       <div className="container-grid">
         <p className="badge">{block.kicker}</p>
         <h2 className="mt-4 max-w-3xl text-3xl font-black leading-tight text-[var(--emerald-950)] md:text-4xl">
@@ -90,7 +90,7 @@ function BeforeAfterSection({ product }: { product: Product }) {
                   sizes="(max-width: 768px) 100vw, 50vw"
                   loading="lazy"
                 />
-                <div className="relative z-10 rounded-full border border-white/20 bg-black/35 px-5 py-3 text-center text-sm font-black text-white backdrop-blur">
+                <div className="relative z-10 rounded-full border border-white/20 bg-black/55 px-5 py-3 text-center text-sm font-black text-white">
                   {col.label}
                 </div>
               </div>
@@ -110,7 +110,7 @@ function InsightStrip({ product }: { product: Product }) {
   if (!strip) return null;
 
   return (
-    <section className="border-y border-[var(--border-gold)] bg-[var(--cream-50)] px-4 py-10">
+    <section className="border-y border-[var(--border-gold)] bg-[var(--cream-50)] px-4 py-10 section-cv">
       <div className="container-grid text-center">
         <p className="text-xs font-black tracking-[0.28em] text-[var(--gold-500)]">ليالي بيوتي · لمحات</p>
         <p className="mt-4 text-2xl font-black leading-snug text-[var(--emerald-950)] md:text-3xl">{strip.headline}</p>
@@ -138,7 +138,7 @@ function CommercePanel({
       <div
         id={PRODUCT_OFFER_ANCHOR_ID}
         dir="rtl"
-        className="relative z-10 scroll-mt-28 rounded-[2rem] border border-gold-400/25 bg-emerald-950/72 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] backdrop-blur lg:p-8"
+        className="relative z-10 scroll-mt-28 rounded-[2rem] border border-gold-400/25 bg-emerald-950/95 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] lg:p-8"
       >
         <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">{product.badge}</p>
         <h1 className="mt-5 text-4xl font-black leading-tight text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.75)] md:text-5xl">
@@ -191,7 +191,7 @@ function CommercePanel({
     <div
       id={PRODUCT_OFFER_ANCHOR_ID}
       dir="rtl"
-      className="relative z-10 scroll-mt-28 rounded-[2rem] border border-gold-400/25 bg-emerald-950/72 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] backdrop-blur lg:p-8"
+      className="relative z-10 scroll-mt-28 rounded-[2rem] border border-gold-400/25 bg-emerald-950/95 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] lg:p-8"
     >
       <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">{product.badge}</p>
       <h1 className="mt-5 text-4xl font-black leading-tight text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.75)] md:text-5xl">
@@ -303,7 +303,6 @@ function CommercePanel({
 
 export function ProductHero({ product }: { product: Product }) {
   const addItem = useCartStore((state) => state.addItem);
-  const tiers = product.offerTiers;
   const [selectedTier, setSelectedTier] = useState<ProductOfferTier | null>(() =>
     resolveDefaultOfferTier(product),
   );
