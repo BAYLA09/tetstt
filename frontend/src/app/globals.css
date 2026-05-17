@@ -187,6 +187,42 @@ html {
   color: var(--emerald-950);
 }
 
+/* Headline + subheading as an editorial pull-quote card (RTL: accent follows inline-start) */
+.copy-quote {
+  position: relative;
+  isolation: isolate;
+  margin-block: 0;
+  padding: 1.25rem 1.35rem 1.35rem 1.45rem;
+  border-radius: 1.35rem;
+  border: 1px solid var(--border-gold);
+  border-inline-start-width: 4px;
+  border-inline-start-color: var(--gold-400);
+  background:
+    radial-gradient(ellipse 100% 90% at 100% 0%, rgba(231, 192, 131, 0.16), transparent 52%),
+    linear-gradient(160deg, rgba(255, 255, 255, 0.98), rgba(255, 245, 230, 0.92));
+  box-shadow: 0 14px 44px rgba(42, 27, 18, 0.07), inset 0 1px rgba(255, 255, 255, 0.75);
+}
+
+.copy-quote--compact {
+  padding: 1rem 1.1rem 1.1rem 1.2rem;
+  border-radius: 1.15rem;
+}
+
+.copy-quote--inverse {
+  border-color: rgba(231, 192, 131, 0.32);
+  border-inline-start-color: var(--gold-300);
+  background:
+    radial-gradient(ellipse 90% 70% at 0% 0%, rgba(231, 192, 131, 0.18), transparent 50%),
+    linear-gradient(155deg, rgba(255, 255, 255, 0.12), rgba(0, 0, 0, 0.28));
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.08), 0 18px 50px rgba(0, 0, 0, 0.22);
+}
+
+@supports (backdrop-filter: blur(2px)) {
+  .copy-quote--inverse {
+    backdrop-filter: blur(10px);
+  }
+}
+
 .premium-card {
   border: 1px solid rgba(201, 150, 69, 0.28);
   border-radius: 2rem;

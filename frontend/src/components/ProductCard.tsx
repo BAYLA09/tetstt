@@ -52,14 +52,14 @@ export function ProductCard({
             ))}
           </div>
         </div>
-        <Link href={`/products/${product.slug}`}>
-          <h3 className="mt-4 text-2xl font-black leading-snug text-[var(--emerald-950)] transition group-hover:text-[var(--gold-500)]">
-            {product.name}
-          </h3>
-        </Link>
-        <p className="mt-3 min-h-16 text-sm leading-7 text-[var(--muted)]">
-          {product.subheading}
-        </p>
+        <div className="copy-quote copy-quote--compact mt-4" dir="rtl">
+          <Link href={`/products/${product.slug}`}>
+            <h3 className="text-2xl font-black leading-snug text-[var(--emerald-950)] transition group-hover:text-[var(--gold-500)]">
+              {product.name}
+            </h3>
+          </Link>
+          <p className="mt-3 min-h-16 text-sm leading-7 text-[var(--muted)]">{product.subheading}</p>
+        </div>
         <div className="mt-auto flex flex-col gap-4 pt-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
             {product.compareAt && (

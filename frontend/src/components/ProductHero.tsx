@@ -36,7 +36,7 @@ function HeroMedia({ product, contained }: { product: Product; contained?: boole
           onError={() => setImageFailed(true)}
         />
       )}
-      <div className="relative z-10 max-w-sm rounded-[1.7rem] border border-white/10 bg-black/20 p-5 text-white shadow-2xl backdrop-blur">
+      <div className="copy-quote copy-quote--inverse relative z-10 max-w-sm p-5 text-white shadow-2xl">
         <p className="text-sm font-black text-[var(--gold-300)]">ليالي بيوتي</p>
         <h2 className="mt-2 text-3xl font-black">{product.shortName}</h2>
         <p className="mt-3 text-sm leading-7 text-[var(--cream-100)]">{product.headline}</p>
@@ -85,7 +85,10 @@ function InsightStrip({ product }: { product: Product }) {
             </p>
           </div>
         ) : null}
-        <div className={`text-center ${hasImage || strip.statPercent ? "mt-8" : ""}`}>
+        <div
+          className={`copy-quote mx-auto max-w-3xl text-center ${hasImage || strip.statPercent ? "mt-8" : ""}`}
+          dir="rtl"
+        >
           <p className="text-xs font-black tracking-[0.28em] text-[var(--gold-500)]">ليالي بيوتي · لمحات</p>
           <p className="mt-4 text-2xl font-black leading-snug text-[var(--emerald-950)] md:text-3xl">{strip.headline}</p>
           <p className="mx-auto mt-3 max-w-3xl text-sm font-semibold leading-8 text-[var(--muted)]">{strip.subline}</p>
@@ -146,13 +149,15 @@ function CommercePanel({
         dir="rtl"
         className="relative z-10 scroll-mt-28 rounded-[2rem] border border-gold-400/25 bg-emerald-950/72 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] backdrop-blur lg:p-8"
       >
-        <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">{product.badge}</p>
-        <h1 className="mt-5 text-4xl font-black leading-tight text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.75)] md:text-5xl">
-          {product.name}
-        </h1>
-        <p className="mt-5 text-xl font-semibold leading-9 text-cream-50 drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)]">
-          {product.headline}
-        </p>
+        <div className="copy-quote copy-quote--inverse mt-1">
+          <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">{product.badge}</p>
+          <h1 className="mt-4 text-4xl font-black leading-tight text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.75)] md:text-5xl">
+            {product.name}
+          </h1>
+          <p className="mt-4 text-xl font-semibold leading-9 text-cream-50 drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)]">
+            {product.headline}
+          </p>
+        </div>
         <div className="mt-5 grid gap-2 rounded-2xl border border-gold-400/25 bg-white/10 p-4 text-sm font-bold text-cream-50 md:grid-cols-3">
           {["تأكيد قبل الشحن", "الدفع عند الاستلام", "عرض محجوز لهذا الأسبوع"].map((item) => (
             <span key={item} className="flex items-center gap-2">
@@ -199,13 +204,15 @@ function CommercePanel({
       dir="rtl"
       className="relative z-10 scroll-mt-28 rounded-[2rem] border border-gold-400/25 bg-emerald-950/72 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] backdrop-blur lg:p-8"
     >
-      <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">{product.badge}</p>
-      <h1 className="mt-5 text-4xl font-black leading-tight text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.75)] md:text-5xl">
-        {product.name}
-      </h1>
-      <p className="mt-5 text-xl font-semibold leading-9 text-cream-50 drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)]">
-        {product.headline}
-      </p>
+      <div className="copy-quote copy-quote--inverse mt-1">
+        <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">{product.badge}</p>
+        <h1 className="mt-4 text-4xl font-black leading-tight text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.75)] md:text-5xl">
+          {product.name}
+        </h1>
+        <p className="mt-4 text-xl font-semibold leading-9 text-cream-50 drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)]">
+          {product.headline}
+        </p>
+      </div>
 
       <div className="mt-5 grid gap-2 rounded-2xl border border-gold-400/25 bg-white/10 p-4 text-sm font-bold text-cream-50 md:grid-cols-3">
         {["تأكيد قبل الشحن", "الدفع عند الاستلام", "عرض محجوز لهذا الأسبوع"].map((item) => (

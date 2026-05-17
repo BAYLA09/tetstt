@@ -35,18 +35,20 @@ export default function Home() {
     <div className="store-shell">
       <section className="hero-gradient overflow-hidden text-white">
         <div className="container-grid py-16 text-center lg:py-24">
-          <p className="badge border-gold-400/50 bg-gold-400/10 text-gold-300">
-            عناية لجفاف البشرة في الإمارات
-          </p>
-          <h1 className="mx-auto mt-6 max-w-4xl text-4xl font-black leading-tight md:text-6xl">
-            بشرة مشدودة من المكيف والحر؟
-            <br />
-            ابدئي الجمال من روتين عود دافئ
-          </h1>
-          <p className="mx-auto mt-6 max-w-3xl text-lg leading-9 text-cream-100/90">
-            ليالي بيوتي مبنية على مشكلة واضحة تعيشها نساء الإمارات: مكيف طول اليوم، حرارة، وشمس.
-            نعرّفج على روتين عود قصر دبي لإحساس نعومة ورائحة راقية، وتدخلين صفحة المنتج بس لما تكونين جاهزة للتفاصيل.
-          </p>
+          <div className="copy-quote copy-quote--inverse mx-auto mt-2 max-w-4xl text-center" dir="rtl">
+            <p className="badge mx-auto border-gold-400/50 bg-gold-400/10 text-gold-300">
+              عناية لجفاف البشرة في الإمارات
+            </p>
+            <h1 className="mt-5 text-4xl font-black leading-tight md:text-6xl">
+              بشرة مشدودة من المكيف والحر؟
+              <br />
+              ابدئي الجمال من روتين عود دافئ
+            </h1>
+            <p className="mx-auto mt-5 max-w-3xl text-lg leading-9 text-cream-100/90">
+              ليالي بيوتي مبنية على مشكلة واضحة تعيشها نساء الإمارات: مكيف طول اليوم، حرارة، وشمس.
+              نعرّفج على روتين عود قصر دبي لإحساس نعومة ورائحة راقية، وتدخلين صفحة المنتج بس لما تكونين جاهزة للتفاصيل.
+            </p>
+          </div>
           <div className="mx-auto mt-10 grid max-w-4xl grid-cols-2 gap-3 text-sm md:grid-cols-4">
             {[
               ["جفاف", "إحساس الشد"],
