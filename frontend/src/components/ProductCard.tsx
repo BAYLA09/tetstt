@@ -1,9 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { ShoppingBag, Star } from "lucide-react";
-import { useState } from "react";
 import { money, type Product } from "@/lib/products";
 import { useCartStore } from "@/lib/cart-store";
 
@@ -15,23 +13,22 @@ export function ProductCard({
   showAddButton?: boolean;
 }) {
   const addItem = useCartStore((state) => state.addItem);
-  const [imageFailed, setImageFailed] = useState(false);
-  const showImage = Boolean(product.cardImage) && !imageFailed;
+  const cardSrc = product.cardImage?.trim();
+  const showPhoto = Boolean(cardSrc);
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-[2rem] border border-[var(--border-gold)] bg-white p-3 shadow-[0_18px_60px_rgba(42,27,18,0.10)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_24px_80px_rgba(42,27,18,0.14)]">
       <Link href={`/products/${product.slug}`} className="block">
-        {showImage ? (
+        {showPhoto ? (
           <div className="relative h-72 overflow-hidden rounded-[1.5rem] border border-[var(--border-gold)] bg-[var(--cream-50)]">
-            <Image
-              src={product.cardImage!}
+            {/* eslint-disable-next-line @next/next/no-img-element -- static /public assets; next/image was tripping onError and showing the illustration fallback */}
+            <img
+              src={cardSrc}
               alt={product.name}
-              fill
-              className="object-cover transition duration-300 group-hover:scale-[1.03]"
-              sizes="(max-width: 768px) 100vw, 50vw"
-              unoptimized
-              priority={!showAddButton}
-              onError={() => setImageFailed(true)}
+              className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"
+              loading={showAddButton ? "lazy" : "eager"}
+              decoding="async"
+              fetchPriority={showAddButton ? "auto" : "high"}
             />
           </div>
         ) : (
