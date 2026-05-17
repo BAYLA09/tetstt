@@ -1,19 +1,24 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fff8ec;
-  --foreground: #18130d;
-  --emerald-950: #013f2a;
-  --emerald-900: #06472f;
-  --emerald-800: #0b5739;
-  --gold-500: #c99645;
-  --gold-400: #d9ad63;
-  --gold-300: #ebc982;
-  --cream-50: #fff8ec;
-  --cream-100: #f7ead7;
-  --ink: #18130d;
-  --muted: #7b705f;
-  --border-gold: rgba(201, 150, 69, 0.35);
+  --background: #fffaf2;
+  --foreground: #201711;
+  --emerald-950: #19372f;
+  --emerald-900: #25493f;
+  --emerald-800: #315b4e;
+  --gold-500: #b77a45;
+  --gold-400: #cf9a61;
+  --gold-300: #e7c083;
+  --cream-50: #fffaf2;
+  --cream-100: #f5eadb;
+  --ink: #201711;
+  --muted: #786a5d;
+  --border-gold: rgba(183, 122, 69, 0.26);
+  --surface: #ffffff;
+  --surface-warm: #fff5e6;
+  --rose-100: #f8e7df;
+  --sage-100: #e7eee8;
+  --shadow-soft: 0 24px 70px rgba(42, 27, 18, 0.1);
 }
 
 @theme inline {
@@ -36,10 +41,7 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-arabic), Arial, Helvetica, sans-serif;
-}
-
-html {
-  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
 }
 
 ::selection {
@@ -49,8 +51,8 @@ html {
 
 .luxury-panel {
   background:
-    radial-gradient(circle at 20% 15%, rgba(235, 201, 130, 0.22), transparent 28%),
-    linear-gradient(135deg, #013f2a 0%, #06472f 48%, #022d1f 100%);
+    radial-gradient(circle at 20% 15%, rgba(231, 192, 131, 0.22), transparent 28%),
+    linear-gradient(135deg, #19372f 0%, #25493f 48%, #132820 100%);
 }
 
 .gold-text {
@@ -63,6 +65,14 @@ html {
 
 .topbar-track {
   animation: topbar-scroll 28s linear infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topbar-track {
+    animation: none;
+    will-change: auto;
+  }
 }
 
 @keyframes topbar-scroll {
@@ -84,9 +94,9 @@ html {
   isolation: isolate;
   overflow: hidden;
   background:
-    radial-gradient(circle at 16% 18%, rgba(235, 201, 130, 0.26), transparent 28%),
-    radial-gradient(circle at 78% 8%, rgba(217, 173, 99, 0.18), transparent 24%),
-    linear-gradient(135deg, #002619 0%, #013f2a 42%, #06472f 72%, #001b12 100%);
+    radial-gradient(circle at 12% 18%, rgba(231, 192, 131, 0.22), transparent 30%),
+    radial-gradient(circle at 78% 8%, rgba(248, 231, 223, 0.18), transparent 26%),
+    linear-gradient(135deg, #132820 0%, #19372f 46%, #25493f 74%, #17120f 100%);
 }
 
 .hero-gradient::before {
@@ -94,15 +104,21 @@ html {
   position: absolute;
   inset: 0;
   z-index: -1;
-  background:
-    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-  background-size: 72px 72px;
-  mask-image: linear-gradient(to bottom, black, transparent 85%);
+  pointer-events: none;
+  background: radial-gradient(ellipse 85% 55% at 50% 0%, rgba(255, 255, 255, 0.05), transparent 58%);
 }
 
 .section-padding {
   padding-block: clamp(4rem, 7vw, 6.5rem);
+}
+
+/**
+ * Skip layout/paint for off-screen sections (major scroll win on long PDPs).
+ * `contain-intrinsic-size` keeps scrollbar length stable while sections are skipped.
+ */
+.section-cv {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 520px;
 }
 
 .section-heading {
@@ -167,7 +183,7 @@ html {
 
 .btn-secondary {
   border: 1px solid rgba(201, 150, 69, 0.42);
-  background: rgba(1, 63, 42, 0.05);
+  background: rgba(25, 55, 47, 0.05);
   color: var(--emerald-950);
 }
 
@@ -178,7 +194,7 @@ html {
     linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 248, 236, 0.92)),
     var(--surface, #fff);
   padding: 1.4rem;
-  box-shadow: 0 22px 70px rgba(1, 63, 42, 0.1);
+  box-shadow: var(--shadow-soft);
 }
 
 .product-visual,
@@ -222,4 +238,124 @@ html {
   text-align: center;
   font-weight: 900;
   box-shadow: 0 24px 55px rgba(0, 0, 0, 0.22);
+}
+
+.container,
+.container-page {
+  width: min(100% - 2rem, 1180px);
+  margin-inline: auto;
+}
+
+.section {
+  padding-block: clamp(4rem, 7vw, 6.5rem);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border-radius: 999px;
+  color: var(--gold-500);
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+.panel,
+.card,
+.card-premium {
+  border: 1px solid var(--border-gold);
+  border-radius: 2rem;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 250, 242, 0.92)),
+    #fff;
+  box-shadow: var(--shadow-soft);
+}
+
+.emerald-panel {
+  background:
+    radial-gradient(circle at 18% 14%, rgba(231, 192, 131, 0.18), transparent 27%),
+    linear-gradient(135deg, #132820, #19372f 55%, #25493f);
+}
+
+.store-shell {
+  background:
+    radial-gradient(circle at top right, rgba(231, 192, 131, 0.14), transparent 32rem),
+    linear-gradient(180deg, #fffaf2 0%, #ffffff 42%, #fffaf2 100%);
+}
+
+.soft-divider {
+  border-top: 1px solid rgba(183, 122, 69, 0.16);
+}
+
+.product-illustration {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(231, 192, 131, 0.36);
+  background:
+    radial-gradient(circle at 50% 24%, rgba(231, 192, 131, 0.36), transparent 24%),
+    radial-gradient(circle at 52% 70%, rgba(255, 255, 255, 0.18), transparent 32%),
+    linear-gradient(145deg, #132820 0%, #25493f 58%, #17120f 100%);
+  color: var(--gold-300);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.1), 0 28px 80px rgba(25, 55, 47, 0.22);
+}
+
+.product-illustration::before {
+  content: "";
+  position: absolute;
+  inset: 1.1rem;
+  border: 1px solid rgba(231, 192, 131, 0.18);
+  border-radius: inherit;
+}
+
+.product-illustration::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 18%;
+  width: min(42%, 13rem);
+  aspect-ratio: 0.64;
+  transform: translateX(-50%);
+  border-radius: 999px 999px 2.2rem 2.2rem;
+  border: 1px solid rgba(231, 192, 131, 0.5);
+  background:
+    radial-gradient(ellipse at center 18%, rgba(255, 255, 255, 0.85) 0 9%, rgba(231, 192, 131, 0.72) 10% 18%, transparent 19%),
+    linear-gradient(180deg, rgba(231, 192, 131, 0.86), rgba(255, 250, 242, 0.86));
+  box-shadow: 0 26px 60px rgba(0, 0, 0, 0.25);
+}
+
+.product-illustration.has-product-image::after {
+  display: none;
+}
+
+.price-lockup {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  color: var(--emerald-950);
+  font-weight: 950;
+}
+
+.price-lockup strong {
+  font-size: clamp(1.85rem, 4vw, 3rem);
+  line-height: 1;
+}
+
+.price-lockup span {
+  color: var(--gold-500);
+  font-size: 0.95rem;
+  font-weight: 900;
+}
+
+@media (max-width: 640px) {
+  .container-grid,
+  .container,
+  .container-page {
+    width: min(100% - 1.25rem, 1180px);
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+  }
 }

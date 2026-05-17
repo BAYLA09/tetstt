@@ -10,41 +10,44 @@ import {
   productSnapshotForOfferTier,
   resolveDefaultOfferTier,
 } from "@/lib/products";
+import { PRODUCT_OFFER_ANCHOR_ID } from "@/lib/product-experience";
 import { useCartStore } from "@/lib/cart-store";
 import { generateEventId, trackEvent } from "@/lib/events";
+import { ProductStickyNav } from "@/components/ProductStickyNav";
 
 function HeroMedia({ product, contained }: { product: Product; contained?: boolean }) {
-  if (!product.image) {
-    return (
-      <div className="placeholder-art min-h-[420px] rounded-[2.5rem] lg:mx-0">
-        <span>{product.shortName}</span>
-      </div>
-    );
-  }
-
-  const panorama = product.heroPanorama === true && !contained;
-
-  const frameClass = panorama
-    ? "relative w-screen max-w-none shrink-0 bg-[rgba(0,20,14,0.4)] mx-[calc(50%-50vw)] lg:mx-auto lg:w-full lg:max-w-[1180px] lg:overflow-hidden lg:rounded-[2.5rem] lg:bg-transparent"
-    : "relative min-h-[320px] overflow-hidden rounded-[2rem] border border-gold-400/20 bg-black/20 lg:min-h-[420px] lg:rounded-[2.5rem]";
-
-  const imageClass = panorama
-    ? "h-auto w-full object-contain"
-    : "h-full min-h-[320px] w-full object-cover lg:min-h-[420px]";
+  const [imageFailed, setImageFailed] = useState(false);
+  const showImage = Boolean(product.image) && !imageFailed;
 
   return (
-    <div className={frameClass}>
-      <Image
-        src={product.image}
-        alt={product.name}
-        width={1536}
-        height={1024}
-        className={imageClass}
-        priority
-        sizes={
-          panorama ? "(max-width: 1024px) 100vw, 45vw" : "(max-width: 1024px) 100vw, 48vw"
-        }
-      />
+    <div
+      className={`product-illustration ${showImage ? "has-product-image" : ""} grid min-h-[380px] place-items-end rounded-[2.5rem] p-6 lg:min-h-[620px] ${
+        contained ? "" : "lg:mx-0"
+      }`}
+    >
+      {showImage && (
+        <Image
+          src={product.image!}
+          alt={product.name}
+          fill
+          className="z-0 object-contain p-4 md:p-8"
+          priority
+          sizes="(max-width: 1024px) 100vw, 48vw"
+          onError={() => setImageFailed(true)}
+        />
+      )}
+      <div className="relative z-10 max-w-sm rounded-[1.7rem] border border-white/10 bg-black/55 p-5 text-white shadow-2xl">
+        <p className="text-sm font-black text-[var(--gold-300)]">ليالي بيوتي</p>
+        <h2 className="mt-2 text-3xl font-black">{product.shortName}</h2>
+        <p className="mt-3 text-sm leading-7 text-[var(--cream-100)]">{product.headline}</p>
+        <div className="mt-4 grid grid-cols-2 gap-2 text-xs font-bold text-[var(--gold-300)]">
+          {product.notes.slice(0, 4).map((note) => (
+            <span key={note} className="rounded-full border border-white/10 bg-white/10 px-3 py-2 text-center">
+              {note}
+            </span>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -65,7 +68,7 @@ function BeforeAfterSection({ product }: { product: Product }) {
       ];
 
   return (
-    <section className="bg-[var(--cream-50)] px-4 py-14">
+    <section className="bg-[var(--cream-50)] px-4 py-14 section-cv">
       <div className="container-grid">
         <p className="badge">{block.kicker}</p>
         <h2 className="mt-4 max-w-3xl text-3xl font-black leading-tight text-[var(--emerald-950)] md:text-4xl">
@@ -78,14 +81,18 @@ function BeforeAfterSection({ product }: { product: Product }) {
               key={`${col.src}-${col.label}`}
               className="overflow-hidden rounded-2xl border border-[var(--border-gold)] bg-white shadow-sm"
             >
-              <div className="relative aspect-[4/3] w-full bg-[var(--cream-100)]">
+              <div className="relative grid aspect-[4/3] w-full place-items-center overflow-hidden bg-[var(--emerald-950)]">
                 <Image
                   src={col.src}
                   alt={col.label}
                   fill
-                  className="object-contain"
+                  className="object-cover"
                   sizes="(max-width: 768px) 100vw, 50vw"
+                  loading="lazy"
                 />
+                <div className="relative z-10 rounded-full border border-white/20 bg-black/55 px-5 py-3 text-center text-sm font-black text-white">
+                  {col.label}
+                </div>
               </div>
               <figcaption className="px-3 py-2 text-center text-sm font-bold text-[var(--emerald-950)]">
                 {col.label}
@@ -103,22 +110,11 @@ function InsightStrip({ product }: { product: Product }) {
   if (!strip) return null;
 
   return (
-    <section className="border-y border-[var(--border-gold)] bg-white px-4 py-12">
-      <div className="relative mx-[calc(50%-50vw)] w-screen max-w-none px-0 lg:mx-auto lg:w-full lg:max-w-[1180px]">
-        <div className="overflow-hidden bg-[var(--emerald-950)] lg:rounded-2xl">
-          <Image
-            src={strip.imageSrc}
-            alt={strip.headline}
-            width={1536}
-            height={1024}
-            className="h-auto w-full object-contain"
-            sizes="100vw"
-          />
-        </div>
-        <div className="container-grid pt-6">
-          <p className="text-xl font-black leading-snug text-[var(--emerald-950)] md:text-2xl">{strip.headline}</p>
-          <p className="mt-2 text-sm font-semibold text-[var(--muted)]">{strip.subline}</p>
-        </div>
+    <section className="border-y border-[var(--border-gold)] bg-[var(--cream-50)] px-4 py-10 section-cv">
+      <div className="container-grid text-center">
+        <p className="text-xs font-black tracking-[0.28em] text-[var(--gold-500)]">ليالي بيوتي · لمحات</p>
+        <p className="mt-4 text-2xl font-black leading-snug text-[var(--emerald-950)] md:text-3xl">{strip.headline}</p>
+        <p className="mx-auto mt-3 max-w-3xl text-sm font-semibold leading-8 text-[var(--muted)]">{strip.subline}</p>
       </div>
     </section>
   );
@@ -140,8 +136,9 @@ function CommercePanel({
   if (!tiers?.length) {
     return (
       <div
+        id={PRODUCT_OFFER_ANCHOR_ID}
         dir="rtl"
-        className="relative z-10 rounded-[2rem] border border-gold-400/25 bg-emerald-950/72 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] backdrop-blur lg:p-8"
+        className="relative z-10 scroll-mt-28 rounded-[2rem] border border-gold-400/25 bg-emerald-950/95 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] lg:p-8"
       >
         <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">{product.badge}</p>
         <h1 className="mt-5 text-4xl font-black leading-tight text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.75)] md:text-5xl">
@@ -150,7 +147,7 @@ function CommercePanel({
         <p className="mt-5 text-xl font-semibold leading-9 text-cream-50 drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)]">
           {product.headline}
         </p>
-        <div className="mt-5 grid gap-2 rounded-2xl border border-gold-400/25 bg-white/8 p-4 text-sm font-bold text-cream-50 md:grid-cols-3">
+        <div className="mt-5 grid gap-2 rounded-2xl border border-gold-400/25 bg-white/10 p-4 text-sm font-bold text-cream-50 md:grid-cols-3">
           {["تأكيد قبل الشحن", "الدفع عند الاستلام", "عرض محجوز لهذا الأسبوع"].map((item) => (
             <span key={item} className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 shrink-0 text-gold-300" />
@@ -169,7 +166,7 @@ function CommercePanel({
             )}
           </div>
           <p className="mt-3 text-sm font-semibold leading-7 text-cream-100">
-            لا دفع مسبق عبر الإنترنت. نؤكد طلبكِ بالاتصال قبل تجهيز الشحن، لتصلك التجربة كما اخترتِها على
+            ما فيه دفع إلكتروني مسبق. بنأكد طلبج بالاتصال قبل ما نجهز الشحن، عشان توصلج التجربة مثل ما اخترتيها على
             الموقع.
           </p>
         </div>
@@ -178,7 +175,7 @@ function CommercePanel({
           onClick={() => onAdd(product)}
           className="mt-6 w-full rounded-full bg-gold-500 px-8 py-5 text-lg font-black text-emerald-950 shadow-2xl transition hover:-translate-y-0.5 hover:bg-gold-400 md:w-auto"
         >
-          أضيفي العرض إلى السلة
+          أضيفي العرض للسلة
         </button>
       </div>
     );
@@ -192,8 +189,9 @@ function CommercePanel({
 
   return (
     <div
+      id={PRODUCT_OFFER_ANCHOR_ID}
       dir="rtl"
-      className="relative z-10 rounded-[2rem] border border-gold-400/25 bg-emerald-950/72 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] backdrop-blur lg:p-8"
+      className="relative z-10 scroll-mt-28 rounded-[2rem] border border-gold-400/25 bg-emerald-950/95 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] lg:p-8"
     >
       <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">{product.badge}</p>
       <h1 className="mt-5 text-4xl font-black leading-tight text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.75)] md:text-5xl">
@@ -203,7 +201,7 @@ function CommercePanel({
         {product.headline}
       </p>
 
-      <div className="mt-5 grid gap-2 rounded-2xl border border-gold-400/25 bg-white/8 p-4 text-sm font-bold text-cream-50 md:grid-cols-3">
+      <div className="mt-5 grid gap-2 rounded-2xl border border-gold-400/25 bg-white/10 p-4 text-sm font-bold text-cream-50 md:grid-cols-3">
         {["تأكيد قبل الشحن", "الدفع عند الاستلام", "عرض محجوز لهذا الأسبوع"].map((item) => (
           <span key={item} className="flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4 shrink-0 text-gold-300" />
@@ -219,7 +217,7 @@ function CommercePanel({
             {product.heroPromoLine}
           </p>
         )}
-        <p className="mt-3 text-center text-lg font-black text-[var(--emerald-950)]">اختاري العرض:</p>
+        <p className="mt-3 text-center text-lg font-black text-[var(--emerald-950)]">اختاري عرضج — هنا يبدأ الطلب</p>
         <div className="mt-4 space-y-3" role="radiogroup" aria-label="اختيار العرض">
           {tiers.map((tier) => {
             const isOn = selectedTier.sku === tier.sku;
@@ -285,8 +283,8 @@ function CommercePanel({
 
       <div className="mt-5 grid gap-2 text-center text-xs font-bold text-cream-100/90 md:grid-cols-3 md:text-sm">
         {[
-          ["الدفع عند الاستلام", "من دون دفع إلكتروني مسبق"],
-          ["تأكيد قبل الشحن", "يتم الاتصال قبل إرسال الشحنة"],
+          ["الدفع عند الاستلام", "بدون دفع إلكتروني مسبق"],
+          ["تأكيد قبل الشحن", "نتصل قبل ما نرسل الشحنة"],
           ["التوصيل خلال 1–3 أيام", "حسب المنطقة داخل الإمارات"],
         ].map(([t, s]) => (
           <div key={t} className="rounded-xl border border-white/10 bg-white/5 px-2 py-2">
@@ -297,8 +295,7 @@ function CommercePanel({
       </div>
 
       <p className="mt-4 text-sm font-semibold leading-7 text-cream-100">
-        لا دفع مسبق عبر الإنترنت. نؤكد طلبكِ بالاتصال قبل تجهيز الشحن، لتصلك التجربة كما اخترتِها في هذه
-        الصفحة.
+        ما فيه دفع إلكتروني مسبق. بنأكد طلبج بالاتصال قبل ما نجهز الشحن، عشان توصلج التجربة مثل ما اخترتيها بهالصفحة.
       </p>
     </div>
   );
@@ -306,7 +303,6 @@ function CommercePanel({
 
 export function ProductHero({ product }: { product: Product }) {
   const addItem = useCartStore((state) => state.addItem);
-  const tiers = product.offerTiers;
   const [selectedTier, setSelectedTier] = useState<ProductOfferTier | null>(() =>
     resolveDefaultOfferTier(product),
   );
@@ -318,13 +314,11 @@ export function ProductHero({ product }: { product: Product }) {
   }
 
   const storyFirst = product.storyBeforeCommerce === true;
-  const stickyLine =
-    tiers?.length && selectedTier ? productSnapshotForOfferTier(product, selectedTier) : product;
 
   if (storyFirst) {
     return (
       <>
-        <section className="hero-gradient relative overflow-hidden px-4 pb-10 pt-6 lg:pb-16 lg:pt-10">
+        <section className="hero-gradient relative overflow-hidden px-4 pb-28 pt-6 lg:pb-32 lg:pt-10">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(201,150,69,0.2),transparent_32%)]" />
           <div className="container-grid relative z-10" dir="ltr">
             <div className="grid items-start gap-10 lg:grid-cols-[1.05fr_0.95fr]">
@@ -340,49 +334,13 @@ export function ProductHero({ product }: { product: Product }) {
         </section>
         <BeforeAfterSection product={product} />
         <InsightStrip product={product} />
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-gold-500/30 bg-emerald-950/95 p-3 backdrop-blur lg:hidden">
-          {tiers?.length && selectedTier ? (
-            <div className="space-y-2">
-              <select
-                className="w-full rounded-xl border border-gold-500/40 bg-white/10 px-3 py-2 text-sm font-bold text-white"
-                value={selectedTier.sku}
-                onChange={(e) => {
-                  const t = tiers.find((x) => x.sku === e.target.value);
-                  if (t) setSelectedTier(t);
-                }}
-                aria-label="اختيار العرض"
-              >
-                {tiers.map((t) => (
-                  <option key={t.sku} value={t.sku} className="text-emerald-950">
-                    {t.title} — {money(t.price)}
-                  </option>
-                ))}
-              </select>
-              <button
-                type="button"
-                onClick={() => addOffer(productSnapshotForOfferTier(product, selectedTier))}
-                className="flex w-full items-center justify-center gap-2 rounded-full bg-gold-500 px-5 py-4 font-black text-emerald-950"
-              >
-                <ShoppingCart className="h-5 w-5" aria-hidden />
-                أضيفي للسلة – {money(selectedTier.price)}
-              </button>
-            </div>
-          ) : (
-            <button
-              type="button"
-              onClick={() => addOffer(product)}
-              className="w-full rounded-full bg-gold-500 px-5 py-4 font-black text-emerald-950"
-            >
-              أضيفي العرض إلى السلة - {money(product.price)}
-            </button>
-          )}
-        </div>
+        <ProductStickyNav slug={product.slug} />
       </>
     );
   }
 
   return (
-    <section className="hero-gradient relative overflow-hidden px-4 py-12 pb-28 text-white lg:py-20 lg:pb-20">
+    <section className="hero-gradient relative overflow-hidden px-4 py-12 pb-28 text-white lg:py-20 lg:pb-32">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(201,150,69,0.2),transparent_32%)]" />
       <div className="container-grid grid items-center gap-10 lg:grid-cols-[0.9fr_1fr]" dir="ltr">
         <div className="order-1 lg:order-1">
@@ -397,22 +355,7 @@ export function ProductHero({ product }: { product: Product }) {
           />
         </div>
       </div>
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-gold-500/30 bg-emerald-950/95 p-3 backdrop-blur lg:hidden">
-        <button
-          type="button"
-          onClick={() => addOffer(stickyLine)}
-          className="flex w-full items-center justify-center gap-2 rounded-full bg-gold-500 px-5 py-4 font-black text-emerald-950"
-        >
-          {tiers?.length ? (
-            <>
-              <ShoppingCart className="h-5 w-5" aria-hidden />
-              أضيفي للسلة – {money(stickyLine.price)}
-            </>
-          ) : (
-            <>أضيفي العرض إلى السلة - {money(product.price)}</>
-          )}
-        </button>
-      </div>
+      <ProductStickyNav slug={product.slug} />
     </section>
   );
 }
