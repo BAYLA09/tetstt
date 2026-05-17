@@ -199,12 +199,12 @@ const catalogProducts: Product[] = [
         badge: "الأكثر توفيراً",
       },
     ],
-    image: "/products/layali-flame-lamp-hero.png",
+    image: "/products/aroma-lamp-insight-before-after-products.png",
     cardImage: "/products/layali-flame-lamp-hero.png",
     heroPanorama: true,
     storyBeforeCommerce: true,
     insightStrip: {
-      imageSrc: "/products/aroma-lamp-insight-before-after-products.png",
+      imageSrc: "/products/aroma-stat-woman.jpg",
       headline:
         "ليالي بيوتي تركّز على تجربة الغرفة: أقل جفاف في الهواء، نوم أهدأ، وطقس عود راقي يشبه فيلات دبي الأنيقة.",
       subline: "ملاحظات من فريق التجربة · الإمارات، ٢٠٢٤",
