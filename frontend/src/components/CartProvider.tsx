@@ -45,9 +45,9 @@ function UpsellModal({ orderId, onDone }: { orderId: string; onDone: () => void 
         <p className="mt-3 text-sm leading-7 text-white/75">أكثر إضافة تزيد إحساس الفخامة في الطلب، بسعر خاص فقط قبل تجهيز الشحنة. ينتهي خلال {seconds} ثانية.</p>
         <div className="mt-5 grid gap-3">
           <button disabled={busy} onClick={accept} className="rounded-full bg-[var(--gold-500)] px-5 py-4 font-black text-[var(--emerald-950)]">
-            {busy ? "جاري الإضافة..." : "ضيفيه لطلبي بـ 39 درهم"}
+            {busy ? "جاري الإضافة..." : "ضيفيه لطلبج بـ 39 درهم"}
           </button>
-          <button onClick={onDone} className="text-sm font-bold text-white/75">لا شكراً، أكملي طلبي</button>
+          <button onClick={onDone} className="text-sm font-bold text-white/75">لا شكراً، أكملي طلبج</button>
         </div>
       </div>
     </div>
@@ -115,7 +115,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const msg =
         e instanceof Error && e.message
           ? e.message
-          : "تعذر إرسال الطلب الآن. تأكدي من الرقم وحاولي مرة أخرى.";
+          : "ما قدرنا نرسل الطلب الحين. تأكدي من الرقم وحاولي مرة ثانية.";
       setError(msg);
     } finally {
       setSubmitting(false);
@@ -214,7 +214,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 <p className="text-sm font-bold text-[var(--gold-500)]">خطوة التأكيد - الدفع عند الاستلام</p>
                 <h2 className="text-2xl font-black text-[var(--emerald-950)]">اكتبي بياناتج ونثبت لج الطلب</h2>
                 <p className="mt-2 text-sm leading-7 text-[var(--muted)]">
-                  ما فيه دفع الحين. بنراجع الرقم ونتواصل معاك عشان نأكد الشحنة قبل التجهيز ونقلل الغلط والتأخير.
+                  ما فيه دفع الحين. بنراجع الرقم ونتواصل معاج عشان نأكد الشحنة قبل التجهيز ونقلل الغلط والتأخير.
                 </p>
               </div>
               <button type="button" onClick={closeCheckout} className="rounded-full border border-[var(--border-gold)] p-2">
@@ -257,7 +257,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
               {submitting ? "جاري تثبيت الطلب..." : "ثبتي الطلب الآن"}
             </button>
             <p className="mt-3 text-center text-xs leading-6 text-[var(--muted)]">
-              الطلب لا يدخل الشحن إلا بعد تأكيدك. هذا يساعدنا نوصل الطلبات المؤكدة بسرعة ونقلل الإلغاءات.
+              الطلب ما يدخل الشحن إلا بعد تأكيدج. هالشي يساعدنا نوصل الطلبات المؤكدة بسرعة ونقلل الإلغاءات.
             </p>
           </form>
         </div>

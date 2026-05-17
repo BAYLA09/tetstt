@@ -10,13 +10,13 @@ import { readLastCheckoutSnapshot } from "@/lib/order-confirmation-storage";
 const OTHER_PRODUCT = {
   href: "/products/dubai-palace-oud-serum",
   title: "سيروم عود قصر دبي",
-  blurb: "إذا طلبتِ الموقد: كمّلي روتين الجفاف بملمس ناعم ورائحة عود على البشرة.",
+  blurb: "طلبج فيه الموقد؟ كملي روتين الجفاف بملمس ناعم ورائحة عود على البشرة.",
 } as const;
 
 const OTHER_PRODUCT_LAMP = {
   href: "/products/aroma-flame-lamp",
   title: "موقد الجو الجاف — ليالي بيوتي",
-  blurb: "إذا طلبتِ السيروم: أضيفي ضباب بارد وهدوء للغرفة مع نفس رائحة العود.",
+  blurb: "طلبج فيه السيروم؟ زيدي للغرفة ضباب بارد وهدوء مع نفس رائحة العود.",
 } as const;
 
 function dubaiHour(date: Date): number {
@@ -79,7 +79,7 @@ export function ThankYouClient({ orderId }: { orderId: string }) {
       badge: "أول الصباح",
       title: "المكالمة بتكون أول شيء الصبح",
       body:
-        "خارج أوقات التأكيد (٩ صباحاً — ٩ مساءً بتوقيت دبي). بندّك أول اتصال الصباح لتأكيد الطلب قبل أي تجهيز. احفظي الرقم الغريب: غالباً يكون منا.",
+        "خارج أوقات التأكيد (٩ صباحاً — ٩ مساءً بتوقيت دبي). نكلّمج أول شي بالصبح عشان نأكد الطلب قبل أي تجهيز. احفظي الرقم الغريب: غالباً من عندنا.",
     };
   }, []);
 
@@ -90,13 +90,13 @@ export function ThankYouClient({ orderId }: { orderId: string }) {
     <div className="pb-16 pt-8">
       <div className="mx-auto max-w-3xl rounded-[2rem] border border-[var(--border-gold)] bg-gradient-to-br from-[var(--emerald-950)] to-[#0f241e] px-5 py-6 text-center text-white shadow-2xl sm:px-8">
         <Sparkles className="mx-auto text-[var(--gold-300)]" size={36} aria-hidden />
-        <p className="mt-3 text-xs font-black uppercase tracking-[0.35em] text-[var(--gold-300)]">VIP · ليالي بيوتي</p>
+        <p className="mt-3 text-xs font-black uppercase tracking-[0.35em] text-[var(--gold-300)]">شكراً · ليالي بيوتي</p>
         <h1 className="mt-3 text-3xl font-black leading-tight sm:text-4xl">
-          {name ? `${name}، طلبج دخل النظام بنجاح` : "طلبج دخل النظام بنجاح"}
+          {name ? `${name}، سجلنا طلبج بنجاح` : "سجلنا طلبج بنجاح"}
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-sm leading-8 text-white/85">
           شكراً على ثقتج. الحين أهم خطوة: <span className="font-black text-[var(--gold-300)]">أجيبي التأكيد</span>{" "}
-          عشان ما يتأخر التجهيز وما يصير إلغاء لأننا ما تواصلنا.
+          عشان ما يتأخر التجهيز وما يصير إلغاء لأننا ما تواصلنا معاج.
         </p>
       </div>
 
@@ -152,7 +152,7 @@ export function ThankYouClient({ orderId }: { orderId: string }) {
       <div className="mx-auto mt-8 max-w-5xl rounded-[2rem] border border-[var(--border-gold)] bg-white p-6 shadow-sm">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h3 className="text-xl font-black text-[var(--emerald-950)]">لسه ما خلصتي؟</h3>
+            <h3 className="text-xl font-black text-[var(--emerald-950)]">تبين تكملين التجربة؟</h3>
             <p className="mt-2 max-w-xl text-sm leading-7 text-[var(--muted)]">{upsell.blurb}</p>
           </div>
           <Link
@@ -178,13 +178,13 @@ export function ThankYouClient({ orderId }: { orderId: string }) {
         <div className="rounded-2xl border border-[var(--border-gold)] bg-white p-5 text-center">
           <CheckCircle2 className="mx-auto text-[var(--gold-500)]" size={28} />
           <p className="mt-3 text-sm font-black text-[var(--emerald-950)]">تجربة مميزة</p>
-          <p className="mt-2 text-xs leading-6 text-[var(--muted)]">تغليف أنيق، متابعة بشرف، وبدون مفاجآت في السعر.</p>
+          <p className="mt-2 text-xs leading-6 text-[var(--muted)]">تغليف أنيق، متابعة لطيفة من الفريق، وبدون مفاجآت بالسعر.</p>
         </div>
       </div>
 
       <div className="mx-auto mt-10 max-w-xl text-center">
         <Link href="/" className="text-sm font-bold text-[var(--gold-500)] underline-offset-4 hover:underline">
-          العودة للرئيسية
+          رجوع للهوم
         </Link>
       </div>
     </div>

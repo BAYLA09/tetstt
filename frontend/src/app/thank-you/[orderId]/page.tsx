@@ -12,7 +12,7 @@ export default async function ThankYouPage({
     <main className="min-h-screen bg-[var(--cream-50)]">
       <Suspense
         fallback={
-          <div className="mx-auto max-w-3xl px-4 py-24 text-center text-[var(--muted)]">جاري تحميل تفاصيل الطلب…</div>
+          <div className="mx-auto max-w-3xl px-4 py-24 text-center text-[var(--muted)]">لحظة… نجهّز لج تفاصيل الطلب</div>
         }
       >
         <ThankYouClient orderId={orderId} />

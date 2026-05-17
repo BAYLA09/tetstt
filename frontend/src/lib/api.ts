@@ -81,12 +81,12 @@ function logOrderSecurityReason(status: number, raw: string): void {
 
 function userMessageForSecurityReason(reason: string): string {
   if (reason.startsWith("country_not_allowed"))
-    return "الطلب لم يُقبل لأن موقع الشبكة لا يطابق الإمارات. جرّبي من شبكة إماراتية أو عطّلي VPN.";
+    return "الطلب ما انقبل: موقع الشبكة مو من الإمارات. جرّبي من شبكة إماراتية أو طفي الـ VPN.";
   if (reason.startsWith("blocked_trait:"))
-    return "الطلب لم يُقبل بسبب نوع الاتصال (VPN/بروكسي). جرّبي بدون VPN أو تواصلي معنا.";
+    return "الطلب ما انقبل بسبب نوع الاتصال (VPN/بروكسي). جرّبي بدون VPN أو كلمينا.";
   if (reason.startsWith("ip_risk_too_high"))
-    return "الطلب لم يُقبل لأن تقييم أمان عنوان الشبكة مرتفع. جرّبي من شبكة أخرى أو تواصلي معنا.";
-  return "تعذر قبول الطلب لأسباب أمنية. جرّبي من شبكة أخرى أو تواصلي معنا.";
+    return "الطلب ما انقبل لأن تقييم أمان عنوان الشبكة عالي. جرّبي من شبكة ثانية أو كلمينا.";
+  return "ما نقدر نكمل الطلب لأسباب أمنية. جرّبي من شبكة ثانية أو كلمينا.";
 }
 
 function orderApiUserMessage(status: number, raw: string): string {
@@ -100,15 +100,15 @@ function orderApiUserMessage(status: number, raw: string): string {
 
   if (status === 403) {
     if (parsed.reason) return userMessageForSecurityReason(parsed.reason);
-    return "تعذر قبول الطلب لأسباب أمنية. جرّبي من شبكة أخرى أو تواصلي معنا.";
+    return "ما نقدر نكمل الطلب لأسباب أمنية. جرّبي من شبكة ثانية أو كلمينا.";
   }
   if (status === 429) {
-    return "طلبات كثيرة من نفس الجهاز. انتظري قليلاً ثم أعيدي المحاولة.";
+    return "طلبات وايد من نفس الجهاز. استني شوي وبعدين حاولي مرة ثانية.";
   }
   if (status >= 500) {
-    return "تعذّر إكمال الطلب من الخادم الآن. أعيدي المحاولة بعد قليل أو تواصلي معنا.";
+    return "ما قدرنا نكمّل الطلب من الخادم الحين. حاولي بعد شوي أو كلمينا.";
   }
-  return "تعذر إرسال الطلب الآن. تأكدي من الرقم وحاولي مرة أخرى.";
+  return "ما قدرنا نرسل الطلب الحين. تأكدي من الرقم وحاولي مرة ثانية.";
 }
 
 function orderRequestUrl(path: "/orders" | `/orders/${string}/upsell`): string {
@@ -150,10 +150,10 @@ function isLikelyTransientFetchFailure(err: unknown): boolean {
 }
 
 function wrapOrderFetchFailure(err: unknown): Error {
-  if (isAbortError(err)) return new Error("انتهت مهلة الاتصال. جرّبي مرة أخرى.");
-  if (err instanceof TypeError) return new Error("تعذّر الاتصال بالخادم. تأكّدي من الشبكة أو جرّبي مرة ثانية.");
+  if (isAbortError(err)) return new Error("طال الاتصال. جرّبي مرة ثانية.");
+  if (err instanceof TypeError) return new Error("ما قدرنا نتواصل بالخادم. تأكدي من الشبكة أو جرّبي مرة ثانية.");
   if (err instanceof Error) return err;
-  return new Error("تعذر إرسال الطلب الآن. تأكدي من الرقم وحاولي مرة أخرى.");
+  return new Error("ما قدرنا نرسل الطلب الحين. تأكدي من الرقم وحاولي مرة ثانية.");
 }
 
 function buildOrderFetchCandidates(path: "/orders" | `/orders/${string}/upsell`): string[] {

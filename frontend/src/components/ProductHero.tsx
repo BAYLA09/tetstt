@@ -112,7 +112,7 @@ function InsightStrip({ product }: { product: Product }) {
   return (
     <section className="border-y border-[var(--border-gold)] bg-[var(--cream-50)] px-4 py-10">
       <div className="container-grid text-center">
-        <p className="text-xs font-black tracking-[0.28em] text-[var(--gold-500)]">ليالي بيوتي · حقائق</p>
+        <p className="text-xs font-black tracking-[0.28em] text-[var(--gold-500)]">ليالي بيوتي · لمحات</p>
         <p className="mt-4 text-2xl font-black leading-snug text-[var(--emerald-950)] md:text-3xl">{strip.headline}</p>
         <p className="mx-auto mt-3 max-w-3xl text-sm font-semibold leading-8 text-[var(--muted)]">{strip.subline}</p>
       </div>

@@ -48,7 +48,7 @@ export default function AboutPage() {
           <Truck className="h-10 w-10 text-gold-300" />
           <h2 className="mt-4 text-3xl font-bold">خدمة واضحة داخل الإمارات</h2>
           <p className="mt-3 max-w-3xl leading-8 text-cream-100">
-            الطلب بالدفع عند الاستلام. بعد الإرسال، الفريق يتواصل معاك ويأكد
+            الطلب بالدفع عند الاستلام. بعد الإرسال، الفريق يتواصل معاج ويأكد
             البيانات قبل تجهيز الشحنة، عشان كل خطوة تكون واضحة ومريحة.
           </p>
         </div>
