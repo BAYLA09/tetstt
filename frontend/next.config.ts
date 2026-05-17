@@ -16,8 +16,6 @@ const nextConfig: NextConfig = {
         destination: MAIN_PRODUCT,
         permanent: false,
       })),
-      { source: "/collections", destination: MAIN_PRODUCT, permanent: false },
-      { source: "/collections/:path*", destination: MAIN_PRODUCT, permanent: false },
     ];
   },
 

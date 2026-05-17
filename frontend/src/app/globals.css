@@ -359,3 +359,8 @@ html {
     width: 100%;
   }
 }
+
+body:has(.admin-root) [data-site-chrome="header"],
+body:has(.admin-root) [data-site-chrome="footer"] {
+  display: none !important;
+}

@@ -30,7 +30,7 @@ export function SiteHeader() {
   const openCart = useCartStore((state) => state.openCart);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--border-gold)] bg-[rgba(25,55,47,0.96)] text-[var(--cream-50)] backdrop-blur">
+    <header data-site-chrome="header" className="sticky top-0 z-40 border-b border-[var(--border-gold)] bg-[rgba(25,55,47,0.96)] text-[var(--cream-50)] backdrop-blur">
       <div className="overflow-hidden border-b border-white/10 bg-black/15 py-2">
         <div className="topbar-track flex w-max gap-10 text-xs font-bold text-[var(--gold-300)] md:text-sm">
           {[...topBarMessages, ...topBarMessages].map((message, index) => (
@@ -108,7 +108,7 @@ export function SiteHeader() {
 
 export function Footer() {
   return (
-    <footer className="bg-[var(--emerald-950)] text-[var(--cream-50)]">
+    <footer data-site-chrome="footer" className="bg-[var(--emerald-950)] text-[var(--cream-50)]">
       <div className="container-grid grid gap-10 py-12 md:grid-cols-[1.3fr_1fr_1fr]">
         <div>
           <Link href="/">

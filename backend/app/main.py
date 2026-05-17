@@ -7,7 +7,7 @@ from app.config import settings
 from app.db import init_db
 from app.deployment import deploy_build_time_utc, deploy_commit_sha
 from app.products import LAMP_OFFER_SKUS, PRODUCTS
-from app.routers import health, orders
+from app.routers import admin_dashboard, analytics, health, orders
 
 log = logging.getLogger(__name__)
 
@@ -43,3 +43,5 @@ async def on_startup() -> None:
 
 app.include_router(health.router)
 app.include_router(orders.router)
+app.include_router(analytics.router)
+app.include_router(admin_dashboard.router)
