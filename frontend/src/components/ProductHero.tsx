@@ -162,7 +162,7 @@ function CommercePanel({
             )}
           </div>
           <p className="mt-3 text-sm font-semibold leading-7 text-cream-100">
-            ما فيه دفع إلكتروني مسبق. نؤكد طلبكِ بالاتصال قبل تجهيز الشحن، لتصلك التجربة كما اخترتِها على
+            ما فيه دفع إلكتروني مسبق. بنأكد طلبج بالاتصال قبل ما نجهز الشحن، عشان توصلج التجربة مثل ما اخترتيها على
             الموقع.
           </p>
         </div>
@@ -171,7 +171,7 @@ function CommercePanel({
           onClick={() => onAdd(product)}
           className="mt-6 w-full rounded-full bg-gold-500 px-8 py-5 text-lg font-black text-emerald-950 shadow-2xl transition hover:-translate-y-0.5 hover:bg-gold-400 md:w-auto"
         >
-          أضيفي العرض إلى السلة
+          أضيفي العرض للسلة
         </button>
       </div>
     );
@@ -279,7 +279,7 @@ function CommercePanel({
       <div className="mt-5 grid gap-2 text-center text-xs font-bold text-cream-100/90 md:grid-cols-3 md:text-sm">
         {[
           ["الدفع عند الاستلام", "بدون دفع إلكتروني مسبق"],
-          ["تأكيد قبل الشحن", "يتم الاتصال قبل إرسال الشحنة"],
+          ["تأكيد قبل الشحن", "نتصل قبل ما نرسل الشحنة"],
           ["التوصيل خلال 1–3 أيام", "حسب المنطقة داخل الإمارات"],
         ].map(([t, s]) => (
           <div key={t} className="rounded-xl border border-white/10 bg-white/5 px-2 py-2">
@@ -290,8 +290,7 @@ function CommercePanel({
       </div>
 
       <p className="mt-4 text-sm font-semibold leading-7 text-cream-100">
-        ما فيه دفع إلكتروني مسبق. نؤكد طلبكِ بالاتصال قبل تجهيز الشحن، لتصلك التجربة كما اخترتِها في هذه
-        الصفحة.
+        ما فيه دفع إلكتروني مسبق. بنأكد طلبج بالاتصال قبل ما نجهز الشحن، عشان توصلج التجربة مثل ما اخترتيها بهالصفحة.
       </p>
     </div>
   );
@@ -366,7 +365,7 @@ export function ProductHero({ product }: { product: Product }) {
               onClick={() => addOffer(product)}
               className="w-full rounded-full bg-gold-500 px-5 py-4 font-black text-emerald-950"
             >
-              أضيفي العرض إلى السلة - {money(product.price)}
+              أضيفي العرض للسلة - {money(product.price)}
             </button>
           )}
         </div>
@@ -402,7 +401,7 @@ export function ProductHero({ product }: { product: Product }) {
               أضيفي للسلة – {money(stickyLine.price)}
             </>
           ) : (
-            <>أضيفي العرض إلى السلة - {money(product.price)}</>
+            <>أضيفي العرض للسلة - {money(product.price)}</>
           )}
         </button>
       </div>

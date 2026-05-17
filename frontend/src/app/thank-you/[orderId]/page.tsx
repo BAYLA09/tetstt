@@ -15,10 +15,10 @@ export default async function ThankYouPage({
           <CheckCircle2 className="mb-4 text-[var(--gold-500)]" size={46} />
           <p className="eyebrow">تم استلام الطلب</p>
           <h1 className="mt-3 text-4xl font-bold text-[var(--emerald-950)]">
-            شكراً لك، طلبك محفوظ الآن
+            شكراً لج، طلبج محفوظ الحين
           </h1>
           <p className="mt-4 text-lg leading-8 text-[var(--muted)]">
-            طلبك بالدفع عند الاستلام. فريق ليالي بيوتي سيتواصل معك لتأكيد التفاصيل قبل الشحن.
+            طلبج بالدفع عند الاستلام. فريق ليالي بيوتي بيتواصل معاك ويأكد التفاصيل قبل الشحن.
           </p>
           <div className="mt-6 rounded-3xl bg-[var(--cream-50)] p-5">
             <p className="text-sm text-[var(--muted)]">رقم الطلب</p>

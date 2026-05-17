@@ -125,7 +125,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             <motion.aside initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", damping: 28 }} className="absolute right-0 top-0 flex h-full w-full max-w-lg flex-col overflow-hidden bg-white shadow-2xl lg:rounded-l-[2rem]">
               <div className="flex items-center justify-between bg-[var(--emerald-950)] p-5 text-white">
                 <div>
-                  <p className="text-sm text-[var(--gold-300)]">طلبك محفوظ الآن</p>
+                  <p className="text-sm text-[var(--gold-300)]">طلبج محفوظ الحين</p>
                   <h2 className="text-xl font-black">سلة ليالي بيوتي</h2>
                 </div>
                 <button onClick={closeCart} className="rounded-full border border-white/20 bg-white/5 p-2 transition hover:bg-white/10"><X /></button>
@@ -133,7 +133,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
               <div className="flex-1 space-y-4 overflow-y-auto bg-[var(--cream-50)] p-5">
                 <div className="rounded-3xl border border-[var(--border-gold)] bg-white p-4 text-[var(--emerald-950)] shadow-sm">
                   <p className="text-xs font-bold text-[var(--gold-500)]">مهم قبل التأكيد</p>
-                  <p className="mt-1 text-sm leading-7">سنؤكد طلبك عبر الهاتف/واتساب قبل الشحن. الطلبات المؤكدة فقط تدخل التجهيز حتى توصلك التجربة مثل ما اخترتيها.</p>
+                  <p className="mt-1 text-sm leading-7">بنأكد طلبج عبر الهاتف/واتساب قبل الشحن. الطلبات المؤكدة بس تدخل التجهيز عشان توصلج التجربة مثل ما اخترتيها.</p>
                 </div>
                 {items.length === 0 ? (
                   <div className="rounded-3xl border border-dashed border-[var(--border-gold)] bg-white p-8 text-center">
@@ -177,14 +177,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
               <div className="mb-5 flex items-start justify-between gap-4">
                 <div>
                   <p className="text-sm font-bold text-[var(--gold-500)]">خطوة التأكيد - الدفع عند الاستلام</p>
-                  <h2 className="text-2xl font-black text-[var(--emerald-950)]">اكتبي بياناتك ونثبت لك الطلب</h2>
-                  <p className="mt-2 text-sm leading-7 text-[var(--muted)]">ما فيه دفع الآن. بنراجع الرقم ونتواصل معك لتأكيد الشحنة قبل التجهيز حتى تقل الأخطاء والتأخير.</p>
+                  <h2 className="text-2xl font-black text-[var(--emerald-950)]">اكتبي بياناتج ونثبت لج الطلب</h2>
+                  <p className="mt-2 text-sm leading-7 text-[var(--muted)]">ما فيه دفع الحين. بنراجع الرقم ونتواصل معاك عشان نأكد الشحنة قبل التجهيز ونقلل الغلط والتأخير.</p>
                 </div>
                 <button type="button" onClick={closeCheckout} className="rounded-full border border-[var(--border-gold)] p-2"><X /></button>
               </div>
               <div className="mb-5 rounded-2xl bg-[var(--cream-50)] p-4">
                 <div className="flex justify-between font-black"><span>ملخص الطلب</span><span>{money(total)}</span></div>
-                <p className="mt-2 text-sm leading-7 text-[var(--muted)]">طلبك محجوز مؤقتاً. إذا كان الرقم صحيحاً، فريق التأكيد يتواصل قبل الشحن.</p>
+                <p className="mt-2 text-sm leading-7 text-[var(--muted)]">طلبج محجوز مؤقتاً. إذا الرقم صحيح، فريق التأكيد يتواصل قبل الشحن.</p>
               </div>
               <div className="grid gap-3">
                 <label className="grid gap-2 text-sm font-bold text-[var(--emerald-950)]">الاسم الكامل
