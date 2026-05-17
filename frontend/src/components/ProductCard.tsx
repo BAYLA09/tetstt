@@ -22,7 +22,7 @@ export function ProductCard({
     <article className="group flex h-full flex-col overflow-hidden rounded-[2rem] border border-[var(--border-gold)] bg-white p-3 shadow-[0_18px_60px_rgba(42,27,18,0.10)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_24px_80px_rgba(42,27,18,0.14)]">
       <Link href={`/products/${product.slug}`} className="block">
         {showImage ? (
-          <div className="relative h-64 overflow-hidden rounded-[1.5rem] border border-[var(--border-gold)] bg-[var(--cream-50)]">
+          <div className="relative h-72 overflow-hidden rounded-[1.5rem] border border-[var(--border-gold)] bg-[var(--cream-50)]">
             <Image
               src={product.cardImage!}
               alt={product.name}
@@ -33,7 +33,7 @@ export function ProductCard({
             />
           </div>
         ) : (
-          <div className="product-illustration grid h-64 place-items-end rounded-[1.5rem] p-6">
+          <div className="product-illustration grid h-72 place-items-end rounded-[1.5rem] p-6">
             <div className="relative z-10 w-full rounded-2xl border border-white/10 bg-white/10 p-4 text-center backdrop-blur-sm">
               <p className="text-xs font-black text-[var(--gold-300)]">{product.badge}</p>
               <p className="mt-1 text-2xl font-black text-white">{product.shortName}</p>

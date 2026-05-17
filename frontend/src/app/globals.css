@@ -48,6 +48,16 @@ html {
   scroll-behavior: smooth;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .topbar-track {
+    animation: none;
+  }
+}
+
 ::selection {
   background: var(--gold-400);
   color: var(--emerald-950);

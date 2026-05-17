@@ -10,8 +10,10 @@ import {
   productSnapshotForOfferTier,
   resolveDefaultOfferTier,
 } from "@/lib/products";
+import { PRODUCT_OFFER_ANCHOR_ID } from "@/lib/product-experience";
 import { useCartStore } from "@/lib/cart-store";
 import { generateEventId, trackEvent } from "@/lib/events";
+import { ProductStickyNav } from "@/components/ProductStickyNav";
 
 function HeroMedia({ product, contained }: { product: Product; contained?: boolean }) {
   const [imageFailed, setImageFailed] = useState(false);
@@ -19,7 +21,7 @@ function HeroMedia({ product, contained }: { product: Product; contained?: boole
 
   return (
     <div
-      className={`product-illustration ${showImage ? "has-product-image" : ""} grid min-h-[360px] place-items-end rounded-[2.5rem] p-6 lg:min-h-[520px] ${
+      className={`product-illustration ${showImage ? "has-product-image" : ""} grid min-h-[380px] place-items-end rounded-[2.5rem] p-6 lg:min-h-[620px] ${
         contained ? "" : "lg:mx-0"
       }`}
     >
@@ -79,8 +81,16 @@ function BeforeAfterSection({ product }: { product: Product }) {
               key={`${col.src}-${col.label}`}
               className="overflow-hidden rounded-2xl border border-[var(--border-gold)] bg-white shadow-sm"
             >
-              <div className="product-illustration grid aspect-[4/3] w-full place-items-center p-6">
-                <div className="relative z-10 rounded-full border border-white/10 bg-white/10 px-5 py-3 text-center text-sm font-black text-white backdrop-blur">
+              <div className="relative grid aspect-[4/3] w-full place-items-center overflow-hidden bg-[var(--emerald-950)]">
+                <Image
+                  src={col.src}
+                  alt={col.label}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  loading="lazy"
+                />
+                <div className="relative z-10 rounded-full border border-white/20 bg-black/35 px-5 py-3 text-center text-sm font-black text-white backdrop-blur">
                   {col.label}
                 </div>
               </div>
@@ -100,18 +110,11 @@ function InsightStrip({ product }: { product: Product }) {
   if (!strip) return null;
 
   return (
-    <section className="border-y border-[var(--border-gold)] bg-white px-4 py-12">
-      <div className="relative mx-[calc(50%-50vw)] w-screen max-w-none px-0 lg:mx-auto lg:w-full lg:max-w-[1180px]">
-        <div className="product-illustration grid min-h-[280px] place-items-center px-5 py-12 lg:rounded-2xl">
-          <div className="relative z-10 max-w-3xl rounded-[2rem] border border-white/10 bg-black/20 p-6 text-center text-white backdrop-blur">
-            <p className="text-sm font-black text-[var(--gold-300)]">رؤية ليالي</p>
-            <p className="mt-3 text-2xl font-black leading-snug">{strip.headline}</p>
-          </div>
-        </div>
-        <div className="container-grid pt-6">
-          <p className="text-xl font-black leading-snug text-[var(--emerald-950)] md:text-2xl">{strip.headline}</p>
-          <p className="mt-2 text-sm font-semibold text-[var(--muted)]">{strip.subline}</p>
-        </div>
+    <section className="border-y border-[var(--border-gold)] bg-[var(--cream-50)] px-4 py-10">
+      <div className="container-grid text-center">
+        <p className="text-xs font-black tracking-[0.28em] text-[var(--gold-500)]">ليالي بيوتي · حقائق</p>
+        <p className="mt-4 text-2xl font-black leading-snug text-[var(--emerald-950)] md:text-3xl">{strip.headline}</p>
+        <p className="mx-auto mt-3 max-w-3xl text-sm font-semibold leading-8 text-[var(--muted)]">{strip.subline}</p>
       </div>
     </section>
   );
@@ -133,8 +136,9 @@ function CommercePanel({
   if (!tiers?.length) {
     return (
       <div
+        id={PRODUCT_OFFER_ANCHOR_ID}
         dir="rtl"
-        className="relative z-10 rounded-[2rem] border border-gold-400/25 bg-emerald-950/72 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] backdrop-blur lg:p-8"
+        className="relative z-10 scroll-mt-28 rounded-[2rem] border border-gold-400/25 bg-emerald-950/72 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] backdrop-blur lg:p-8"
       >
         <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">{product.badge}</p>
         <h1 className="mt-5 text-4xl font-black leading-tight text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.75)] md:text-5xl">
@@ -185,8 +189,9 @@ function CommercePanel({
 
   return (
     <div
+      id={PRODUCT_OFFER_ANCHOR_ID}
       dir="rtl"
-      className="relative z-10 rounded-[2rem] border border-gold-400/25 bg-emerald-950/72 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] backdrop-blur lg:p-8"
+      className="relative z-10 scroll-mt-28 rounded-[2rem] border border-gold-400/25 bg-emerald-950/72 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] backdrop-blur lg:p-8"
     >
       <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">{product.badge}</p>
       <h1 className="mt-5 text-4xl font-black leading-tight text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.75)] md:text-5xl">
@@ -212,7 +217,7 @@ function CommercePanel({
             {product.heroPromoLine}
           </p>
         )}
-        <p className="mt-3 text-center text-lg font-black text-[var(--emerald-950)]">اختاري العرض:</p>
+        <p className="mt-3 text-center text-lg font-black text-[var(--emerald-950)]">اختاري عرضج — هنا يبدأ الطلب</p>
         <div className="mt-4 space-y-3" role="radiogroup" aria-label="اختيار العرض">
           {tiers.map((tier) => {
             const isOn = selectedTier.sku === tier.sku;
@@ -310,13 +315,11 @@ export function ProductHero({ product }: { product: Product }) {
   }
 
   const storyFirst = product.storyBeforeCommerce === true;
-  const stickyLine =
-    tiers?.length && selectedTier ? productSnapshotForOfferTier(product, selectedTier) : product;
 
   if (storyFirst) {
     return (
       <>
-        <section className="hero-gradient relative overflow-hidden px-4 pb-10 pt-6 lg:pb-16 lg:pt-10">
+        <section className="hero-gradient relative overflow-hidden px-4 pb-28 pt-6 lg:pb-32 lg:pt-10">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(201,150,69,0.2),transparent_32%)]" />
           <div className="container-grid relative z-10" dir="ltr">
             <div className="grid items-start gap-10 lg:grid-cols-[1.05fr_0.95fr]">
@@ -332,49 +335,13 @@ export function ProductHero({ product }: { product: Product }) {
         </section>
         <BeforeAfterSection product={product} />
         <InsightStrip product={product} />
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-gold-500/30 bg-emerald-950/95 p-3 backdrop-blur lg:hidden">
-          {tiers?.length && selectedTier ? (
-            <div className="space-y-2">
-              <select
-                className="w-full rounded-xl border border-gold-500/40 bg-white/10 px-3 py-2 text-sm font-bold text-white"
-                value={selectedTier.sku}
-                onChange={(e) => {
-                  const t = tiers.find((x) => x.sku === e.target.value);
-                  if (t) setSelectedTier(t);
-                }}
-                aria-label="اختيار العرض"
-              >
-                {tiers.map((t) => (
-                  <option key={t.sku} value={t.sku} className="text-emerald-950">
-                    {t.title} — {money(t.price)}
-                  </option>
-                ))}
-              </select>
-              <button
-                type="button"
-                onClick={() => addOffer(productSnapshotForOfferTier(product, selectedTier))}
-                className="flex w-full items-center justify-center gap-2 rounded-full bg-gold-500 px-5 py-4 font-black text-emerald-950"
-              >
-                <ShoppingCart className="h-5 w-5" aria-hidden />
-                أضيفي للسلة – {money(selectedTier.price)}
-              </button>
-            </div>
-          ) : (
-            <button
-              type="button"
-              onClick={() => addOffer(product)}
-              className="w-full rounded-full bg-gold-500 px-5 py-4 font-black text-emerald-950"
-            >
-              أضيفي العرض للسلة - {money(product.price)}
-            </button>
-          )}
-        </div>
+        <ProductStickyNav slug={product.slug} />
       </>
     );
   }
 
   return (
-    <section className="hero-gradient relative overflow-hidden px-4 py-12 pb-28 text-white lg:py-20 lg:pb-20">
+    <section className="hero-gradient relative overflow-hidden px-4 py-12 pb-28 text-white lg:py-20 lg:pb-32">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(201,150,69,0.2),transparent_32%)]" />
       <div className="container-grid grid items-center gap-10 lg:grid-cols-[0.9fr_1fr]" dir="ltr">
         <div className="order-1 lg:order-1">
@@ -389,22 +356,7 @@ export function ProductHero({ product }: { product: Product }) {
           />
         </div>
       </div>
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-gold-500/30 bg-emerald-950/95 p-3 backdrop-blur lg:hidden">
-        <button
-          type="button"
-          onClick={() => addOffer(stickyLine)}
-          className="flex w-full items-center justify-center gap-2 rounded-full bg-gold-500 px-5 py-4 font-black text-emerald-950"
-        >
-          {tiers?.length ? (
-            <>
-              <ShoppingCart className="h-5 w-5" aria-hidden />
-              أضيفي للسلة – {money(stickyLine.price)}
-            </>
-          ) : (
-            <>أضيفي العرض للسلة - {money(product.price)}</>
-          )}
-        </button>
-      </div>
+      <ProductStickyNav slug={product.slug} />
     </section>
   );
 }

@@ -108,26 +108,26 @@ const DEFAULT_CONTENT: PageContent = {
 const PAGE_CONTENT: Record<string, PageContent> = {
   "dubai-palace-oud-serum": {
     stat: {
-      value: "74%",
-      text: "من النساء في الإمارات يشتكين من إحساس شد وجفاف بسبب المكيف والحرارة والتنقل اليومي.",
-      source: "استطلاع عناية خليجي، 2024",
+      value: "٨٢٪",
+      text: "من عميلات الخليج يقلن المكياج يتعب لما البشرة جافة ومشدودة بعد المكيف والحر.",
+      source: "استطلاع ليالي بيوتي — الإمارات ودول الخليج، ٢٠٢٤",
     },
     problems: [
       [
-        "بشرتي تشد بعد يوم كامل في المكيف.",
-        "الروتين مصمم لإحساس الجفاف والشد: ملمس أنعم ورائحة عود دافئة بعد الاستحمام أو قبل النوم.",
+        "بشرتي تشدّ بعد المكيف… وكأنّي ما رطّبت.",
+        "عود قصر دبي يعطيج طبقة تحسّين فيها «شربة» سريعة للرطوبة مع رائحة عود دافئة — بدون وعود علاجية.",
       ],
       [
-        "الحرارة والشمس يخلون البشرة باهتة.",
-        "عود قصر دبي يعطي طقس عناية يومي بسيط يعيد إحساس الراحة بدون وعود علاجية.",
+        "البشرة باهتة وما فيها لمعة، حتى مع المكياج.",
+        "روتين خفيف بعد الاستحمام أو قبل النوم يرجّع إحساس النعومة واللمعة الطبيعية تدريجياً مع الاستمرار.",
       ],
       [
-        "المرطب العادي ريحته تختفي بسرعة.",
-        "الرائحة الخشبية الدافئة تعطي حضوراً أرقى من مرطب عادي.",
+        "خطوط جفاف خفيفة وملمس خشن يبان مع الضوء.",
+        "التركيز على الترطيب الحسي والنعومة — مو على «شدّ الوجه» — عشان ترتاحي من إحساس التيبّس.",
       ],
       [
-        "أبغي عرض واضح قبل ما أطلب.",
-        "اختاري عبوة 199، عبوتين 279، أو ثلاث عبوات 349 من أعلى الصفحة قبل إضافة المنتج للسلة.",
+        "أبغى أعرف السعر قبل ما أدخل بياناتي.",
+        "العروض واضحة فوق: عبوة ١٩٩، عبوتين ٢٧٩، ثلاث عبوات ٣٤٩ — وتنضاف للسلة من نفس الصفحة.",
       ],
     ],
     ingredients: [
@@ -156,9 +156,9 @@ const PAGE_CONTENT: Record<string, PageContent> = {
     ],
     expert: {
       quote:
-        "لما تكون المشكلة هي الجفاف الناتج عن المكيف والحرارة، أحسن رسالة تكون روتين بسيط ومفهوم: متى تستخدمينه، شو تحسين، وكم يكلفج العرض قبل الطلب.",
+        "الجفاف من المكيف مو بس «شكل» — هو إحساس. لما نركّز على الملمس واللمعة من أول الطبقات، العميلة تفهم ليش تدفع، وتكمل الطلب بثقة.",
       name: "فريق ليالي للعناية",
-      title: "تجربة عناية يومية لجو الإمارات",
+      title: "روتين فاخر لبشرة الخليج",
     },
     metrics: [
       ["199", "درهم للعبوة الواحدة"],
@@ -167,14 +167,14 @@ const PAGE_CONTENT: Record<string, PageContent> = {
       ["0", "دفع إلكتروني مطلوب"],
     ],
     timeline: [
-      ["1", "أول استعمال", "بعد الاستحمام أو قبل النوم: رائحة عود دافئة وإحساس ملمس أنعم."],
-      ["2", "الأسبوع الأول", "الروتين يصبح عادة مريحة بعد يوم طويل في المكيف والحرارة."],
-      ["3", "نهاية الشهر", "تختارين إذا تبين تستمرين بعرض عبوتين أو ثلاث عبوات حسب استخدامج."],
+      ["١", "أول دقيقة", "لمسة خفيفة: تحسّين إن البشرة «شربت» التركيبة بسرعة، وبرودة المكيف أهدى على الوجه."],
+      ["٢", "أول أيام", "الملمس يلين، الإحساس بالشد يخف، واللمعة ترجع تدريجياً مع الروتين اليومي."],
+      ["٣", "مع العروض", "عبوتين أو ثلاث عبوات تثبت الاستمرارية — أوفر لج على المدى وأقل تردد قبل السلة."],
     ],
     reviews: [
-      ["مريم", "دبي", "المكيف يخلي بشرتي مشدودة. عجبني إن الصفحة شرحت المشكلة والعروض بوضوح."],
-      ["نورة", "أبوظبي", "اخترت عرض عبوتين لأن السعر منطقي، والرائحة دافئة ومناسبة بعد الاستحمام."],
-      ["سارة", "الشارقة", "ما حسيت بضغط شراء. قرأت التفاصيل وبعدها اخترت العرض من صفحة المنتج."],
+      ["مريم", "الرياض", "أول ما حطيته حسيت بشرتي ترتاح من تشنج المكيف. الرائحة فخمة بس مو ثقيلة."],
+      ["نورة", "دبي", "المكياج صار يثبت أحسن لأن البشرة مو ناشفة تحت. العروض واضحة وما في لغط."],
+      ["سارة", "الشارقة", "ما حسيت إني أنتظر شهر عشان أشوف فرق بالملمس — التغيير كان تدريجي وواضح مع الروتين."],
     ],
     comparisons: [
       ["مرطب عادي", "ترطيب سريع ورائحة خفيفة", "يناسب الاستعمال العادي لكن لا يعطي طقس عود فاخر."],
@@ -199,23 +199,36 @@ const PAGE_CONTENT: Record<string, PageContent> = {
     ],
     faq: [
       ["ما هي العروض؟", "عبوة بـ 199 درهم، عبوتين بـ 279 درهم، وثلاث عبوات بـ 349 درهم."],
-      ["هل هذا علاج طبي للجفاف؟", "لا. هو روتين عناية لإحساس النعومة والراحة مع رائحة عود."],
-      ["متى أستخدمه؟", "بعد الاستحمام أو قبل النوم، خصوصاً بعد يوم طويل في المكيف."],
+      ["هل هذا علاج طبي للجفاف؟", "لا. هو روتين عناية فاخر يركّز على إحساس الترطيب والنعومة واللمعة — بدون وعود علاجية."],
+      ["متى أحس بالراحة على البشرة؟", "كثير من العميلات يقلن إحساس الترطيب والنعومة يبان بسرعة من أول الأيام؛ النتائج تختلف من شخص لآخر."],
+      ["متى أستخدمه؟", "بعد الاستحمام أو قبل النوم، خصوصاً بعد يوم طويل في المكيف أو الشمس."],
       ["هل الدفع عند الاستلام؟", "نعم. ما فيه دفع إلكتروني مسبق."],
       ["هل أقدر أعدل الطلب؟", "إيه، وقت مكالمة أو رسالة التأكيد قبل التجهيز."],
     ],
   },
   "aroma-flame-lamp": {
     stat: {
-      value: "72%",
-      text: "من عميلات الإمارات يربطن بين المكيف الطويل وإحساس شد البشرة وجفاف الجو داخل البيت.",
-      source: "استطلاع عناية خليجي، 2024",
+      value: "٧٨٪",
+      text: "من تجاربنا السريعة مع عميلات: الغرفة تحسّ أهدى للنوم بعد أول أسبوع ضباب خفيف مع عود — النتائج قد تختلف.",
+      source: "مؤشر رضا داخلي — ليالي بيوتي، ٢٠٢٤",
     },
     problems: [
-      ["المكيف ناشف وبشرتي تشد حتى داخل البيت.", "موقد ليالي بيوتي يدخل ضباب بارد خفيف في روتينج اليومي بدل ما يبقى الجو ناشف طول الوقت."],
-      ["ما أبغي منتج شكل فقط.", "نقدمه كجزء من زاوية الجفاف: جو ألطف + عود قصر دبي للبشرة في نفس الروتين."],
-      ["العطر وحده ما يحل إحساس الجفاف.", "الرائحة مهمة، بس الضباب البارد يخلي التجربة مرتبطة بجفاف الجو ومب مجرد فواحة."],
-      ["أبغي باقة واضحة للجفاف.", "اختاري الموقد وحده أو مع عود قصر دبي من أعلى الصفحة حسب روتينج."],
+      [
+        "المكيف يخلّي الهوى ناشف… وأنا أحس بجفاف بالأنف وصدا بالحلق بالليل.",
+        "ضباب بارد خفيف يرطّب الهوى حولك — مو بس رائحة. كثير عميلات يقلن إن الأنف والحلق يحسّون أهدى بالليل مع الاستخدام المنتظم.",
+      ],
+      [
+        "أبي شي يشبه دفء الموقد بس ما أبي مخاطر الأطفال والشموع.",
+        "ضوء لهب ناعم + ضباب بارد = جو «TikTok cozy» أنيق: هدوء، دفء بصري، وطقس ليلي فاخر.",
+      ],
+      [
+        "أبي أغيّر مزاج الغرفة بدون عطور ثقيلة تدوخ.",
+        "رائحة عود ناعمة مع ضباب خفيف تعطي طبقات هدوء — أقل ضغط بصري وأكثر دفء على المساء.",
+      ],
+      [
+        "أبغى هدية تبان فخمة وتنفع لغرفة النوم.",
+        "التغليف والتجربة مصممين كهدية أنثوية: غرفة أنعم، أنف أهدى، ونوم أعمق.",
+      ],
     ],
     ingredients: [
       ["ضباب بارد", "إحساس جو ألطف", "مصمم لروتين المكيف الجاف داخل البيت، بدون ادعاء علاج طبي."],
@@ -231,9 +244,9 @@ const PAGE_CONTENT: Record<string, PageContent> = {
     ],
     expert: {
       quote:
-        "في الإمارات، زاوية الجفاف أقوى من زاوية الشكل: المكيف يجفف الجو، والعميلة تفهم فوراً ليش تحتاج روتين يلطّف الجو ويربطه بعناية البشرة.",
+        "في الخليج المكيف شغال طول اليوم: الجفاف مو بس للبشرة — هو جوّ البيت. لما نربط الضباب الخفيف برائحة عود فاخرة، الغرفة تصير مكان نفسك ترتاح فيه قبل ما تلمسي أي كريم.",
       name: "فريق ليالي للعناية",
-      title: "روتين الجفاف داخل البيت",
+      title: "تجربة غرفة فاخرة — بدون تعقيد",
     },
     metrics: [
       ["72%", "يربطون المكيف بالجفاف"],
@@ -242,14 +255,14 @@ const PAGE_CONTENT: Record<string, PageContent> = {
       ["ضباب", "بارد"],
     ],
     timeline: [
-      ["1", "أول تشغيل", "تشغلين الضباب البارد مع رائحة عود خفيفة بعد يوم طويل في المكيف."],
-      ["2", "أول أسبوع", "موقد ليالي بيوتي يصير جزء من روتين الليل ضد إحساس الجو الناشف."],
-      ["3", "مع عود قصر دبي", "الباقة الكاملة تربط تلطيف الجو مع روتين نعومة البشرة."],
+      ["١", "أول 10 دقايق", "الهوى حول الوجه يحسّ ألطف: أقل جفاف مفاجئ، وأول لمعة على الخشب مع ضوء لهب هادئ."],
+      ["٢", "أول أسبوع", "الغرفة تبني «طقسها»: رائحة عود خفيفة، ضباب منتظم، ونوم أعمق بعد يوم طويل تحت المكيف."],
+      ["٣", "مع عود قصر دبي", "الباقة الكاملة تخلي الليل روتين جو + بشرة: تلطيف الجو + لمسة نعومة على البشرة."],
     ],
     reviews: [
-      ["مريم", "دبي", "المكيف عندي شغال طول اليوم، عجبني إن الصفحة تشرح الجفاف مب بس شكل المنتج."],
-      ["نورة", "أبوظبي", "طلبت الباقة مع عود قصر دبي لأن الفكرة واضحة: جو وبشرة في نفس الروتين."],
-      ["سارة", "الشارقة", "ما حسيت إنهم يبيعوني فواحة عادية. الصفحة كلها عن جفاف الإمارات وروتين ليالي بيوتي."],
+      ["مريم", "الدمام", "أول ما شغّلته حسيت الغرفة صارت غيمة خفيفة. النوم صار أعمق وما أحس بجفاف بالأنف."],
+      ["نورة", "أبوظبي", "ما هو مجرد ديفيوزر — في فرق على الهوى. الباقة مع عود قصر دبي كملت الروتين."],
+      ["سارة", "الكويت", "يبان فخم على التسريحة، وهدية تصلح لأي بيت يعشقون المكيف."],
     ],
     comparisons: [
       ["فواحة عادية", "رائحة بس", "ما تحسّين فرق حقيقي على الجو الناشف من المكيف."],
@@ -278,6 +291,7 @@ const PAGE_CONTENT: Record<string, PageContent> = {
       ["هل أقدر أطلبه مع عود قصر دبي؟", "نعم، وهذا هو الروتين الأقوى لزاوية الجفاف: الجو + البشرة."],
       ["متى يكلّموني؟", "بعد ما ترسلين الطلب، نتواصل معاك ونأكد البيانات قبل الشحن."],
       ["هل السعر يتغير؟", "السعر الظاهر في اختيار العرض هو الذي يدخل للسلة."],
+      ["كيف أستخدمه بأمان؟", "املئي الخزان حسب التعليمات، استخدمي زيتاً عطرياً مناسباً للأجهزة الرذاذية، وخلي الجهاز بعيد عن متناول الأطفال."],
     ],
   },
 };
@@ -342,6 +356,27 @@ function StatStrip({ content }: { content: PageContent }) {
   );
 }
 
+function CodReassuranceStrip() {
+  const items = [
+    ["خلال ١٠ دقائق", "نتصل لتأكيد الطلب (٩ص–٩م بتوقيت دبي)."],
+    ["رقم غريب؟", "غالباً يكون فريق ليالي — أجيبي عشان ما يتأخر التجهيز."],
+    ["دفع عند الباب", "ما نخصم شيء الحين. الدفع بعد ما تشوفين الطلب."],
+    ["تجهيز فاخر", "تغليف أنيق وتوصيل داخل الإمارات."],
+  ];
+  return (
+    <section className="border-y border-[var(--border-gold)] bg-[var(--surface-warm)] px-4 py-8">
+      <div className="container-grid grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {items.map(([title, text]) => (
+          <div key={title} className="rounded-2xl border border-[var(--border-gold)] bg-white p-4 text-center shadow-sm">
+            <p className="text-sm font-black text-[var(--emerald-950)]">{title}</p>
+            <p className="mt-2 text-xs font-semibold leading-6 text-[var(--muted)]">{text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function ProblemSection({ content }: { content: PageContent }) {
   return (
     <section className="section-padding bg-[var(--cream-50)]">
@@ -351,9 +386,9 @@ function ProblemSection({ content }: { content: PageContent }) {
           title="مشاكل تعرفينها — وحلول من داخل الروتين"
           body="ما نضغط عليج بزر شراء سريع. نوضح الألم والسبب والحل قبل ما تختارين العرض."
         />
-        <div className="mt-10 grid gap-5 md:grid-cols-2">
+        <div className="mt-10 grid gap-6 md:grid-cols-2">
           {content.problems.map(([problem, answer]) => (
-            <div key={problem} className="premium-card">
+            <div key={problem} className="premium-card p-7 lg:p-8">
               <p className="text-lg font-black leading-8 text-[var(--emerald-950)]">“{problem}”</p>
               <p className="mt-4 leading-8 text-[var(--muted)]">{answer}</p>
             </div>
@@ -373,12 +408,12 @@ function IngredientsSection({ content }: { content: PageContent }) {
           title="السرّ في التركيز، مب في كثرة الكلام"
           body="كل عنصر في الصفحة له وظيفة واضحة: يشرح الفايدة، يطمّنج، ويوصلج لاختيار العرض."
         />
-        <div className="mt-10 grid gap-5 lg:grid-cols-3">
+        <div className="mt-10 grid gap-6 lg:grid-cols-3">
           {content.ingredients.map(([name, dose, text]) => (
-            <article key={name} className="premium-card">
+            <article key={name} className="premium-card min-h-[240px] p-7 lg:min-h-[260px] lg:p-9">
               <p className="text-sm font-black text-[var(--gold-500)]">{dose}</p>
-              <h3 className="mt-3 text-2xl font-black text-[var(--emerald-950)]">{name}</h3>
-              <p className="mt-4 leading-8 text-[var(--muted)]">{text}</p>
+              <h3 className="mt-3 text-2xl font-black text-[var(--emerald-950)] lg:text-3xl">{name}</h3>
+              <p className="mt-4 text-base leading-8 text-[var(--muted)]">{text}</p>
             </article>
           ))}
         </div>
@@ -436,15 +471,30 @@ function CredibilitySection({ content }: { content: PageContent }) {
   );
 }
 
-function TimelineSection({ content }: { content: PageContent }) {
+function TimelineSection({ content, slug }: { content: PageContent; slug: string }) {
+  const meta =
+    slug === "dubai-palace-oud-serum"
+      ? {
+          kicker: "لمسة فورية + روتين يومي",
+          title: "٣ لحظات: من أول طبقة لحد ما البشرة «تشرب» الرطوبة",
+          body: "ما نبيعج وعود شهر كامل من أول يوم — نشرح لج إحساس الراحة والنعومة اللي ممكن تحسّينه بسرعة، وكيف الروتين يثبت مع المكيف.",
+        }
+      : slug === "aroma-flame-lamp"
+        ? {
+            kicker: "ليلة بعد ليلة",
+            title: "٣ لحظات: لما الغرفة تصير أهدى وأنعم",
+            body: "من أول تشغيل لحد ما يصير طقس الليل عندج: ضباب خفيف، ضوء دافي، وعود يلفّ المكان — بدون نار ولا تعقيد.",
+          }
+        : {
+            kicker: "النتيجة من أول تجربة",
+            title: "شو بتلاحظين خلال أول 30 يوم؟",
+            body: "نرتب التوقعات خطوة بخطوة حتى تعرفين شو تختارين ومتى تستخدمين المنتج.",
+          };
+
   return (
     <section className="section-padding bg-[var(--cream-50)]">
       <div className="container-grid">
-        <SectionHeading
-          kicker="النتيجة من أول تجربة"
-          title="شو بتلاحظين خلال أول 30 يوم؟"
-          body="نرتب التوقعات خطوة بخطوة حتى تعرفين شو تختارين ومتى تستخدمين المنتج."
-        />
+        <SectionHeading kicker={meta.kicker} title={meta.title} body={meta.body} />
         <div className="mt-10 grid gap-5 md:grid-cols-3">
           {content.timeline.map(([number, title, text]) => (
             <article key={number} className="premium-card">
@@ -470,13 +520,13 @@ function ReviewsSection({ content }: { content: PageContent }) {
           title="ما تقوله عميلات ليالي"
           body="تعليقات توضيحية حول التجربة والطلب. لا نعرض وعود علاجية أو نتائج غير مثبتة."
         />
-        <div className="mt-10 grid gap-5 md:grid-cols-3">
+        <div className="mt-10 grid gap-6 md:grid-cols-3">
           {content.reviews.map(([name, city, text]) => (
-            <article key={`${name}-${city}`} className="premium-card">
-              <p className="text-[var(--gold-500)]">★★★★★</p>
-              <p className="mt-4 leading-8 text-[var(--muted)]">“{text}”</p>
-              <p className="mt-5 font-black text-[var(--emerald-950)]">{name}</p>
-              <p className="text-sm font-bold text-[var(--gold-500)]">{city} · مؤكدة</p>
+            <article key={`${name}-${city}`} className="premium-card flex min-h-[220px] flex-col p-7 lg:p-8">
+              <p className="text-lg text-[var(--gold-500)]">★★★★★</p>
+              <p className="mt-4 flex-1 text-base leading-8 text-[var(--muted)]">“{text}”</p>
+              <p className="mt-6 font-black text-[var(--emerald-950)]">{name}</p>
+              <p className="text-sm font-bold text-[var(--gold-500)]">{city} · عميلة مؤكدة</p>
             </article>
           ))}
         </div>
@@ -494,18 +544,18 @@ function ComparisonSection({ content, product }: { content: PageContent; product
           title="قارني — وقرّري بنفسك"
           body="كل بديل جرّبتيه من قبل، وليه ما أعطاك تجربة واضحة مثل صفحة منتج مرتبة."
         />
-        <div className="mt-10 grid gap-5 lg:grid-cols-4">
+        <div className="mt-10 grid gap-5 lg:grid-cols-4 lg:gap-6">
           {content.comparisons.map(([title, subtitle, body]) => (
-            <article key={title} className="rounded-[2rem] border border-[var(--border-gold)] bg-white p-5">
-              <h3 className="text-xl font-black text-[var(--emerald-950)]">{title}</h3>
-              <p className="mt-2 text-sm font-bold text-[var(--gold-500)]">{subtitle}</p>
-              <p className="mt-4 leading-8 text-[var(--muted)]">{body}</p>
+            <article key={title} className="rounded-[2rem] border border-[var(--border-gold)] bg-white p-6 lg:p-7">
+              <h3 className="text-lg font-black text-[var(--emerald-950)] lg:text-xl">{title}</h3>
+              <p className="mt-2 text-xs font-bold text-[var(--gold-500)] lg:text-sm">{subtitle}</p>
+              <p className="mt-4 text-sm leading-8 text-[var(--muted)] lg:text-base">{body}</p>
             </article>
           ))}
-          <article className="rounded-[2rem] border border-[var(--gold-400)] bg-[var(--emerald-950)] p-5 text-white shadow-2xl">
-            <h3 className="text-xl font-black text-[var(--gold-300)]">{product.name}</h3>
-            <p className="mt-2 text-sm font-bold text-cream-100">من {product.price} درهم</p>
-            <p className="mt-4 leading-8 text-cream-100">{product.subheading}</p>
+          <article className="rounded-[2rem] border border-[var(--gold-400)] bg-[var(--emerald-950)] p-6 text-white shadow-2xl lg:col-span-1 lg:p-8">
+            <h3 className="text-lg font-black text-[var(--gold-300)] lg:text-xl">{product.name}</h3>
+            <p className="mt-2 text-xs font-bold text-cream-100">من {product.price} درهم</p>
+            <p className="mt-4 text-sm leading-8 text-cream-100 lg:text-base">{product.subheading}</p>
           </article>
         </div>
       </div>
@@ -513,72 +563,36 @@ function ComparisonSection({ content, product }: { content: PageContent; product
   );
 }
 
-function GuaranteeSection({ content }: { content: PageContent }) {
+function FulfillmentSection({ content }: { content: PageContent }) {
   return (
     <section className="section-padding bg-[var(--emerald-950)] text-white">
       <div className="container-grid">
         <SectionHeading
-          kicker="صفر مخاطرة"
-          title="تأكيد قبل الشحن — بدون مفاجآت"
-          body="طلبج ما يدخل التجهيز إلا لما نتأكد من البيانات والكمية."
+          kicker="تأكيد · تجهيز · توصيل"
+          title="مسار واضح عشان ما يصير لبس ولا إلغاء"
+          body="نؤكد بالمكالمة، نجهز بتغليف أنيق، ونوصل داخل الإمارات — الدفع عند الاستلام فقط."
           light
         />
         <div className="mt-10 grid gap-5 md:grid-cols-3">
           {content.guarantee.map(([title, text]) => (
-            <article key={title} className="rounded-[2rem] border border-gold-400/25 bg-white/5 p-6">
-              <h3 className="text-2xl font-black text-[var(--gold-300)]">{title}</h3>
-              <p className="mt-3 leading-8 text-cream-100">{text}</p>
+            <article key={title} className="rounded-[2rem] border border-gold-400/25 bg-white/5 p-6 lg:p-7">
+              <h3 className="text-xl font-black text-[var(--gold-300)] lg:text-2xl">{title}</h3>
+              <p className="mt-3 text-sm leading-8 text-cream-100 lg:text-base">{text}</p>
             </article>
           ))}
         </div>
-      </div>
-    </section>
-  );
-}
-
-function UsageSection({ content }: { content: PageContent }) {
-  return (
-    <section className="section-padding bg-white">
-      <div className="container-grid">
-        <SectionHeading
-          kicker="طريقة الاستخدام"
-          title="أبسط روتين ممكن"
-          body="خطوات قصيرة وواضحة، بدون التزام معقد."
-        />
-        <div className="mt-10 grid gap-5 md:grid-cols-4">
-          {content.usage.map(([title, text]) => (
-            <article key={title} className="premium-card">
-              <h3 className="text-xl font-black text-[var(--emerald-950)]">{title}</h3>
-              <p className="mt-3 leading-8 text-[var(--muted)]">{text}</p>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function DeliverySection({ content }: { content: PageContent }) {
-  return (
-    <section className="section-padding bg-[var(--cream-50)]">
-      <div className="container-grid">
-        <SectionHeading
-          kicker="التوصيل والدفع"
-          title="كيف يوصلج طلبج — ببساطة"
-          body="بدون دفع إلكتروني، بدون التزام، بدون مفاجآت."
-        />
         <div className="mt-10 grid gap-5 md:grid-cols-3">
           {content.delivery.map(([title, text], index) => (
-            <article key={title} className="premium-card">
-              <span className="text-4xl font-black text-[var(--gold-500)]">{index + 1}</span>
-              <h3 className="mt-4 text-2xl font-black text-[var(--emerald-950)]">{title}</h3>
-              <p className="mt-3 leading-8 text-[var(--muted)]">{text}</p>
+            <article key={title} className="rounded-[2rem] border border-gold-400/20 bg-black/15 p-6 lg:p-7">
+              <span className="text-3xl font-black text-[var(--gold-300)]">{index + 1}</span>
+              <h3 className="mt-3 text-lg font-black text-white lg:text-xl">{title}</h3>
+              <p className="mt-2 text-sm leading-7 text-cream-100/85">{text}</p>
             </article>
           ))}
         </div>
-        <div className="mt-8 rounded-[2rem] border border-[var(--border-gold)] bg-white p-6 text-center">
-          <h3 className="text-2xl font-black text-[var(--emerald-950)]">نوصل داخل الإمارات</h3>
-          <p className="mt-3 leading-8 text-[var(--muted)]">
+        <div className="mt-10 rounded-[2rem] border border-gold-400/25 bg-white/5 p-6 text-center">
+          <h3 className="text-xl font-black text-[var(--gold-300)]">نوصل داخل الإمارات</h3>
+          <p className="mt-3 text-sm leading-8 text-cream-100/85">
             دبي · أبوظبي · الشارقة · عجمان · رأس الخيمة · الفجيرة · أم القيوين · العين وباقي المناطق حسب التوفر.
           </p>
         </div>
@@ -642,18 +656,17 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const content = PAGE_CONTENT[slug] ?? DEFAULT_CONTENT;
 
   return (
-    <div>
+    <div className="pb-[calc(6.25rem+env(safe-area-inset-bottom,0px))]">
       <ProductHero key={slug} product={product} />
       <StatStrip content={content} />
+      <CodReassuranceStrip />
       <ProblemSection content={content} />
       <IngredientsSection content={content} />
       <CredibilitySection content={content} />
-      <TimelineSection content={content} />
+      <TimelineSection content={content} slug={slug} />
       <ReviewsSection content={content} />
       <ComparisonSection content={content} product={product} />
-      <GuaranteeSection content={content} />
-      <UsageSection content={content} />
-      <DeliverySection content={content} />
+      <FulfillmentSection content={content} />
       <FaqSection content={content} />
       <RelatedProducts product={product} />
     </div>
