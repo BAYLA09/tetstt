@@ -76,7 +76,7 @@ function BeforeAfterSection({ product }: { product: Product }) {
           {columns.map((col) => (
             <figure
               key={`${col.src}-${col.label}`}
-              className="overflow-hidden rounded-2xl border border-[var(--border-gold)] bg-white shadow-sm"
+              className="overflow-hidden rounded-2xl border border-[var(--border-gold)] bg-white shadow-md ring-1 ring-[rgba(201,150,69,0.06)] transition-shadow duration-200 hover:shadow-lg"
             >
               <div className="relative aspect-[4/3] w-full bg-[var(--cream-100)]">
                 <Image
@@ -105,7 +105,7 @@ function InsightStrip({ product }: { product: Product }) {
   return (
     <section className="border-y border-[var(--border-gold)] bg-white px-4 py-12">
       <div className="relative mx-[calc(50%-50vw)] w-screen max-w-none px-0 lg:mx-auto lg:w-full lg:max-w-[1180px]">
-        <div className="overflow-hidden bg-[var(--emerald-950)] lg:rounded-2xl">
+        <div className="overflow-hidden bg-[var(--emerald-950)] shadow-lg ring-1 ring-black/10 lg:rounded-2xl">
           <Image
             src={strip.imageSrc}
             alt={strip.headline}
@@ -141,7 +141,7 @@ function CommercePanel({
     return (
       <div
         dir="rtl"
-        className="relative z-10 rounded-[2rem] border border-gold-400/25 bg-emerald-950/72 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] backdrop-blur lg:p-8"
+        className="relative z-10 rounded-[2rem] border border-gold-400/25 bg-emerald-950/94 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.32)] ring-1 ring-white/5 lg:p-8"
       >
         <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">{product.badge}</p>
         <h1 className="mt-5 text-4xl font-black leading-tight text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.75)] md:text-5xl">
@@ -193,7 +193,7 @@ function CommercePanel({
   return (
     <div
       dir="rtl"
-      className="relative z-10 rounded-[2rem] border border-gold-400/25 bg-emerald-950/72 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] backdrop-blur lg:p-8"
+      className="relative z-10 rounded-[2rem] border border-gold-400/25 bg-emerald-950/94 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.32)] ring-1 ring-white/5 lg:p-8"
     >
       <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">{product.badge}</p>
       <h1 className="mt-5 text-4xl font-black leading-tight text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.75)] md:text-5xl">
@@ -340,11 +340,11 @@ export function ProductHero({ product }: { product: Product }) {
         </section>
         <BeforeAfterSection product={product} />
         <InsightStrip product={product} />
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-gold-500/30 bg-emerald-950/95 p-3 backdrop-blur lg:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-gold-500/35 bg-emerald-950 p-3 shadow-[0_-12px_40px_rgba(0,0,0,0.2)] ring-1 ring-white/5 lg:hidden">
           {tiers?.length && selectedTier ? (
             <div className="space-y-2">
               <select
-                className="w-full rounded-xl border border-gold-500/40 bg-white/10 px-3 py-2 text-sm font-bold text-white"
+                className="w-full rounded-xl border border-gold-500/45 bg-white/12 px-3 py-2.5 text-sm font-bold text-white shadow-inner transition-colors duration-200 hover:border-gold-400/55"
                 value={selectedTier.sku}
                 onChange={(e) => {
                   const t = tiers.find((x) => x.sku === e.target.value);
@@ -361,7 +361,7 @@ export function ProductHero({ product }: { product: Product }) {
               <button
                 type="button"
                 onClick={() => addOffer(productSnapshotForOfferTier(product, selectedTier))}
-                className="flex w-full items-center justify-center gap-2 rounded-full bg-gold-500 px-5 py-4 font-black text-emerald-950"
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-gold-500 px-5 py-4 font-black text-emerald-950 shadow-lg transition duration-200 ease-out hover:bg-gold-400 hover:shadow-xl active:scale-[0.99]"
               >
                 <ShoppingCart className="h-5 w-5" aria-hidden />
                 أضيفي للسلة – {money(selectedTier.price)}
@@ -371,7 +371,7 @@ export function ProductHero({ product }: { product: Product }) {
             <button
               type="button"
               onClick={() => addOffer(product)}
-              className="w-full rounded-full bg-gold-500 px-5 py-4 font-black text-emerald-950"
+              className="w-full rounded-full bg-gold-500 px-5 py-4 font-black text-emerald-950 shadow-lg transition duration-200 ease-out hover:bg-gold-400 hover:shadow-xl"
             >
               أضيفي العرض إلى السلة - {money(product.price)}
             </button>
@@ -397,11 +397,11 @@ export function ProductHero({ product }: { product: Product }) {
           />
         </div>
       </div>
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-gold-500/30 bg-emerald-950/95 p-3 backdrop-blur lg:hidden">
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-gold-500/35 bg-emerald-950 p-3 shadow-[0_-12px_40px_rgba(0,0,0,0.2)] ring-1 ring-white/5 lg:hidden">
         <button
           type="button"
           onClick={() => addOffer(stickyLine)}
-          className="flex w-full items-center justify-center gap-2 rounded-full bg-gold-500 px-5 py-4 font-black text-emerald-950"
+          className="flex w-full items-center justify-center gap-2 rounded-full bg-gold-500 px-5 py-4 font-black text-emerald-950 shadow-lg transition duration-200 ease-out hover:bg-gold-400 hover:shadow-xl active:scale-[0.99]"
         >
           {tiers?.length ? (
             <>

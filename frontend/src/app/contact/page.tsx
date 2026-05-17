@@ -3,9 +3,9 @@ import { MessageCircle, Phone } from "lucide-react";
 export default function ContactPage() {
   return (
     <main>
-      <section className="section container">
+      <section className="section container-page">
         <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
-          <div className="panel p-8">
+          <div className="panel p-8 shadow-md ring-1 ring-[rgba(201,150,69,0.08)]">
             <p className="eyebrow">تواصل معنا</p>
             <h1 className="mt-3 text-4xl font-bold text-[var(--emerald-950)]">
               نحن هنا لتأكيد طلبك ومساعدتك.
@@ -19,7 +19,7 @@ export default function ContactPage() {
               ["واتساب", "تواصلي معنا لتأكيد الطلب أو الاستفسار.", MessageCircle],
               ["هاتف", "أدخلي رقمك في الطلب وسنتواصل معك قبل الشحن.", Phone],
             ].map(([title, text, Icon]) => (
-              <div className="panel flex gap-4 p-6" key={title as string}>
+              <div className="panel flex gap-4 p-6 shadow-sm ring-1 ring-[rgba(201,150,69,0.06)] transition-shadow duration-200 hover:shadow-md" key={title as string}>
                 <Icon className="mt-1 text-[var(--gold-500)]" />
                 <div>
                   <h2 className="text-xl font-bold text-[var(--emerald-950)]">{title as string}</h2>
