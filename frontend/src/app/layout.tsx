@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans_Arabic, Inter } from "next/font/google";
+import { IBM_Plex_Sans_Arabic, Inter, Dancing_Script } from "next/font/google";
 import { CartProvider } from "@/components/CartProvider";
 import { Footer, SiteHeader } from "@/components/SiteChrome";
 import "./globals.css";
@@ -13,6 +13,12 @@ const arabic = IBM_Plex_Sans_Arabic({
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+});
+
+const dancingScript = Dancing_Script({
+  variable: "--font-script",
+  subsets: ["latin"],
+  weight: ["700"],
 });
 
 export const metadata: Metadata = {
@@ -31,7 +37,7 @@ export default function RootLayout({
     <html
       lang="ar"
       dir="rtl"
-      className={`${arabic.variable} ${inter.variable} h-full scroll-smooth antialiased`}
+      className={`${arabic.variable} ${inter.variable} ${dancingScript.variable} h-full scroll-smooth antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <CartProvider>
