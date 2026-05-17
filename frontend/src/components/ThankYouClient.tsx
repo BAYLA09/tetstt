@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { CheckCircle2, MessageCircle, PhoneCall, Sparkles, Truck } from "lucide-react";
 import { money } from "@/lib/products";
 import { readLastCheckoutSnapshot } from "@/lib/order-confirmation-storage";
@@ -42,9 +42,8 @@ function maskPhoneDisplay(phone: string): string {
 
 export function ThankYouClient({ orderId }: { orderId: string }) {
   const search = useSearchParams();
-  const [snapshot, setSnapshot] = useState<ReturnType<typeof readLastCheckoutSnapshot>>(null);
 
-  useEffect(() => {
+  const snapshot = useMemo(() => {
     const skusRaw = search.get("s");
     const skus = skusRaw ? skusRaw.split(",").filter(Boolean) : [];
     const fromUrl = {
@@ -52,13 +51,12 @@ export function ThankYouClient({ orderId }: { orderId: string }) {
       phone: search.get("p")?.trim() || "",
       total: Number(search.get("t")) || 0,
       skus,
-      savedAt: Date.now(),
+      savedAt: 0,
     };
     if (fromUrl.name && fromUrl.phone) {
-      setSnapshot(fromUrl);
-      return;
+      return fromUrl;
     }
-    setSnapshot(readLastCheckoutSnapshot());
+    return readLastCheckoutSnapshot();
   }, [search]);
 
   const name = snapshot?.name?.trim() || "";

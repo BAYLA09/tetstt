@@ -45,7 +45,11 @@ export type Product = {
     imageSrc: string;
     headline: string;
     subline: string;
+    /** Large figure directly under the insight image (optional). */
+    statPercent?: string;
   };
+  /** Optional three-image row after the insight strip (PDP storytelling). */
+  storyGallery?: { src: string; alt: string }[];
 };
 
 export type CartItem = {
@@ -195,8 +199,8 @@ const catalogProducts: Product[] = [
         badge: "الأكثر توفيراً",
       },
     ],
-    image: "/products/aroma-lamp-oud-hero.jpg",
-    cardImage: "/products/img-diffuser-card.jpg",
+    image: "/products/layali-flame-lamp-hero.png",
+    cardImage: "/products/layali-flame-lamp-angle.png",
     heroPanorama: true,
     storyBeforeCommerce: true,
     beforeAfterStory: {
@@ -215,7 +219,22 @@ const catalogProducts: Product[] = [
       headline:
         "ليالي بيوتي تركّز على تجربة الغرفة: أقل جفاف في الهواء، نوم أهدأ، وطقس عود راقي يشبه فيلات دبي الأنيقة.",
       subline: "ملاحظات من فريق التجربة · الإمارات، ٢٠٢٤",
+      statPercent: "٧٨٪",
     },
+    storyGallery: [
+      {
+        src: "/products/layali-flame-lamp-hero.png",
+        alt: "موقد الجو الجاف — واجهة أمامية مع تأثير اللهب والضباب",
+      },
+      {
+        src: "/products/layali-essential-oil-studio.png",
+        alt: "زيت عطري مع قطارة للاستعمال مع الموقد",
+      },
+      {
+        src: "/products/layali-flame-lamp-angle.png",
+        alt: "موقد الجو الجاف — زاوية جانبية على سطح خشبي",
+      },
+    ],
   },
 ];
 

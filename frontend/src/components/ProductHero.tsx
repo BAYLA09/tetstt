@@ -109,12 +109,71 @@ function InsightStrip({ product }: { product: Product }) {
   const strip = product.insightStrip;
   if (!strip) return null;
 
+  const hasImage = Boolean(strip.imageSrc?.trim());
+
   return (
     <section className="border-y border-[var(--border-gold)] bg-[var(--cream-50)] px-4 py-10">
-      <div className="container-grid text-center">
-        <p className="text-xs font-black tracking-[0.28em] text-[var(--gold-500)]">ليالي بيوتي · لمحات</p>
-        <p className="mt-4 text-2xl font-black leading-snug text-[var(--emerald-950)] md:text-3xl">{strip.headline}</p>
-        <p className="mx-auto mt-3 max-w-3xl text-sm font-semibold leading-8 text-[var(--muted)]">{strip.subline}</p>
+      <div className="container-grid">
+        {hasImage ? (
+          <div className="relative mx-auto w-full max-w-[1180px] overflow-hidden rounded-2xl border border-[var(--border-gold)] bg-[var(--emerald-950)] shadow-lg ring-1 ring-black/10">
+            <div className="relative aspect-[16/10] w-full md:aspect-[2/1]">
+              <Image
+                src={strip.imageSrc}
+                alt={strip.headline}
+                fill
+                className="object-contain p-2 md:p-4"
+                sizes="(max-width: 768px) 100vw, 1180px"
+                loading="lazy"
+              />
+            </div>
+          </div>
+        ) : null}
+        {strip.statPercent ? (
+          <div className={`text-center ${hasImage ? "mt-5" : ""}`} dir="rtl">
+            <p
+              className="bg-gradient-to-l from-[var(--emerald-900)] to-[var(--emerald-950)] bg-clip-text text-5xl font-black leading-none tracking-tight text-transparent tabular-nums md:text-6xl"
+              aria-label={`نسبة مذكورة: ${strip.statPercent}`}
+            >
+              {strip.statPercent}
+            </p>
+          </div>
+        ) : null}
+        <div className={`text-center ${hasImage || strip.statPercent ? "mt-8" : ""}`}>
+          <p className="text-xs font-black tracking-[0.28em] text-[var(--gold-500)]">ليالي بيوتي · لمحات</p>
+          <p className="mt-4 text-2xl font-black leading-snug text-[var(--emerald-950)] md:text-3xl">{strip.headline}</p>
+          <p className="mx-auto mt-3 max-w-3xl text-sm font-semibold leading-8 text-[var(--muted)]">{strip.subline}</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function StoryGallerySection({ product }: { product: Product }) {
+  const images = product.storyGallery;
+  if (!images?.length) return null;
+
+  return (
+    <section className="border-t border-[var(--border-gold)] bg-white px-4 py-14">
+      <div className="container-grid">
+        <div className="grid gap-4 md:grid-cols-3" dir="ltr">
+          {images.map((item) => (
+            <figure
+              key={item.src}
+              className="overflow-hidden rounded-2xl border border-[var(--border-gold)] bg-[var(--cream-50)] shadow-md ring-1 ring-[rgba(201,150,69,0.06)] transition-shadow duration-300 hover:shadow-xl"
+            >
+              <div className="relative aspect-[4/3] w-full bg-[var(--cream-100)]">
+                <Image
+                  src={item.src}
+                  alt={item.alt}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  loading="lazy"
+                />
+              </div>
+            </figure>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -303,7 +362,6 @@ function CommercePanel({
 
 export function ProductHero({ product }: { product: Product }) {
   const addItem = useCartStore((state) => state.addItem);
-  const tiers = product.offerTiers;
   const [selectedTier, setSelectedTier] = useState<ProductOfferTier | null>(() =>
     resolveDefaultOfferTier(product),
   );
@@ -319,6 +377,7 @@ export function ProductHero({ product }: { product: Product }) {
   if (storyFirst) {
     return (
       <>
+        <BeforeAfterSection product={product} />
         <section className="hero-gradient relative overflow-hidden px-4 pb-28 pt-6 lg:pb-32 lg:pt-10">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(201,150,69,0.2),transparent_32%)]" />
           <div className="container-grid relative z-10" dir="ltr">
@@ -333,8 +392,8 @@ export function ProductHero({ product }: { product: Product }) {
             </div>
           </div>
         </section>
-        <BeforeAfterSection product={product} />
         <InsightStrip product={product} />
+        <StoryGallerySection product={product} />
         <ProductStickyNav slug={product.slug} />
       </>
     );
