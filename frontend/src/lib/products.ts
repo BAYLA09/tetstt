@@ -103,7 +103,7 @@ const catalogProducts: Product[] = [
     story:
       "مكيف السيارة، المكتب، والبيت يخلّون البشرة «تشرب» أي ترطيب بسرعة وتبقى باهتة. عود قصر دبي يعطيج طقس فاخر: رطوبة حسّية، لمعان خفيف، ورائحة عربية راقية بعد الاستحمام أو قبل النوم.",
     insightStrip: {
-      imageSrc: "/products/dubai-palace-oud-serum.svg",
+      imageSrc: "/products/layali-essential-oil-studio.png",
       headline: "من أول الأيام: ملمس أنعم، إحساس أقل تشنج مع المكيف، ورائحة تفتح المزاج.",
       subline: "ملاحظات فريق ليالي بيوتي من تجارب العميلات — النتائج تختلف.",
     },
@@ -138,8 +138,8 @@ const catalogProducts: Product[] = [
         badge: "الأكثر توفيراً",
       },
     ],
-    image: "/products/dubai-palace-oud-serum.svg",
-    cardImage: "/products/dubai-palace-oud-serum.svg",
+    image: "/products/layali-essential-oil-studio.png",
+    cardImage: "/products/layali-essential-oil-studio.png",
   },
   {
     sku: "LB-SERUM-SET-99",
@@ -200,7 +200,7 @@ const catalogProducts: Product[] = [
       },
     ],
     image: "/products/layali-flame-lamp-hero.png",
-    cardImage: "/products/layali-flame-lamp-angle.png",
+    cardImage: "/products/layali-flame-lamp-hero.png",
     heroPanorama: true,
     storyBeforeCommerce: true,
     insightStrip: {

@@ -1,27 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ProductCard } from "@/components/ProductCard";
 import { products } from "@/lib/products";
-
-/** Large lifestyle shots used only on the home page (PDPs keep their own hero/card assets). */
-const homeVisualSpotlights = [
-  {
-    slug: "aroma-flame-lamp" as const,
-    href: "/products/aroma-flame-lamp",
-    imageSrc: "/products/layali-flame-lamp-hero.png",
-    title: "موقد الجو الجاف",
-    caption: "ضباب بارد وضوء دافي لطقس الغرفة بعد المكيف.",
-    imageAlt: "موقد الجو الجاف من ليالي بيوتي على منضدة بغرفة نوم مع ضباب مضيء يشبه اللهب",
-  },
-  {
-    slug: "dubai-palace-oud-serum" as const,
-    href: "/products/dubai-palace-oud-serum",
-    imageSrc: "/products/layali-essential-oil-studio.png",
-    title: "عود قصر دبي",
-    caption: "روتين 100مل بلمسة عود دافئة وملمس ناعم.",
-    imageAlt: "عبوة روتين عود قصر دبي في لقطة فاخرة مع خشب العود وإضاءة دافئة",
-  },
-];
 
 const pillars = [
   ["مصمم لجو الإمارات", "المكيف، الشمس، والمشاوير اليومية تخلي البشرة مشدودة وباهتة. كل رسالة في المتجر مبنية على هالمشكلة."],
@@ -88,45 +67,6 @@ export default function Home() {
             <p className="mt-2 text-sm leading-7 text-cream-100">
               الهوم للشرح بس. اختيار العرض وإضافة السلة داخل صفحة المنتج.
             </p>
-          </div>
-        </div>
-      </section>
-
-      <section
-        className="section-padding border-y border-[var(--border-gold)] bg-[var(--cream-50)]"
-        aria-labelledby="home-visual-spotlights-heading"
-      >
-        <div className="container-grid">
-          <div className="section-heading">
-            <p className="badge">من المعرض</p>
-            <h2 id="home-visual-spotlights-heading">لمسة بصرية قبل صفحة المنتج</h2>
-            <p>صورتين للرئيسية فقط. السعر واختيار العرض يظهر داخل صفحة كل منتج.</p>
-          </div>
-          <div className="mt-10 grid gap-8 md:grid-cols-2" dir="rtl">
-            {homeVisualSpotlights.map((item) => (
-              <Link
-                key={item.slug}
-                href={item.href}
-                className="group block overflow-hidden rounded-[2rem] border border-[var(--border-gold)] bg-white shadow-[0_18px_60px_rgba(42,27,18,0.08)] ring-1 ring-[rgba(201,150,69,0.06)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_24px_80px_rgba(42,27,18,0.12)]"
-              >
-                <div className="relative aspect-[4/3] w-full bg-[var(--cream-100)]">
-                  <Image
-                    src={item.imageSrc}
-                    alt={item.imageAlt}
-                    fill
-                    className="object-cover transition duration-300 group-hover:scale-[1.02]"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-black text-[var(--emerald-950)] transition group-hover:text-[var(--gold-500)]">
-                    {item.title}
-                  </h3>
-                  <p className="mt-2 text-sm font-semibold leading-7 text-[var(--muted)]">{item.caption}</p>
-                  <p className="mt-4 text-sm font-black text-[var(--gold-500)]">ادخلي لصفحة المنتج</p>
-                </div>
-              </Link>
-            ))}
           </div>
         </div>
       </section>
