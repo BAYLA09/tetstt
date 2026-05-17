@@ -157,10 +157,8 @@ const catalogProducts: Product[] = [
         badge: "الأكثر توفيراً",
       },
     ],
-    image:
-      "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=2000&q=88",
-    cardImage:
-      "https://images.unsplash.com/photo-1615529328331-f8917597711f?auto=format&fit=crop&w=900&q=85",
+    image: "/products/layali-flame-lamp-hero.png",
+    cardImage: "/products/layali-flame-lamp-angle.png",
     heroPanorama: true,
     storyBeforeCommerce: true,
     beforeAfterStory: {
@@ -168,17 +166,14 @@ const catalogProducts: Product[] = [
       title: "منزلك يبدو باردًا وفارغًا — حتى مع تنسيق الديكور",
       body:
         "الهواء الجاف والإضاءة الباردة وغياب الدفء يجعلكِ تفضّلين قضاء الوقت خارج الغرفة. المشكلة ليست في الأثاث بقدر ما هي في أجواء المكان.",
-      beforeSrc:
-        "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1400&q=85",
-      afterSrc:
-        "https://images.unsplash.com/photo-1600210492493-0946911123ea?auto=format&fit=crop&w=1400&q=85",
+      beforeSrc: "/products/before-diffuser.jpg",
+      afterSrc: "/products/after-family-aroma.jpg",
       beforeLabel: "قبل",
       afterLabel: "بعد",
       layout: "warm-left",
     },
     insightStrip: {
-      imageSrc:
-        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1600&q=85",
+      imageSrc: "/products/aroma-stat-woman.jpg",
       headline:
         "نساء في الإمارات يشعرن بأن منازلهن تحتاج إلى دفء أجواء أرقى، حتى مع اهتمامهن بكل تفاصيل الديكور.",
       subline: "استطلاع ليالي بيوتي — دولة الإمارات العربية المتحدة، ٢٠٢٤",
@@ -186,16 +181,16 @@ const catalogProducts: Product[] = [
     },
     storyGallery: [
       {
-        src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1200&q=85",
-        alt: "موقد ليالي في فضاء معيشة مرتب بهدوء",
+        src: "/products/layali-flame-lamp-hero.png",
+        alt: "موقد ليالي — واجهة أمامية مع تأثير اللهب والضباب",
       },
       {
-        src: "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=1200&q=85",
-        alt: "لمسة دفء وإضاءة ناعمة في غرفة معيشة",
+        src: "/products/layali-essential-oil-studio.png",
+        alt: "زيت عطري مع قطارة للاستعمال مع الموقد",
       },
       {
-        src: "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=1200&q=85",
-        alt: "تفاصيل أجواء منزلية أنيقة تلائم الموقد",
+        src: "/products/layali-flame-lamp-angle.png",
+        alt: "موقد ليالي — زاوية جانبية على سطح خشبي",
       },
     ],
   },

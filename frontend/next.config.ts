@@ -3,16 +3,6 @@ import type { NextConfig } from "next";
 const LAMP_PRODUCT = "/products/aroma-flame-lamp";
 
 const nextConfig: NextConfig = {
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "images.unsplash.com",
-        pathname: "/**",
-      },
-    ],
-  },
-
   /** Works even if Edge middleware is disabled by the host; forces old bookmarks to the lamp page. */
   async redirects() {
     const legacyProductPaths = [
