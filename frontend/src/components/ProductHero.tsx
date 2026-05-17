@@ -52,56 +52,6 @@ function HeroMedia({ product, contained }: { product: Product; contained?: boole
   );
 }
 
-function BeforeAfterSection({ product }: { product: Product }) {
-  const block = product.beforeAfterStory;
-  if (!block) return null;
-
-  const warmLeft = block.layout === "warm-left";
-  const columns = warmLeft
-    ? [
-        { src: block.afterSrc, label: block.afterLabel },
-        { src: block.beforeSrc, label: block.beforeLabel },
-      ]
-    : [
-        { src: block.beforeSrc, label: block.beforeLabel },
-        { src: block.afterSrc, label: block.afterLabel },
-      ];
-
-  return (
-    <section className="bg-[var(--cream-50)] px-4 py-14">
-      <div className="container-grid">
-        <p className="badge">{block.kicker}</p>
-        <h2 className="mt-4 max-w-3xl text-3xl font-black leading-tight text-[var(--emerald-950)] md:text-4xl">
-          {block.title}
-        </h2>
-        <p className="mt-4 max-w-3xl text-lg leading-9 text-[var(--muted)]">{block.body}</p>
-        <div className="mt-10 grid gap-4 md:grid-cols-2" dir="ltr">
-          {columns.map((col) => (
-            <figure
-              key={`${col.src}-${col.label}`}
-              className="overflow-hidden rounded-2xl border border-[var(--border-gold)] bg-white shadow-sm"
-            >
-              <div className="relative aspect-[4/3] w-full overflow-hidden bg-[var(--emerald-950)]">
-                <Image
-                  src={col.src}
-                  alt={`${block.title} — ${col.label}`}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  loading="lazy"
-                />
-                <span className="pointer-events-none absolute start-3 top-3 z-10 rounded-full border border-white/25 bg-black/50 px-4 py-1.5 text-xs font-black text-white shadow-sm backdrop-blur-sm">
-                  {col.label}
-                </span>
-              </div>
-            </figure>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function InsightStrip({ product }: { product: Product }) {
   const strip = product.insightStrip;
   if (!strip) return null;
@@ -374,7 +324,6 @@ export function ProductHero({ product }: { product: Product }) {
   if (storyFirst) {
     return (
       <>
-        <BeforeAfterSection product={product} />
         <section className="hero-gradient relative overflow-hidden px-4 pb-28 pt-6 lg:pb-32 lg:pt-10">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(201,150,69,0.2),transparent_32%)]" />
           <div className="container-grid relative z-10" dir="ltr">

@@ -203,17 +203,6 @@ const catalogProducts: Product[] = [
     cardImage: "/products/layali-flame-lamp-angle.png",
     heroPanorama: true,
     storyBeforeCommerce: true,
-    beforeAfterStory: {
-      kicker: "قبل وبعد",
-      title: "من غرفة مكيفة باردة إلى زاوية دافئة تخلصين فيها يومج",
-      body:
-        "الضباب الخفيف يلطّف الهوى حواليج، والضوء الدافي يعطي إحساس موقد فاخر — رائحة عود ناعمة تكمل المزاج بدون دخان ولا شموع خطرة.",
-      beforeSrc: "/products/before-diffuser.jpg",
-      afterSrc: "/products/after-family-aroma.jpg",
-      beforeLabel: "قبل",
-      afterLabel: "بعد",
-      layout: "warm-left",
-    },
     insightStrip: {
       imageSrc: "/products/aroma-stat-woman.jpg",
       headline:
