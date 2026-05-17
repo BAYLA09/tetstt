@@ -45,7 +45,11 @@ export type Product = {
     imageSrc: string;
     headline: string;
     subline: string;
+    /** Large figure shown directly under the insight image (e.g. survey share). */
+    statPercent?: string;
   };
+  /** Optional row of three gallery images after the insight strip (PDP storytelling). */
+  storyGallery?: { src: string; alt: string }[];
 };
 
 export type CartItem = {
@@ -153,8 +157,10 @@ const catalogProducts: Product[] = [
         badge: "الأكثر توفيراً",
       },
     ],
-    image: "/products/aroma-lamp-oud-hero.jpg",
-    cardImage: "/products/img-diffuser-card.jpg",
+    image:
+      "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=2000&q=88",
+    cardImage:
+      "https://images.unsplash.com/photo-1615529328331-f8917597711f?auto=format&fit=crop&w=900&q=85",
     heroPanorama: true,
     storyBeforeCommerce: true,
     beforeAfterStory: {
@@ -162,18 +168,36 @@ const catalogProducts: Product[] = [
       title: "منزلك يبدو باردًا وفارغًا — حتى مع تنسيق الديكور",
       body:
         "الهواء الجاف والإضاءة الباردة وغياب الدفء يجعلكِ تفضّلين قضاء الوقت خارج الغرفة. المشكلة ليست في الأثاث بقدر ما هي في أجواء المكان.",
-      beforeSrc: "/products/before-diffuser.jpg",
-      afterSrc: "/products/after-family-aroma.jpg",
+      beforeSrc:
+        "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1400&q=85",
+      afterSrc:
+        "https://images.unsplash.com/photo-1600210492493-0946911123ea?auto=format&fit=crop&w=1400&q=85",
       beforeLabel: "قبل",
       afterLabel: "بعد",
       layout: "warm-left",
     },
     insightStrip: {
-      imageSrc: "/products/aroma-stat-woman.jpg",
+      imageSrc:
+        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1600&q=85",
       headline:
         "نساء في الإمارات يشعرن بأن منازلهن تحتاج إلى دفء أجواء أرقى، حتى مع اهتمامهن بكل تفاصيل الديكور.",
       subline: "استطلاع ليالي بيوتي — دولة الإمارات العربية المتحدة، ٢٠٢٤",
+      statPercent: "٧٨٪",
     },
+    storyGallery: [
+      {
+        src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1200&q=85",
+        alt: "موقد ليالي في فضاء معيشة مرتب بهدوء",
+      },
+      {
+        src: "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=1200&q=85",
+        alt: "لمسة دفء وإضاءة ناعمة في غرفة معيشة",
+      },
+      {
+        src: "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=1200&q=85",
+        alt: "تفاصيل أجواء منزلية أنيقة تلائم الموقد",
+      },
+    ],
   },
 ];
 

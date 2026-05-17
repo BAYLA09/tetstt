@@ -115,9 +115,49 @@ function InsightStrip({ product }: { product: Product }) {
             sizes="100vw"
           />
         </div>
+        {strip.statPercent ? (
+          <div className="container-grid pt-5" dir="rtl">
+            <p
+              className="bg-gradient-to-l from-[var(--emerald-900)] to-[var(--emerald-950)] bg-clip-text text-center text-5xl font-black leading-none tracking-tight text-transparent tabular-nums md:text-6xl"
+              aria-label={`نسبة مذكورة في الاستطلاع: ${strip.statPercent}`}
+            >
+              {strip.statPercent}
+            </p>
+          </div>
+        ) : null}
         <div className="container-grid pt-6">
           <p className="text-xl font-black leading-snug text-[var(--emerald-950)] md:text-2xl">{strip.headline}</p>
           <p className="mt-2 text-sm font-semibold text-[var(--muted)]">{strip.subline}</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function StoryGallerySection({ product }: { product: Product }) {
+  const images = product.storyGallery;
+  if (!images?.length) return null;
+
+  return (
+    <section className="bg-[var(--cream-50)] px-4 py-14">
+      <div className="container-grid">
+        <div className="grid gap-4 md:grid-cols-3" dir="ltr">
+          {images.map((item) => (
+            <figure
+              key={item.src}
+              className="overflow-hidden rounded-2xl border border-[var(--border-gold)] bg-white shadow-md ring-1 ring-[rgba(201,150,69,0.06)] transition-shadow duration-300 hover:shadow-xl"
+            >
+              <div className="relative aspect-[4/3] w-full bg-[var(--cream-100)]">
+                <Image
+                  src={item.src}
+                  alt={item.alt}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                />
+              </div>
+            </figure>
+          ))}
         </div>
       </div>
     </section>
@@ -324,6 +364,7 @@ export function ProductHero({ product }: { product: Product }) {
   if (storyFirst) {
     return (
       <>
+        <BeforeAfterSection product={product} />
         <section className="hero-gradient relative overflow-hidden px-4 pb-10 pt-6 lg:pb-16 lg:pt-10">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(201,150,69,0.2),transparent_32%)]" />
           <div className="container-grid relative z-10" dir="ltr">
@@ -338,8 +379,8 @@ export function ProductHero({ product }: { product: Product }) {
             </div>
           </div>
         </section>
-        <BeforeAfterSection product={product} />
         <InsightStrip product={product} />
+        <StoryGallerySection product={product} />
         <div className="fixed inset-x-0 bottom-0 z-40 border-t border-gold-500/35 bg-emerald-950 p-3 shadow-[0_-12px_40px_rgba(0,0,0,0.2)] ring-1 ring-white/5 lg:hidden">
           {tiers?.length && selectedTier ? (
             <div className="space-y-2">
