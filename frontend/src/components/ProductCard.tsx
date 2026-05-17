@@ -10,7 +10,7 @@ export function ProductCard({ product }: { product: Product }) {
   const addItem = useCartStore((state) => state.addItem);
 
   return (
-    <article className="rounded-[2rem] border border-[var(--border-gold)] bg-white p-4 shadow-[0_18px_60px_rgba(1,63,42,0.12)]">
+    <article className="rounded-[2rem] border border-[var(--border-gold)] bg-white p-4 shadow-[0_18px_56px_rgba(1,38,25,0.08)] ring-1 ring-[rgba(201,150,69,0.06)] transition-shadow duration-300 ease-out hover:shadow-[0_24px_72px_rgba(1,38,25,0.12)]">
       <Link href={`/products/${product.slug}`} className="block">
         {product.cardImage ? (
           <div className="relative h-64 overflow-hidden rounded-[1.5rem] border border-[var(--border-gold)] bg-[var(--cream-50)]">
@@ -60,7 +60,7 @@ export function ProductCard({ product }: { product: Product }) {
           </div>
           <button
             onClick={() => addItem(product)}
-            className="rounded-full bg-[var(--gold-500)] px-5 py-3 text-sm font-black text-[var(--emerald-950)] shadow-lg transition hover:-translate-y-0.5 hover:bg-[var(--gold-400)]"
+            className="rounded-full bg-[var(--gold-500)] px-5 py-3 text-sm font-black text-[var(--emerald-950)] shadow-md transition duration-200 ease-out hover:-translate-y-0.5 hover:bg-[var(--gold-400)] hover:shadow-lg active:translate-y-0"
           >
             أضيفي العرض
           </button>

@@ -21,21 +21,14 @@ export default function BuildInfoPage() {
   };
 
   return (
-    <main style={{ padding: "1.5rem", fontFamily: "ui-monospace, monospace", maxWidth: "56rem" }}>
-      <h1 style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>Storefront build info</h1>
-      <p style={{ marginBottom: "1rem", opacity: 0.85 }}>
-        Compare <code>commitSha</code> / <code>gitCommit</code> with Git and <code>GET https://api.layalibeauty.shop/version</code>.
+    <main className="min-h-screen bg-[var(--cream-50)] px-6 py-10 font-mono text-[var(--foreground)]">
+      <h1 className="mb-3 text-lg font-bold text-[var(--emerald-950)]">Storefront build info</h1>
+      <p className="mb-4 max-w-2xl text-sm leading-relaxed text-[var(--muted)]">
+        Compare <code className="rounded bg-white px-1.5 py-0.5 text-xs text-[var(--emerald-950)] shadow-sm">commitSha</code> /{" "}
+        <code className="rounded bg-white px-1.5 py-0.5 text-xs text-[var(--emerald-950)] shadow-sm">gitCommit</code> with Git and{" "}
+        <code className="rounded bg-white px-1.5 py-0.5 text-xs text-[var(--emerald-950)] shadow-sm">GET https://api.layalibeauty.shop/version</code>.
       </p>
-      <pre
-        style={{
-          background: "#0f172a",
-          color: "#e2e8f0",
-          padding: "1rem",
-          borderRadius: "8px",
-          overflow: "auto",
-          fontSize: "0.85rem",
-        }}
-      >
+      <pre className="overflow-auto rounded-xl border border-[var(--border-gold)] bg-[var(--emerald-950)] p-4 text-[0.8rem] leading-relaxed text-[var(--cream-100)] shadow-lg ring-1 ring-black/10">
         {JSON.stringify(data, null, 2)}
       </pre>
     </main>

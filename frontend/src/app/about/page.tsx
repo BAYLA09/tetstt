@@ -9,7 +9,7 @@ const values = [
 export default function AboutPage() {
   return (
     <main className="bg-cream-50">
-      <section className="section-padding bg-emerald-950 text-cream-50">
+      <section className="section-padding bg-emerald-950 text-cream-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
         <div className="mx-auto grid max-w-6xl gap-10 px-4 md:grid-cols-[1fr_0.8fr] md:items-center">
           <div>
             <p className="eyebrow text-gold-300">عن ليالي بيوتي</p>
@@ -44,7 +44,7 @@ export default function AboutPage() {
         </div>
       </section>
       <section className="px-4 pb-20">
-        <div className="mx-auto max-w-6xl rounded-[2rem] bg-emerald-900 p-8 text-cream-50 md:p-12">
+        <div className="mx-auto max-w-6xl rounded-[2rem] border border-white/10 bg-emerald-900/95 p-8 text-cream-50 shadow-2xl ring-1 ring-white/5 md:p-12">
           <Truck className="h-10 w-10 text-gold-300" />
           <h2 className="mt-4 text-3xl font-bold">خدمة واضحة داخل الإمارات</h2>
           <p className="mt-3 max-w-3xl leading-8 text-cream-100">
