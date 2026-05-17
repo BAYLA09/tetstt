@@ -81,22 +81,19 @@ function BeforeAfterSection({ product }: { product: Product }) {
               key={`${col.src}-${col.label}`}
               className="overflow-hidden rounded-2xl border border-[var(--border-gold)] bg-white shadow-sm"
             >
-              <div className="relative grid aspect-[4/3] w-full place-items-center overflow-hidden bg-[var(--emerald-950)]">
+              <div className="relative aspect-[4/3] w-full overflow-hidden bg-[var(--emerald-950)]">
                 <Image
                   src={col.src}
-                  alt={col.label}
+                  alt={`${block.title} — ${col.label}`}
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 50vw"
                   loading="lazy"
                 />
-                <div className="relative z-10 rounded-full border border-white/20 bg-black/35 px-5 py-3 text-center text-sm font-black text-white backdrop-blur">
+                <span className="pointer-events-none absolute start-3 top-3 z-10 rounded-full border border-white/25 bg-black/50 px-4 py-1.5 text-xs font-black text-white shadow-sm backdrop-blur-sm">
                   {col.label}
-                </div>
+                </span>
               </div>
-              <figcaption className="px-3 py-2 text-center text-sm font-bold text-[var(--emerald-950)]">
-                {col.label}
-              </figcaption>
             </figure>
           ))}
         </div>
