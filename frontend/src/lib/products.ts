@@ -26,6 +26,8 @@ export type Product = {
   image?: string;
   cardImage?: string;
   heroPanorama?: boolean;
+  /** When false, CommercePanel skips badge/title/headline + first trust row (lamp PDP cleanup). */
+  commerceShowIntro?: boolean;
   /** When false, hero image area shows only the photo (no glass caption card). */
   heroMediaShowCaption?: boolean;
   /** Hero image + story blocks render above price and add-to-cart. */
@@ -205,6 +207,7 @@ const catalogProducts: Product[] = [
     cardImage: "/products/layali-flame-lamp-hero.png",
     heroPanorama: true,
     heroMediaShowCaption: false,
+    commerceShowIntro: false,
     storyBeforeCommerce: true,
     insightStrip: {
       imageSrc: "/products/aroma-stat-woman.jpg",

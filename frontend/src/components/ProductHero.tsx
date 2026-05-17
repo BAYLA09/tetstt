@@ -144,6 +144,7 @@ function CommercePanel({
   onAdd: (line: Product) => void;
 }) {
   const tiers = product.offerTiers;
+  const showCommerceIntro = product.commerceShowIntro !== false;
 
   if (!tiers?.length) {
     return (
@@ -152,24 +153,29 @@ function CommercePanel({
         dir="rtl"
         className="relative z-10 scroll-mt-28 rounded-[2rem] border border-gold-400/25 bg-emerald-950/72 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] backdrop-blur lg:p-8"
       >
-        <div className="copy-quote copy-quote--inverse mt-1">
-          <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">{product.badge}</p>
-          <h1 className="mt-4 text-4xl font-black leading-tight text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.75)] md:text-5xl">
-            {product.name}
-          </h1>
-          <p className="mt-4 text-xl font-semibold leading-9 text-cream-50 drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)]">
-            {product.headline}
-          </p>
-        </div>
-        <div className="mt-5 grid gap-2 rounded-2xl border border-gold-400/25 bg-white/10 p-4 text-sm font-bold text-cream-50 md:grid-cols-3">
-          {["تأكيد قبل الشحن", "الدفع عند الاستلام", "عرض محجوز لهذا الأسبوع"].map((item) => (
-            <span key={item} className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 shrink-0 text-gold-300" />
-              {item}
-            </span>
-          ))}
-        </div>
-        <div className="mt-8 rounded-[2rem] border border-gold-400/40 bg-black/22 p-5 shadow-inner">
+        {!showCommerceIntro ? <h1 className="sr-only">{product.name}</h1> : null}
+        {showCommerceIntro ? (
+          <>
+            <div className="copy-quote copy-quote--inverse mt-1">
+              <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">{product.badge}</p>
+              <h1 className="mt-4 text-4xl font-black leading-tight text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.75)] md:text-5xl">
+                {product.name}
+              </h1>
+              <p className="mt-4 text-xl font-semibold leading-9 text-cream-50 drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)]">
+                {product.headline}
+              </p>
+            </div>
+            <div className="mt-5 grid gap-2 rounded-2xl border border-gold-400/25 bg-white/10 p-4 text-sm font-bold text-cream-50 md:grid-cols-3">
+              {["تأكيد قبل الشحن", "الدفع عند الاستلام", "عرض محجوز لهذا الأسبوع"].map((item) => (
+                <span key={item} className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-gold-300" />
+                  {item}
+                </span>
+              ))}
+            </div>
+          </>
+        ) : null}
+        <div className={`${showCommerceIntro ? "mt-8" : "mt-0"} rounded-[2rem] border border-gold-400/40 bg-black/22 p-5 shadow-inner`}>
           <p className="text-sm text-gold-300">العرض الحالي</p>
           <div className="mt-2 flex flex-wrap items-end gap-3">
             <p className="text-4xl font-black text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)]">
@@ -207,26 +213,31 @@ function CommercePanel({
       dir="rtl"
       className="relative z-10 scroll-mt-28 rounded-[2rem] border border-gold-400/25 bg-emerald-950/72 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] backdrop-blur lg:p-8"
     >
-      <div className="copy-quote copy-quote--inverse mt-1">
-        <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">{product.badge}</p>
-        <h1 className="mt-4 text-4xl font-black leading-tight text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.75)] md:text-5xl">
-          {product.name}
-        </h1>
-        <p className="mt-4 text-xl font-semibold leading-9 text-cream-50 drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)]">
-          {product.headline}
-        </p>
-      </div>
+      {!showCommerceIntro ? <h1 className="sr-only">{product.name}</h1> : null}
+      {showCommerceIntro ? (
+        <>
+          <div className="copy-quote copy-quote--inverse mt-1">
+            <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">{product.badge}</p>
+            <h1 className="mt-4 text-4xl font-black leading-tight text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.75)] md:text-5xl">
+              {product.name}
+            </h1>
+            <p className="mt-4 text-xl font-semibold leading-9 text-cream-50 drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)]">
+              {product.headline}
+            </p>
+          </div>
 
-      <div className="mt-5 grid gap-2 rounded-2xl border border-gold-400/25 bg-white/10 p-4 text-sm font-bold text-cream-50 md:grid-cols-3">
-        {["تأكيد قبل الشحن", "الدفع عند الاستلام", "عرض محجوز لهذا الأسبوع"].map((item) => (
-          <span key={item} className="flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 shrink-0 text-gold-300" />
-            {item}
-          </span>
-        ))}
-      </div>
+          <div className="mt-5 grid gap-2 rounded-2xl border border-gold-400/25 bg-white/10 p-4 text-sm font-bold text-cream-50 md:grid-cols-3">
+            {["تأكيد قبل الشحن", "الدفع عند الاستلام", "عرض محجوز لهذا الأسبوع"].map((item) => (
+              <span key={item} className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-gold-300" />
+                {item}
+              </span>
+            ))}
+          </div>
+        </>
+      ) : null}
 
-      <div className="mt-8 rounded-[2rem] border border-gold-400/50 bg-[var(--cream-50)] p-5 text-[var(--emerald-950)] shadow-inner">
+      <div className={`${showCommerceIntro ? "mt-8" : "mt-0"} rounded-[2rem] border border-gold-400/50 bg-[var(--cream-50)] p-5 text-[var(--emerald-950)] shadow-inner`}>
         {product.heroPromoLine && (
           <p className="flex items-center justify-center gap-2 text-center text-xs font-bold text-amber-700 md:text-sm">
             <span className="inline-block h-2 w-2 shrink-0 rounded-full bg-amber-500" aria-hidden />
