@@ -36,7 +36,7 @@ export default function Home() {
           <div className="order-2 lg:order-1">
             <div className="product-visual min-h-[420px]">
               <span className="absolute left-10 top-8 text-5xl text-gold-300">☾</span>
-              <div className="relative z-10 rounded-[2rem] border border-gold-400/40 bg-emerald-900/80 p-8 text-center shadow-2xl">
+              <div className="relative z-10 rounded-[2rem] border border-gold-400/45 bg-emerald-900/85 p-8 text-center shadow-[0_24px_80px_rgba(0,0,0,0.35)] ring-1 ring-white/5">
                 <p className="text-sm text-gold-300">ليالي بيوتي</p>
                 <div className="mx-auto mt-6 h-52 w-40 rounded-t-full border border-gold-400/50 bg-gradient-to-b from-gold-300/70 to-cream-100/90 shadow-xl" />
                 <p className="mt-6 text-2xl font-semibold text-gold-300">
@@ -65,7 +65,7 @@ export default function Home() {
             </div>
             <div className="mt-8 grid grid-cols-2 gap-3 text-sm md:grid-cols-4">
               {["الدفع عند الاستلام", "تأكيد قبل الشحن", "تغليف أنيق", "إضافات ذكية"].map((item) => (
-                <div key={item} className="rounded-2xl border border-gold-400/25 bg-white/5 p-3 text-center text-cream-50">
+                <div key={item} className="rounded-2xl border border-gold-400/30 bg-white/8 p-3 text-center text-cream-50 shadow-sm ring-1 ring-white/5 transition-colors duration-200 hover:border-gold-400/45 hover:bg-white/12">
                   {item}
                 </div>
               ))}
@@ -127,7 +127,7 @@ export default function Home() {
           </div>
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             {reviews.map(([name, city, text]) => (
-              <div key={`${name}-${city}`} className="rounded-[2rem] border border-gold-400/30 bg-white/5 p-6">
+              <div key={`${name}-${city}`} className="rounded-[2rem] border border-gold-400/35 bg-white/8 p-6 shadow-md ring-1 ring-white/5 transition-shadow duration-200 hover:shadow-lg">
                 <p className="text-gold-300">★★★★★</p>
                 <p className="mt-5 leading-8 text-cream-100">{text}</p>
                 <p className="mt-5 font-bold text-gold-300">{name}</p>
@@ -178,7 +178,7 @@ export default function Home() {
           </div>
           <div className="grid gap-4">
             {["الدفع عند الاستلام", "تأكيد الطلب قبل الشحن", "إضافات ذكية في السلة", "تغليف وتجربة راقية"].map((item) => (
-              <div key={item} className="rounded-3xl border border-gold-400/30 bg-white/5 p-5 text-gold-300">
+              <div key={item} className="rounded-3xl border border-gold-400/35 bg-white/8 p-5 text-gold-300 shadow-sm ring-1 ring-white/5 transition duration-200 hover:border-gold-400/50">
                 {item}
               </div>
             ))}
@@ -195,7 +195,7 @@ export default function Home() {
           </div>
           <div className="mx-auto mt-10 grid max-w-4xl gap-4">
             {faqs.map(([question, answer]) => (
-              <div key={question} className="rounded-3xl border border-[var(--border-gold)] bg-white p-6">
+              <div key={question} className="rounded-3xl border border-[var(--border-gold)] bg-white p-6 shadow-sm ring-1 ring-[rgba(201,150,69,0.08)] transition-shadow duration-200 hover:shadow-md">
                 <h3 className="text-xl font-black text-emerald-950">{question}</h3>
                 <p className="mt-3 leading-8 text-muted">{answer}</p>
               </div>

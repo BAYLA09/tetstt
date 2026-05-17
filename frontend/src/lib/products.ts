@@ -45,7 +45,11 @@ export type Product = {
     imageSrc: string;
     headline: string;
     subline: string;
+    /** Large figure shown directly under the insight image (e.g. survey share). */
+    statPercent?: string;
   };
+  /** Optional row of three gallery images after the insight strip (PDP storytelling). */
+  storyGallery?: { src: string; alt: string }[];
 };
 
 export type CartItem = {
@@ -153,8 +157,8 @@ const catalogProducts: Product[] = [
         badge: "الأكثر توفيراً",
       },
     ],
-    image: "/products/aroma-lamp-oud-hero.jpg",
-    cardImage: "/products/img-diffuser-card.jpg",
+    image: "/products/layali-flame-lamp-hero.png",
+    cardImage: "/products/layali-flame-lamp-angle.png",
     heroPanorama: true,
     storyBeforeCommerce: true,
     beforeAfterStory: {
@@ -173,7 +177,22 @@ const catalogProducts: Product[] = [
       headline:
         "نساء في الإمارات يشعرن بأن منازلهن تحتاج إلى دفء أجواء أرقى، حتى مع اهتمامهن بكل تفاصيل الديكور.",
       subline: "استطلاع ليالي بيوتي — دولة الإمارات العربية المتحدة، ٢٠٢٤",
+      statPercent: "٧٨٪",
     },
+    storyGallery: [
+      {
+        src: "/products/layali-flame-lamp-hero.png",
+        alt: "موقد ليالي — واجهة أمامية مع تأثير اللهب والضباب",
+      },
+      {
+        src: "/products/layali-essential-oil-studio.png",
+        alt: "زيت عطري مع قطارة للاستعمال مع الموقد",
+      },
+      {
+        src: "/products/layali-flame-lamp-angle.png",
+        alt: "موقد ليالي — زاوية جانبية على سطح خشبي",
+      },
+    ],
   },
 ];
 

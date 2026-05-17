@@ -38,13 +38,13 @@ function UpsellModal({ orderId, onDone }: { orderId: string; onDone: () => void 
 
   return (
     <div className="fixed inset-0 z-[70] grid place-items-center bg-black/60 p-4">
-      <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="max-w-md rounded-[2rem] border border-[var(--border-gold)] bg-[var(--emerald-950)] p-6 text-center text-white shadow-2xl">
+      <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="max-w-md rounded-[2rem] border border-[var(--border-gold)] bg-[var(--emerald-950)] p-6 text-center text-white shadow-2xl ring-1 ring-white/10">
         <p className="mx-auto mb-3 grid size-16 place-items-center rounded-full bg-[var(--gold-500)] text-3xl text-[var(--emerald-950)]">✦</p>
         <p className="text-sm font-bold text-[var(--gold-300)]">عرض خاص يظهر مرة واحدة فقط</p>
         <h3 className="mt-2 text-2xl font-black">أضيفي لمسة عود فاخرة بـ 39 درهم</h3>
         <p className="mt-3 text-sm leading-7 text-white/75">أكثر إضافة تزيد إحساس الفخامة في الطلب، بسعر خاص فقط قبل تجهيز الشحنة. ينتهي خلال {seconds} ثانية.</p>
         <div className="mt-5 grid gap-3">
-          <button disabled={busy} onClick={accept} className="rounded-full bg-[var(--gold-500)] px-5 py-4 font-black text-[var(--emerald-950)]">
+          <button disabled={busy} onClick={accept} className="rounded-full bg-[var(--gold-500)] px-5 py-4 font-black text-[var(--emerald-950)] shadow-md transition duration-200 hover:bg-[var(--gold-400)] hover:shadow-lg">
             {busy ? "جاري الإضافة..." : "أضيفيه لطلبي بـ 39 درهم"}
           </button>
           <button onClick={onDone} className="text-sm font-bold text-white/75">لا شكراً، أكملي طلبي</button>
@@ -122,16 +122,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         {isCartOpen && (
           <div className="fixed inset-0 z-50">
             <button aria-label="إغلاق السلة" className="absolute inset-0 bg-black/50" onClick={closeCart} />
-            <motion.aside initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", damping: 28 }} className="absolute right-0 top-0 flex h-full w-full max-w-md flex-col bg-white shadow-2xl">
-              <div className="flex items-center justify-between bg-[var(--emerald-950)] p-5 text-white">
+            <motion.aside initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", damping: 28 }} className="absolute right-0 top-0 flex h-full w-full max-w-md flex-col border-l border-[var(--border-gold)] bg-white shadow-[0_0_80px_rgba(0,0,0,0.18)] ring-1 ring-black/5">
+              <div className="flex items-center justify-between border-b border-white/10 bg-[var(--emerald-950)] p-5 text-white">
                 <div>
                   <p className="text-sm text-[var(--gold-300)]">طلبك محفوظ الآن</p>
                   <h2 className="text-xl font-black">سلة ليالي بيوتي</h2>
                 </div>
-                <button onClick={closeCart} className="rounded-full border border-white/20 p-2"><X /></button>
+                <button onClick={closeCart} className="rounded-full border border-white/25 bg-white/5 p-2 transition-colors duration-200 hover:bg-white/15">
+                  <X />
+                </button>
               </div>
               <div className="flex-1 space-y-4 overflow-y-auto p-5">
-                <div className="rounded-3xl bg-[var(--emerald-950)] p-4 text-white">
+                <div className="rounded-3xl border border-white/15 bg-[var(--emerald-950)] p-4 text-white shadow-inner">
                   <p className="text-xs font-bold text-[var(--gold-300)]">مهم قبل التأكيد</p>
                   <p className="mt-1 text-sm leading-7">سنؤكد طلبك عبر الهاتف/واتساب قبل الشحن. الطلبات المؤكدة فقط تدخل التجهيز حتى توصلك التجربة مثل ما اخترتيها.</p>
                 </div>
@@ -141,13 +143,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                     <p className="font-bold">السلة فارغة حالياً</p>
                   </div>
                 ) : items.map((item) => (
-                  <div key={item.sku} className="rounded-2xl border border-[var(--border-gold)] p-4">
+                  <div key={item.sku} className="rounded-2xl border border-[var(--border-gold)] bg-white p-4 shadow-sm ring-1 ring-[rgba(201,150,69,0.05)] transition-shadow duration-200 hover:shadow-md">
                     <div className="flex justify-between gap-3">
                       <div>
                         <p className="font-black text-[var(--emerald-950)]">{item.name}</p>
                         <p className="mt-1 text-sm text-[var(--muted)]">{money(item.price)}</p>
                       </div>
-                      <button onClick={() => removeItem(item.sku)} className="text-sm text-red-700">حذف</button>
+                      <button onClick={() => removeItem(item.sku)} className="text-sm font-semibold text-red-700/90 transition-colors duration-200 hover:text-red-800">
+                        حذف
+                      </button>
                     </div>
                     <div className="mt-3 flex items-center gap-2">
                       <button onClick={() => updateQuantity(item.sku, item.quantity - 1)} className="rounded-full border p-2"><Minus size={14} /></button>
@@ -163,7 +167,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                   <span>{money(total)}</span>
                 </div>
                 <p className="mb-4 flex items-center gap-2 text-sm text-[var(--emerald-950)]"><CheckCircle2 size={16} /> الدفع عند الاستلام - لا تدفعين الآن</p>
-                <button disabled={!items.length} onClick={openCheckout} className="w-full rounded-full bg-[var(--gold-500)] px-6 py-4 font-black text-[var(--emerald-950)] disabled:opacity-50">ثبتي الطلب للتأكيد</button>
+                <button disabled={!items.length} onClick={openCheckout} className="w-full rounded-full bg-[var(--gold-500)] px-6 py-4 font-black text-[var(--emerald-950)] shadow-md transition duration-200 ease-out hover:bg-[var(--gold-400)] hover:shadow-lg disabled:opacity-50">
+                  ثبتي الطلب للتأكيد
+                </button>
               </div>
             </motion.aside>
           </div>
@@ -173,14 +179,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       <AnimatePresence>
         {checkoutState === "checkout" && (
           <div className="fixed inset-0 z-[60] grid place-items-center bg-black/45 p-4 lg:place-items-center">
-            <motion.form onSubmit={submitOrder} initial={{ y: 24, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 24, opacity: 0 }} className="w-full max-w-lg rounded-[2rem] border border-[var(--border-gold)] bg-white p-6 shadow-2xl">
+            <motion.form onSubmit={submitOrder} initial={{ y: 24, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 24, opacity: 0 }} className="w-full max-w-lg rounded-[2rem] border border-[var(--border-gold)] bg-white p-6 shadow-[0_24px_80px_rgba(0,0,0,0.2)] ring-1 ring-[rgba(201,150,69,0.08)]">
               <div className="mb-5 flex items-start justify-between gap-4">
                 <div>
                   <p className="text-sm font-bold text-[var(--gold-500)]">خطوة التأكيد - الدفع عند الاستلام</p>
                   <h2 className="text-2xl font-black text-[var(--emerald-950)]">اكتبي بياناتك ونثبت لك الطلب</h2>
                   <p className="mt-2 text-sm leading-7 text-[var(--muted)]">لا يوجد دفع الآن. سنراجع الرقم ونتواصل معك لتأكيد الشحنة قبل التجهيز حتى تقل الأخطاء والتأخير.</p>
                 </div>
-                <button type="button" onClick={closeCheckout} className="rounded-full border p-2"><X /></button>
+                <button type="button" onClick={closeCheckout} className="rounded-full border border-[var(--border-gold)] bg-[var(--cream-50)]/80 p-2 transition-colors duration-200 hover:bg-[var(--cream-50)]">
+                  <X />
+                </button>
               </div>
               <div className="mb-5 rounded-2xl bg-[var(--cream-50)] p-4">
                 <div className="flex justify-between font-black"><span>ملخص الطلب</span><span>{money(total)}</span></div>
