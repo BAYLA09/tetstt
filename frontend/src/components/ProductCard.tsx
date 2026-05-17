@@ -28,7 +28,9 @@ export function ProductCard({
               alt={product.name}
               fill
               className="object-cover transition duration-300 group-hover:scale-[1.03]"
-              sizes="(max-width: 768px) 100vw, 33vw"
+              sizes="(max-width: 768px) 100vw, 50vw"
+              unoptimized
+              priority={!showAddButton}
               onError={() => setImageFailed(true)}
             />
           </div>
