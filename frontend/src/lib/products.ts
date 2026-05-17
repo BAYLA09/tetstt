@@ -26,6 +26,8 @@ export type Product = {
   image?: string;
   cardImage?: string;
   heroPanorama?: boolean;
+  /** When false, hero image area shows only the photo (no glass caption card). */
+  heroMediaShowCaption?: boolean;
   /** Hero image + story blocks render above price and add-to-cart. */
   storyBeforeCommerce?: boolean;
   offerTiers?: ProductOfferTier[];
@@ -202,6 +204,7 @@ const catalogProducts: Product[] = [
     image: "/products/aroma-lamp-insight-before-after-products.png",
     cardImage: "/products/layali-flame-lamp-hero.png",
     heroPanorama: true,
+    heroMediaShowCaption: false,
     storyBeforeCommerce: true,
     insightStrip: {
       imageSrc: "/products/aroma-stat-woman.jpg",

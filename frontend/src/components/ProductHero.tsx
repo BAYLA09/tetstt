@@ -18,36 +18,39 @@ import { ProductStickyNav } from "@/components/ProductStickyNav";
 function HeroMedia({ product, contained }: { product: Product; contained?: boolean }) {
   const [imageFailed, setImageFailed] = useState(false);
   const showImage = Boolean(product.image) && !imageFailed;
+  const showCaption = product.heroMediaShowCaption !== false;
 
   return (
     <div
-      className={`product-illustration ${showImage ? "has-product-image" : ""} grid min-h-[380px] place-items-end rounded-[2.5rem] p-6 lg:min-h-[620px] ${
-        contained ? "" : "lg:mx-0"
-      }`}
+      className={`product-illustration ${showImage ? "has-product-image" : ""} grid min-h-[380px] rounded-[2.5rem] p-6 lg:min-h-[620px] ${
+        showCaption ? "place-items-end" : "place-items-center"
+      } ${contained ? "" : "lg:mx-0"}`}
     >
       {showImage && (
         <Image
           src={product.image!}
           alt={product.name}
           fill
-          className="z-0 object-contain p-4 md:p-8"
+          className={`z-0 object-contain ${showCaption ? "p-4 md:p-8" : "p-2 md:p-4"}`}
           priority
           sizes="(max-width: 1024px) 100vw, 48vw"
           onError={() => setImageFailed(true)}
         />
       )}
-      <div className="copy-quote copy-quote--inverse relative z-10 max-w-sm p-5 text-white shadow-2xl">
-        <p className="text-sm font-black text-[var(--gold-300)]">ليالي بيوتي</p>
-        <h2 className="mt-2 text-3xl font-black">{product.shortName}</h2>
-        <p className="mt-3 text-sm leading-7 text-[var(--cream-100)]">{product.headline}</p>
-        <div className="mt-4 grid grid-cols-2 gap-2 text-xs font-bold text-[var(--gold-300)]">
-          {product.notes.slice(0, 4).map((note) => (
-            <span key={note} className="rounded-full border border-white/10 bg-white/10 px-3 py-2 text-center">
-              {note}
-            </span>
-          ))}
+      {showCaption ? (
+        <div className="copy-quote copy-quote--inverse relative z-10 max-w-sm p-5 text-white shadow-2xl">
+          <p className="text-sm font-black text-[var(--gold-300)]">ليالي بيوتي</p>
+          <h2 className="mt-2 text-3xl font-black">{product.shortName}</h2>
+          <p className="mt-3 text-sm leading-7 text-[var(--cream-100)]">{product.headline}</p>
+          <div className="mt-4 grid grid-cols-2 gap-2 text-xs font-bold text-[var(--gold-300)]">
+            {product.notes.slice(0, 4).map((note) => (
+              <span key={note} className="rounded-full border border-white/10 bg-white/10 px-3 py-2 text-center">
+                {note}
+              </span>
+            ))}
+          </div>
         </div>
-      </div>
+      ) : null}
     </div>
   );
 }
