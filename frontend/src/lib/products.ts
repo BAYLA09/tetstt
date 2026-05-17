@@ -139,7 +139,7 @@ const catalogProducts: Product[] = [
       },
     ],
     image: "/products/layali-essential-oil-studio.png",
-    cardImage: "/products/layali-essential-oil-studio.png",
+    cardImage: "/products/layali-oud-home-card.png",
   },
   {
     sku: "LB-SERUM-SET-99",
