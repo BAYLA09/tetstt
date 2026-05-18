@@ -151,8 +151,6 @@ export function ProductLandingView({ product }: { product: LandingProduct }) {
 
   const ingredients = product.ingredientStack.map(normalizeIngredient);
 
-  const serumHeroFirst = product.slug === "dubai-palace-oud-serum";
-
   const codStrip = (
     <div className="border-b bg-[var(--lp-primary)] px-4 py-2 text-center text-xs font-bold text-white sm:text-sm">
       <span className="inline-flex items-center justify-center gap-2">
@@ -184,17 +182,8 @@ export function ProductLandingView({ product }: { product: LandingProduct }) {
 
   return (
     <div className="product-landing-root pb-28" style={themeStyle()}>
-      {serumHeroFirst ? (
-        <>
-          {heroAndBadges}
-          {codStrip}
-        </>
-      ) : (
-        <>
-          {codStrip}
-          {heroAndBadges}
-        </>
-      )}
+      {codStrip}
+      {heroAndBadges}
 
       <section className="bg-[var(--lp-bg)] px-4 py-6" dir="rtl">
         <div className="mx-auto max-w-lg text-right">
