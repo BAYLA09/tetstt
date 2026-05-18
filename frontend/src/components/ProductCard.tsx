@@ -17,7 +17,7 @@ export function ProductCard({
   const showPhoto = Boolean(cardSrc);
   /** `object-cover` was cropping the label off wide studio shots for the serum card. */
   const cardImgClass =
-    product.slug === "dubai-palace-oud-serum"
+    product.slug === "dubai-palace-oud-serum" || product.slug === "aroma-flame-lamp"
       ? "h-full w-full object-contain object-center p-2 sm:p-4 transition duration-300 group-hover:scale-[1.02]"
       : "h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.03]";
 

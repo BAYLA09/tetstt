@@ -182,6 +182,7 @@ const catalogProducts: Product[] = [
     story:
       "مو بس «فواحة»: نبني أجواء — أقل جفاف في الهوى حول الوجه، رائحة عود ناعمة، ونوم أعمق بعد يوم طويل تحت المكيف.",
     notes: ["ضباب بارد", "لجو المكيف", "رائحة عود", "دفع عند الاستلام"],
+    cardImage: `/merchant/aroma-fussile/${encodeURIComponent("adskull-image-f9dbbdc2-6987-4514-85ec-4a70890656f6 (3).png")}`,
     heroPromoLine: "اختاري الموقد وحده أو مع عود قصر دبي لروتين الجفاف الكامل",
     offerTiers: [
       {
