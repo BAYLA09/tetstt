@@ -1,6 +1,6 @@
 import type { LandingProduct } from "./landing-types";
 
-/** URL-safe path under `public/merchant/aroma-fussile/` (spaces, parentheses, etc.). */
+/** Builds `/merchant/aroma-fussile/…` URLs with encoding — only the three handoff filenames below; no `/products` catalog art. */
 const AROMA_FUSSILE_MERCHANT = "/merchant/aroma-fussile";
 function aromaFussileMerchantSrc(filename: string): string {
   return `${AROMA_FUSSILE_MERCHANT}/${encodeURIComponent(filename)}`;
@@ -396,10 +396,10 @@ export const landingProducts: LandingProduct[] = [
       comparisonImage: "",
     },
     imageAlts: {
-      heroBeforeAfter: "قبل وبعد — الموقد وزيت الصندل وتحوّل لطيف للجو",
+      heroBeforeAfter: "قبل وبعد: تحوّل الوجه مع الموقد وزيت الصندل في المقدمة",
       heroProduct: "موقد ليالي بيوتي",
-      problemImage: "لقطة قريبة — هدوء وتفكير بلمسة عناية يومية",
-      ingredientImage: "جو دافئ بعد الروتين — راحة للبيت والعائلة",
+      problemImage: "صورة مقربة: حجاب بيج وإضاءة طبيعية ناعمة",
+      ingredientImage: "عائلة في غرفة دافئة — جو البيت بعد الروتين",
       authorityImage: "عناصر توضيحية للاستعمال",
       lifestyleImage: "لقطة مسائية داخل البيت",
       testimonialImage: "تجربة عميلة",
