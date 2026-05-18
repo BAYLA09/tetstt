@@ -58,6 +58,47 @@ function HeroMedia({ product, contained }: { product: Product; contained?: boole
   const [imageFailed, setImageFailed] = useState(false);
   const hasImageSrc = Boolean(product.image?.trim());
   const showImage = hasImageSrc && !imageFailed;
+  const heroPanorama = product.heroPanorama === true;
+
+  /** Wide marketing composites (before/after + SKU in-frame): never force square slots or `object-cover`. */
+  if (heroPanorama && showImage) {
+    const fullBleed = !contained;
+    const frameClass = fullBleed
+      ? "relative w-screen max-w-none shrink-0 bg-[rgba(0,20,14,0.35)] mx-[calc(50%-50vw)] lg:mx-auto lg:w-full lg:max-w-[1180px] lg:overflow-hidden lg:rounded-[2.5rem] lg:bg-transparent"
+      : "relative w-full overflow-hidden rounded-[2.5rem] border border-gold-400/20 bg-black/10";
+    const unmodified = product.heroMediaUnmodified === true;
+    return (
+      <div className={frameClass}>
+        {unmodified ? (
+          // eslint-disable-next-line @next/next/no-img-element -- merchant hero must bypass next/image recompression
+          <img
+            src={product.image!}
+            alt={product.name}
+            className="block h-auto w-full object-contain object-center"
+            decoding="async"
+            fetchPriority="high"
+            onError={() => setImageFailed(true)}
+          />
+        ) : (
+          <Image
+            src={product.image!}
+            alt={product.name}
+            width={1536}
+            height={1024}
+            className="h-auto w-full object-contain"
+            priority
+            sizes={
+              fullBleed
+                ? "(max-width: 1024px) 100vw, min(1180px, 100vw)"
+                : "(max-width: 1024px) 100vw, 52vw"
+            }
+            onError={() => setImageFailed(true)}
+          />
+        )}
+      </div>
+    );
+  }
+
   const showCaption = product.heroMediaShowCaption !== false;
   const denseHero = !showCaption;
   const denseContain = denseHero && product.heroMediaObjectFit === "contain";
@@ -430,13 +471,36 @@ export function ProductHero({ product }: { product: Product }) {
 
   if (storyFirst) {
     const bridge = product.heroMarketingBridge;
+    const stackedPanoramaHero = product.heroPanorama === true;
 
     return (
       <>
         <section className="hero-gradient relative overflow-hidden px-4 pb-28 pt-6 lg:pb-32 lg:pt-10">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(201,150,69,0.2),transparent_32%)]" />
           <div className="container-grid relative z-10" dir="ltr">
-            {bridge ? (
+            {stackedPanoramaHero ? (
+              <div className="flex flex-col gap-8 lg:gap-10">
+                <HeroMedia product={product} />
+                {bridge ? (
+                  <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-start lg:gap-x-10">
+                    <CommercePanel
+                      product={product}
+                      selectedTier={selectedTier}
+                      onTierChange={setSelectedTier}
+                      onAdd={addOffer}
+                    />
+                    <HeroMarketingBridge block={bridge} />
+                  </div>
+                ) : (
+                  <CommercePanel
+                    product={product}
+                    selectedTier={selectedTier}
+                    onTierChange={setSelectedTier}
+                    onAdd={addOffer}
+                  />
+                )}
+              </div>
+            ) : bridge ? (
               <div className="flex flex-col gap-8 lg:grid lg:grid-cols-[0.95fr_1.05fr] lg:grid-rows-[auto_auto] lg:items-stretch lg:gap-x-10 lg:gap-y-8">
                 <div className="min-h-0 lg:col-start-2 lg:row-start-1">
                   <HeroMedia product={product} contained />
