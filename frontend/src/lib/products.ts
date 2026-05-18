@@ -216,7 +216,7 @@ const catalogProducts: Product[] = [
       },
     ],
     image: "/products/aroma-lamp-pdp-hero-exact.png",
-    cardImage: "/products/layali-flame-lamp-hero.png",
+    cardImage: "/products/aroma-lamp-pdp-hero-exact.png",
     heroPanorama: true,
     heroMediaObjectFit: "contain",
     heroMediaUnmodified: true,
