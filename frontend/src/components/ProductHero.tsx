@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { CheckCircle2, ShoppingCart } from "lucide-react";
+import { CheckCircle2, Droplets, Flame, ShieldCheck, ShoppingCart, Wind } from "lucide-react";
 import {
   Product,
   ProductOfferTier,
@@ -14,6 +14,47 @@ import { PRODUCT_OFFER_ANCHOR_ID } from "@/lib/product-experience";
 import { useCartStore } from "@/lib/cart-store";
 import { generateEventId, trackEvent } from "@/lib/events";
 import { ProductStickyNav } from "@/components/ProductStickyNav";
+
+function HeroMarketingBridge({
+  block,
+}: {
+  block: NonNullable<Product["heroMarketingBridge"]>;
+}) {
+  const icons = [Droplets, Flame, Wind, ShieldCheck];
+
+  return (
+    <div
+      className="rounded-[2rem] border border-[var(--border-gold)] bg-white p-5 shadow-[0_14px_50px_rgba(42,27,18,0.08)] md:p-8"
+      dir="rtl"
+    >
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        {block.pills.map(([title, sub], i) => {
+          const Icon = icons[i] ?? Droplets;
+          return (
+            <div
+              key={title}
+              className="flex gap-2.5 rounded-2xl border border-[var(--border-gold)]/80 bg-[var(--cream-50)] p-3 md:flex-col md:items-start md:gap-2"
+            >
+              <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-[var(--emerald-950)] text-[var(--gold-300)]">
+                <Icon className="h-5 w-5" aria-hidden />
+              </span>
+              <div className="min-w-0 text-right">
+                <p className="text-xs font-black leading-snug text-[var(--emerald-950)] md:text-sm">{title}</p>
+                <p className="mt-0.5 text-[11px] font-semibold leading-5 text-[var(--muted)] md:text-xs">{sub}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <h2 className="mt-7 text-2xl font-black leading-snug text-[var(--emerald-950)] md:mt-8 md:text-3xl md:leading-tight">
+        {block.headline}
+      </h2>
+      <p className="mt-4 text-[0.95rem] font-semibold leading-8 text-[var(--muted)] md:text-base md:leading-9">
+        {block.body}
+      </p>
+    </div>
+  );
+}
 
 function HeroMedia({ product, contained }: { product: Product; contained?: boolean }) {
   const [imageFailed, setImageFailed] = useState(false);
@@ -384,24 +425,45 @@ export function ProductHero({ product }: { product: Product }) {
   const storyFirst = product.storyBeforeCommerce === true;
 
   if (storyFirst) {
+    const bridge = product.heroMarketingBridge;
+
     return (
       <>
         <section className="hero-gradient relative overflow-hidden px-4 pb-28 pt-6 lg:pb-32 lg:pt-10">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(201,150,69,0.2),transparent_32%)]" />
           <div className="container-grid relative z-10" dir="ltr">
-            <div className="grid items-start gap-10 lg:grid-cols-[0.95fr_1.05fr]">
-              <div className="order-2 lg:order-1">
-                <CommercePanel
-                  product={product}
-                  selectedTier={selectedTier}
-                  onTierChange={setSelectedTier}
-                  onAdd={addOffer}
-                />
+            {bridge ? (
+              <div className="flex flex-col gap-8 lg:grid lg:grid-cols-[0.95fr_1.05fr] lg:grid-rows-[auto_auto] lg:items-stretch lg:gap-x-10 lg:gap-y-8">
+                <div className="min-h-0 lg:col-start-2 lg:row-start-1">
+                  <HeroMedia product={product} contained />
+                </div>
+                <div className="lg:col-start-2 lg:row-start-2">
+                  <HeroMarketingBridge block={bridge} />
+                </div>
+                <div className="flex min-h-0 flex-col lg:col-start-1 lg:row-span-2 lg:row-start-1">
+                  <CommercePanel
+                    product={product}
+                    selectedTier={selectedTier}
+                    onTierChange={setSelectedTier}
+                    onAdd={addOffer}
+                  />
+                </div>
               </div>
-              <div className="order-1 lg:order-2">
-                <HeroMedia product={product} contained />
+            ) : (
+              <div className="grid items-start gap-10 lg:grid-cols-[0.95fr_1.05fr]">
+                <div className="order-2 lg:order-1">
+                  <CommercePanel
+                    product={product}
+                    selectedTier={selectedTier}
+                    onTierChange={setSelectedTier}
+                    onAdd={addOffer}
+                  />
+                </div>
+                <div className="order-1 lg:order-2">
+                  <HeroMedia product={product} contained />
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </section>
         <InsightStrip product={product} />

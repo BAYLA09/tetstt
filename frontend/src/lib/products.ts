@@ -58,6 +58,12 @@ export type Product = {
   };
   /** Optional three-image row after the insight strip (PDP storytelling). */
   storyGallery?: { src: string; alt: string }[];
+  /** Hero bridge: compact pills + headline + body between hero art and offer panel (lamp PDP). */
+  heroMarketingBridge?: {
+    pills: [title: string, sub: string][];
+    headline: string;
+    body: string;
+  };
 };
 
 export type CartItem = {
@@ -214,6 +220,17 @@ const catalogProducts: Product[] = [
     heroMediaShowCaption: false,
     commerceShowIntro: false,
     storyBeforeCommerce: true,
+    heroMarketingBridge: {
+      pills: [
+        ["ضباب بارد خفيف", "يلطّف الهوى حول الوجه"],
+        ["ضوء لهب دافي", "أجواء ليلية بدون نار حقيقية"],
+        ["رائحة عود راقية", "تغطي على رائحة المكيف"],
+        ["لجوه الإمارات", "دفع عند الاستلام"],
+      ],
+      headline: "بشرتج تيقرّص من جفاف المكيف — السبب مو «كريم زايد» وحدو",
+      body:
+        "اليوم الطويل تحت التكييف يخلّي الهوى حول الوجه أنشف: تحسّين شد خفيف، بشرة بطيّة، والمكياج ما يثبتش مثل قبل. موقد الجو الجاف من ليالي بيوتي يبني طبقة ضباب باردة خفيفة تلطّف الهوى حولج، مع ضوء لهب دافي يرخّي الأعصاب بعد المغرب، وبوخور عود يعطي للغرفة طقس فيلا أنيق. ما يحتاج إبرة، ولا جلسة فيتامين سي؛ أداة واحدة تمشي مع زيتج العطري وتكمّل روتين «بشرة أهدى» بليلة تشغيل — والطلب واضح: دفع عند الاستلام داخل الإمارات.",
+    },
     insightStrip: {
       imageSrc: "/products/aroma-stat-woman.jpg",
       headline:
