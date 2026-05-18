@@ -153,7 +153,7 @@ const catalogProducts: Product[] = [
         badge: "الأكثر توفيراً",
       },
     ],
-    image: "/products/aroma-lamp-oud-hero.jpg",
+    image: "/products/aroma-lamp-pdp-hero-exact.png",
     cardImage: "/products/img-diffuser-card.jpg",
     heroPanorama: true,
     storyBeforeCommerce: true,
