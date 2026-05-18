@@ -215,8 +215,8 @@ const catalogProducts: Product[] = [
         badge: "الأكثر توفيراً",
       },
     ],
-    image: "/products/aroma-lamp-pdp-hero-exact.png",
-    cardImage: "/products/aroma-lamp-pdp-hero-exact.png",
+    image: "/products/layali-flame-lamp-hero.png",
+    cardImage: "/products/layali-flame-lamp-hero.png",
     heroPanorama: true,
     heroMediaObjectFit: "contain",
     heroMediaUnmodified: true,
@@ -243,16 +243,16 @@ const catalogProducts: Product[] = [
     },
     storyGallery: [
       {
+        src: "/products/layali-flame-lamp-angle.png",
+        alt: "موقد الجو الجاف — زاوية جانبية على سطح خشبي",
+      },
+      {
         src: "/products/layali-flame-lamp-hero.png",
         alt: "موقد الجو الجاف — واجهة أمامية مع تأثير اللهب والضباب",
       },
       {
-        src: "/products/layali-essential-oil-studio.png",
-        alt: "زيت عطري مع قطارة للاستعمال مع الموقد",
-      },
-      {
-        src: "/products/layali-flame-lamp-angle.png",
-        alt: "موقد الجو الجاف — زاوية جانبية على سطح خشبي",
+        src: "/products/layali-oud-home-card.png",
+        alt: "سيروم عود قصر دبي — صورة العرض للاستعمال مع الموقد",
       },
     ],
   },
