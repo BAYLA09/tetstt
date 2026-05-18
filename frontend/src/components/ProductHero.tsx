@@ -19,21 +19,26 @@ function HeroMedia({ product, contained }: { product: Product; contained?: boole
   const [imageFailed, setImageFailed] = useState(false);
   const showImage = Boolean(product.image) && !imageFailed;
   const showCaption = product.heroMediaShowCaption !== false;
+  const denseHero = !showCaption;
 
   return (
     <div
-      className={`product-illustration ${showImage ? "has-product-image" : ""} grid min-h-[380px] rounded-[2.5rem] p-6 lg:min-h-[620px] ${
-        showCaption ? "place-items-end" : "place-items-center"
-      } ${contained ? "" : "lg:mx-0"}`}
+      className={`product-illustration ${showImage ? "has-product-image" : ""} grid rounded-[2.5rem] ${
+        denseHero
+          ? "min-h-[min(92dvh,720px)] p-0 sm:p-1 lg:min-h-[640px] lg:p-2"
+          : "min-h-[380px] p-6 lg:min-h-[620px]"
+      } ${showCaption ? "place-items-end" : "place-items-stretch"} ${contained ? "" : "lg:mx-0"}`}
     >
       {showImage && (
         <Image
           src={product.image!}
           alt={product.name}
           fill
-          className={`z-0 object-contain ${showCaption ? "p-4 md:p-8" : "p-2 md:p-4"}`}
+          className={`z-0 ${denseHero ? "object-cover object-center" : "object-contain"} ${
+            showCaption ? "p-4 md:p-8" : denseHero ? "p-0" : "p-2 md:p-4"
+          }`}
           priority
-          sizes="(max-width: 1024px) 100vw, 48vw"
+          sizes="(max-width: 1024px) 100vw, 52vw"
           onError={() => setImageFailed(true)}
         />
       )}
