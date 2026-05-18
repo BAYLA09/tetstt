@@ -353,14 +353,18 @@ export function ProductHero({ product }: { product: Product }) {
         <section className="hero-gradient relative overflow-hidden px-4 pb-28 pt-6 lg:pb-32 lg:pt-10">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(201,150,69,0.2),transparent_32%)]" />
           <div className="container-grid relative z-10" dir="ltr">
-            <div className="grid items-start gap-10 lg:grid-cols-[1.05fr_0.95fr]">
-              <HeroMedia product={product} contained />
-              <CommercePanel
-                product={product}
-                selectedTier={selectedTier}
-                onTierChange={setSelectedTier}
-                onAdd={addOffer}
-              />
+            <div className="grid items-start gap-10 lg:grid-cols-[0.95fr_1.05fr]">
+              <div className="order-2 lg:order-1">
+                <CommercePanel
+                  product={product}
+                  selectedTier={selectedTier}
+                  onTierChange={setSelectedTier}
+                  onAdd={addOffer}
+                />
+              </div>
+              <div className="order-1 lg:order-2">
+                <HeroMedia product={product} contained />
+              </div>
             </div>
           </div>
         </section>
