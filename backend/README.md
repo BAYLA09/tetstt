@@ -20,13 +20,13 @@ run automatically in the Docker command.
 When `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and `ADMIN_JWT_SECRET` (16+ chars) are set:
 
 - `POST /admin/login` — JSON `{ "username", "password" }` → `{ "access_token", "token_type", "expires_in" }`.
-- `GET /admin/metrics?date_from=YYYY-MM-DD&date_to=YYYY-MM-DD` — Bearer token; returns clicks, orders, revenue, conversion (orders ÷ ad clicks).
-- `GET /admin/orders?...` — Bearer token; paginated order summaries.
+- `GET /admin/metrics?date_from=YYYY-MM-DD&date_to=YYYY-MM-DD` — Bearer token; returns clicks, orders, revenue, conversion (orders ÷ ad clicks), AOV, orders-by-status, sheet-sync pending count, upsell attach rate.
+- `GET /admin/orders?date_from=&date_to=&status=&limit=&offset=` — Bearer token; JSON `{ total, limit, offset, orders: [...] }` with optional `status` filter.
 - `GET /admin/orders/{public_order_id}` — Bearer token; full order + line items.
 
 **Ad clicks:** `POST /analytics/click` (public) records a row only when the body includes at least one of `fbclid`, `ttclid`, or `sc_click_id` (Snap). The storefront beacon sends once per session.
 
-For production Postgres, apply `migrations/sql/20260517_ad_clicks_postgres.sql` or run Alembic revision `20260517_0002`.
+For production Postgres, either run **Alembic** (`alembic upgrade head`) or apply the idempotent script `migrations/sql/layali_cod_store_postgres_bootstrap.sql` (full orders + items + tracking + ad_clicks). The older `migrations/sql/20260517_ad_clicks_postgres.sql` only adds `ad_clicks` if you already have orders from Alembic.
 
 For local testing without Postgres, set:
 

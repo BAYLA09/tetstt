@@ -400,3 +400,15 @@ body:has(.admin-root) [data-site-chrome="header"],
 body:has(.admin-root) [data-site-chrome="footer"] {
   display: none !important;
 }
+
+@media print {
+  body:has(.admin-root) {
+    background: white !important;
+  }
+
+  body:has(.admin-root) #order-preview-panel {
+    max-height: none !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+}

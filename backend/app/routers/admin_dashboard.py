@@ -7,7 +7,7 @@ from datetime import UTC, date, datetime, timedelta
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Query
-from sqlalchemy import func, select
+from sqlalchemy import and_, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -18,6 +18,7 @@ from app.schemas import (
     AdminLoginIn,
     AdminLoginResponse,
     AdminMetricsOut,
+    AdminOrdersListOut,
     OrderAdminDetailOut,
     OrderAdminSummaryOut,
     OrderItemAdminOut,
@@ -118,6 +119,45 @@ async def admin_metrics(
     conversion = (orders_count / clicks * 100.0) if clicks else None
     aov = (revenue / orders_count) if orders_count else None
 
+    status_rows = (
+        await session.execute(
+            select(Order.status, func.count())
+            .select_from(Order)
+            .where(Order.created_at >= start_dt, Order.created_at < end_dt)
+            .group_by(Order.status),
+        )
+    ).all()
+    orders_by_status = {str(s): int(c) for s, c in status_rows}
+
+    pending_sheet = int(
+        (
+            await session.execute(
+                select(func.count())
+                .select_from(Order)
+                .where(
+                    Order.created_at >= start_dt,
+                    Order.created_at < end_dt,
+                    Order.sheet_sync_status == "pending",
+                ),
+            )
+        ).scalar_one()
+    )
+
+    with_upsell = int(
+        (
+            await session.execute(
+                select(func.count())
+                .select_from(Order)
+                .where(
+                    Order.created_at >= start_dt,
+                    Order.created_at < end_dt,
+                    Order.upsell_total > 0,
+                ),
+            )
+        ).scalar_one()
+    )
+    upsell_rate = (with_upsell / orders_count * 100.0) if orders_count else None
+
     return AdminMetricsOut(
         date_from=ds,
         date_to=de,
@@ -126,23 +166,34 @@ async def admin_metrics(
         revenue_aed=round(revenue, 2),
         conversion_rate_percent=round(conversion, 2) if conversion is not None else None,
         average_order_value_aed=round(aov, 2) if aov is not None else None,
+        orders_by_status=orders_by_status,
+        pending_sheet_sync_count=pending_sheet,
+        orders_with_upsell=with_upsell,
+        upsell_attach_rate_percent=round(upsell_rate, 2) if upsell_rate is not None else None,
     )
 
 
-@router.get("/orders", response_model=list[OrderAdminSummaryOut])
+@router.get("/orders", response_model=AdminOrdersListOut)
 async def admin_orders(
     _: None = Depends(require_admin),
     session: AsyncSession = Depends(get_session),
     date_from: str | None = Query(None),
     date_to: str | None = Query(None),
+    status: str | None = Query(None, description="Filter by order.status"),
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
-) -> list[OrderAdminSummaryOut]:
+) -> AdminOrdersListOut:
     start_dt, end_dt, _, _ = _parse_range(date_from, date_to)
+    filters = [Order.created_at >= start_dt, Order.created_at < end_dt]
+    if status:
+        filters.append(Order.status == status.strip())
+
+    total = int((await session.execute(select(func.count()).select_from(Order).where(and_(*filters)))).scalar_one())
+
     stmt = (
         select(Order)
         .options(selectinload(Order.items))
-        .where(Order.created_at >= start_dt, Order.created_at < end_dt)
+        .where(and_(*filters))
         .order_by(Order.created_at.desc())
         .offset(offset)
         .limit(limit)
@@ -161,11 +212,12 @@ async def admin_orders(
                 phone_display=_mask_phone(o.phone_e164),
                 total=float(o.total),
                 currency=o.currency,
+                status=o.status,
                 utm_source=o.utm_source,
                 items_preview=preview,
             )
         )
-    return out
+    return AdminOrdersListOut(total=total, limit=limit, offset=offset, orders=out)
 
 
 @router.get("/orders/{public_order_id}", response_model=OrderAdminDetailOut)

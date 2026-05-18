@@ -12,6 +12,10 @@ type Metrics = {
   revenue_aed: number;
   conversion_rate_percent: number | null;
   average_order_value_aed: number | null;
+  orders_by_status: Record<string, number>;
+  pending_sheet_sync_count: number;
+  orders_with_upsell: number;
+  upsell_attach_rate_percent: number | null;
 };
 
 type OrderRow = {
@@ -21,8 +25,16 @@ type OrderRow = {
   phone_display: string;
   total: number;
   currency: string;
+  status: string;
   utm_source: string | null;
   items_preview: string;
+};
+
+type OrdersPage = {
+  total: number;
+  limit: number;
+  offset: number;
+  orders: OrderRow[];
 };
 
 type OrderDetail = {
@@ -54,12 +66,22 @@ type OrderDetail = {
   }[];
 };
 
+function isoDate(d: Date) {
+  return d.toISOString().slice(0, 10);
+}
+
 function defaultDateRange() {
   const end = new Date();
   const start = new Date();
   start.setDate(start.getDate() - 29);
-  const iso = (d: Date) => d.toISOString().slice(0, 10);
-  return { from: iso(start), to: iso(end) };
+  return { from: isoDate(start), to: isoDate(end) };
+}
+
+function presetRange(days: number) {
+  const end = new Date();
+  const start = new Date();
+  start.setDate(start.getDate() - (days - 1));
+  return { from: isoDate(start), to: isoDate(end) };
 }
 
 export default function AdminDashboardPage() {
@@ -75,15 +97,20 @@ export default function AdminDashboardPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState<string | null>(null);
-  const [tab, setTab] = useState<"overview" | "orders">("overview");
+  const [tab, setTab] = useState<"overview" | "orders" | "setup">("overview");
   const [dateFrom, setDateFrom] = useState(initialRange.from);
   const [dateTo, setDateTo] = useState(initialRange.to);
   const [metrics, setMetrics] = useState<Metrics | null>(null);
-  const [orders, setOrders] = useState<OrderRow[]>([]);
+  const [ordersPayload, setOrdersPayload] = useState<OrdersPage | null>(null);
   const [loading, setLoading] = useState(false);
+  const [ordersLoading, setOrdersLoading] = useState(false);
   const [detail, setDetail] = useState<OrderDetail | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const [refreshTick, setRefreshTick] = useState(0);
+  const [orderStatus, setOrderStatus] = useState<string>("");
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(0);
+  const pageSize = 25;
 
   const authHeader = useCallback(() => {
     if (!token) return null;
@@ -98,8 +125,9 @@ export default function AdminDashboardPage() {
     }
     setToken(null);
     setMetrics(null);
-    setOrders([]);
+    setOrdersPayload(null);
     setDetail(null);
+    setPage(0);
   }, []);
 
   const login = async (e: React.FormEvent) => {
@@ -138,21 +166,12 @@ export default function AdminDashboardPage() {
     void (async () => {
       setLoading(true);
       try {
-        const [mRes, oRes] = await Promise.all([
-          fetch(`/api/admin/metrics?${qs}`, { headers: { Authorization: h } }),
-          fetch(`/api/admin/orders?${qs}&limit=100&offset=0`, { headers: { Authorization: h } }),
-        ]);
-        if (mRes.status === 401 || oRes.status === 401) {
+        const mRes = await fetch(`/api/admin/metrics?${qs}`, { headers: { Authorization: h } });
+        if (mRes.status === 401) {
           logout();
           return;
         }
-        if (!cancelled) {
-          if (mRes.ok) setMetrics(await mRes.json());
-          if (oRes.ok) {
-            const data = await oRes.json();
-            setOrders(Array.isArray(data) ? data : []);
-          }
-        }
+        if (!cancelled && mRes.ok) setMetrics(await mRes.json());
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -161,6 +180,35 @@ export default function AdminDashboardPage() {
       cancelled = true;
     };
   }, [token, dateFrom, dateTo, refreshTick, logout]);
+
+  useEffect(() => {
+    if (!token || tab !== "orders") return;
+    const h = `Bearer ${token}`;
+    let cancelled = false;
+    const qs = new URLSearchParams({
+      date_from: dateFrom,
+      date_to: dateTo,
+      limit: String(pageSize),
+      offset: String(page * pageSize),
+    });
+    if (orderStatus.trim()) qs.set("status", orderStatus.trim());
+    void (async () => {
+      setOrdersLoading(true);
+      try {
+        const oRes = await fetch(`/api/admin/orders?${qs}`, { headers: { Authorization: h } });
+        if (oRes.status === 401) {
+          logout();
+          return;
+        }
+        if (!cancelled && oRes.ok) setOrdersPayload(await oRes.json());
+      } finally {
+        if (!cancelled) setOrdersLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [token, tab, dateFrom, dateTo, page, orderStatus, refreshTick, logout]);
 
   const openOrder = async (id: string | null) => {
     if (!id) return;
@@ -184,36 +232,93 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const filteredOrders = useMemo(() => {
+    const rows = ordersPayload?.orders ?? [];
+    const q = search.trim().toLowerCase();
+    if (!q) return rows;
+    return rows.filter(
+      (o) =>
+        (o.public_order_id && o.public_order_id.toLowerCase().includes(q)) ||
+        o.customer_name.toLowerCase().includes(q) ||
+        o.phone_display.toLowerCase().includes(q) ||
+        o.items_preview.toLowerCase().includes(q),
+    );
+  }, [ordersPayload, search]);
+
+  const statusOptions = useMemo(() => {
+    const fromMetrics = metrics ? Object.keys(metrics.orders_by_status) : [];
+    const hints = ["received", "confirmed", "shipped", "cancelled"];
+    return Array.from(new Set([...hints, ...fromMetrics])).sort();
+  }, [metrics]);
+
+  const exportCsv = () => {
+    const rows = filteredOrders;
+    const header = ["order_id", "created_at", "customer", "phone", "status", "total", "currency", "utm_source", "items"];
+    const lines = [
+      header.join(","),
+      ...rows.map((o) =>
+        [
+          o.public_order_id ?? "",
+          o.created_at,
+          csvEscape(o.customer_name),
+          o.phone_display,
+          o.status,
+          o.total,
+          o.currency,
+          o.utm_source ?? "",
+          csvEscape(o.items_preview),
+        ].join(","),
+      ),
+    ];
+    const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `layali-orders-${dateFrom}_${dateTo}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   if (!token) {
     return (
-      <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 py-16" dir="ltr">
-        <h1 className="text-2xl font-bold tracking-tight text-white">Layali Beauty · Admin</h1>
-        <p className="mt-2 text-sm text-slate-400">Sign in with backend credentials (Bearer JWT).</p>
+      <div
+        className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 py-16"
+        dir="ltr"
+        style={{ background: "var(--emerald-950)", color: "var(--cream-50)" }}
+      >
+        <p className="text-xs font-bold uppercase tracking-[0.28em]" style={{ color: "var(--gold-400)" }}>
+          ليالي بيوتي
+        </p>
+        <h1 className="mt-2 text-3xl font-black text-white">Admin</h1>
+        <p className="mt-2 text-sm opacity-80">COD operations · sign in with backend credentials.</p>
         <form onSubmit={login} className="mt-8 space-y-4">
-          <label className="block text-sm font-medium text-slate-200">
+          <label className="block text-sm font-semibold">
             Username
             <input
-              className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-white outline-none ring-amber-500/40 focus:ring-2"
+              className="mt-1 w-full rounded-xl border px-3 py-2.5 text-[var(--ink)] outline-none ring-amber-400/30 focus:ring-2"
+              style={{ borderColor: "var(--border-gold)", background: "var(--cream-50)" }}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               autoComplete="username"
             />
           </label>
-          <label className="block text-sm font-medium text-slate-200">
+          <label className="block text-sm font-semibold">
             Password
             <input
               type="password"
-              className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-white outline-none ring-amber-500/40 focus:ring-2"
+              className="mt-1 w-full rounded-xl border px-3 py-2.5 text-[var(--ink)] outline-none ring-amber-400/30 focus:ring-2"
+              style={{ borderColor: "var(--border-gold)", background: "var(--cream-50)" }}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
             />
           </label>
-          {loginError && <p className="text-sm text-rose-400">{loginError}</p>}
+          {loginError && <p className="text-sm text-rose-300">{loginError}</p>}
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-amber-500 py-2.5 text-sm font-bold text-emerald-950 transition hover:bg-amber-400 disabled:opacity-60"
+            className="w-full rounded-full py-3 text-sm font-black transition disabled:opacity-60"
+            style={{ background: "var(--gold-500)", color: "var(--emerald-950)" }}
           >
             {loading ? "Signing in…" : "Sign in"}
           </button>
@@ -222,49 +327,62 @@ export default function AdminDashboardPage() {
     );
   }
 
+  const totalPages = ordersPayload ? Math.max(1, Math.ceil(ordersPayload.total / pageSize)) : 1;
+
   return (
-    <div className="min-h-screen bg-slate-950 pb-24 text-slate-100" dir="ltr">
-      <header className="border-b border-slate-800 bg-slate-900/80 px-6 py-4 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4">
+    <div className="min-h-screen pb-28 text-[var(--ink)]" dir="ltr" style={{ background: "var(--cream-50)" }}>
+      <header
+        className="border-b shadow-sm"
+        style={{ borderColor: "var(--border-gold)", background: "linear-gradient(135deg, var(--emerald-950) 0%, #132820 100%)" }}
+      >
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-4 text-white">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-400/90">Layali Beauty</p>
-            <h1 className="text-xl font-bold text-white">Operations dashboard</h1>
+            <p className="text-xs font-bold uppercase tracking-[0.2em]" style={{ color: "var(--gold-300)" }}>
+              Layali Beauty
+            </p>
+            <h1 className="text-xl font-black">COD admin</h1>
+            <p className="mt-0.5 text-xs text-white/70">Metrics · orders · fulfillment signals</p>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2 text-sm text-slate-300">
-              <label className="sr-only" htmlFor="df">
-                From
-              </label>
+          <div className="flex flex-wrap items-center gap-2">
+            <DatePresets
+              onPick={(from, to) => {
+                setDateFrom(from);
+                setDateTo(to);
+                setPage(0);
+              }}
+            />
+            <div className="flex items-center gap-1 rounded-full border border-white/15 bg-white/5 px-2 py-1">
               <input
-                id="df"
                 type="date"
                 value={dateFrom}
-                onChange={(e) => setDateFrom(e.target.value)}
-                className="rounded-md border border-slate-700 bg-slate-900 px-2 py-1 text-sm"
+                onChange={(e) => {
+                  setDateFrom(e.target.value);
+                  setPage(0);
+                }}
+                className="rounded-md bg-transparent px-1 py-1 text-xs text-white"
               />
-              <span className="text-slate-500">—</span>
-              <label className="sr-only" htmlFor="dt">
-                To
-              </label>
+              <span className="text-white/40">—</span>
               <input
-                id="dt"
                 type="date"
                 value={dateTo}
-                onChange={(e) => setDateTo(e.target.value)}
-                className="rounded-md border border-slate-700 bg-slate-900 px-2 py-1 text-sm"
+                onChange={(e) => {
+                  setDateTo(e.target.value);
+                  setPage(0);
+                }}
+                className="rounded-md bg-transparent px-1 py-1 text-xs text-white"
               />
             </div>
             <button
               type="button"
               onClick={() => setRefreshTick((t) => t + 1)}
-              className="rounded-md border border-slate-600 px-3 py-1.5 text-sm font-semibold text-slate-200 hover:bg-slate-800"
+              className="rounded-full border border-white/20 px-3 py-1.5 text-xs font-bold text-white hover:bg-white/10"
             >
               Refresh
             </button>
             <button
               type="button"
               onClick={logout}
-              className="rounded-md bg-rose-600/90 px-3 py-1.5 text-sm font-semibold text-white hover:bg-rose-600"
+              className="rounded-full px-3 py-1.5 text-xs font-bold text-rose-100 hover:bg-rose-500/30"
             >
               Log out
             </button>
@@ -272,21 +390,27 @@ export default function AdminDashboardPage() {
         </div>
       </header>
 
-      <div className="mx-auto max-w-6xl px-6 py-8">
-        <nav className="flex gap-2 border-b border-slate-800 pb-3">
+      <div className="mx-auto max-w-6xl px-5 py-6">
+        <nav className="flex flex-wrap gap-2 border-b pb-3" style={{ borderColor: "var(--border-gold)" }}>
           {(
             [
               ["overview", "Overview"],
               ["orders", "Orders"],
+              ["setup", "Setup"],
             ] as const
           ).map(([id, label]) => (
             <button
               key={id}
               type="button"
               onClick={() => setTab(id)}
-              className={`rounded-full px-4 py-1.5 text-sm font-semibold ${
-                tab === id ? "bg-amber-500 text-emerald-950" : "text-slate-400 hover:text-white"
+              className={`rounded-full px-4 py-1.5 text-sm font-black transition ${
+                tab === id ? "shadow-md" : "opacity-70 hover:opacity-100"
               }`}
+              style={
+                tab === id
+                  ? { background: "var(--gold-500)", color: "var(--emerald-950)" }
+                  : { background: "white", color: "var(--emerald-950)", border: "1px solid var(--border-gold)" }
+              }
             >
               {label}
             </button>
@@ -296,154 +420,306 @@ export default function AdminDashboardPage() {
         {tab === "overview" && (
           <section className="mt-8 space-y-6">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <MetricCard label="Ad clicks (with fb/tt/sc id)" value={metrics?.clicks ?? "—"} hint="Session beacon, paid click params only" />
+              <MetricCard label="Paid ad clicks" value={metrics?.clicks ?? "—"} hint="fbclid / ttclid / sc_click_id beacons" />
               <MetricCard label="Orders" value={metrics?.orders ?? "—"} />
               <MetricCard label="Revenue (AED)" value={metrics != null ? metrics.revenue_aed.toFixed(2) : "—"} />
               <MetricCard
-                label="Conversion (orders ÷ clicks)"
+                label="Conversion"
                 value={metrics?.conversion_rate_percent != null ? `${metrics.conversion_rate_percent.toFixed(2)}%` : "—"}
-                hint={metrics?.clicks === 0 ? "No clicks in range — set paid params on URL or run ads" : undefined}
+                hint={metrics?.clicks === 0 ? "No clicks in range" : "Orders ÷ clicks"}
               />
             </div>
-            <div className="grid gap-4 lg:grid-cols-2">
-              <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-5">
-                <h2 className="text-sm font-bold uppercase tracking-wide text-slate-400">Average order value</h2>
-                <p className="mt-2 text-3xl font-black text-white">
-                  {metrics?.average_order_value_aed != null ? `${metrics.average_order_value_aed.toFixed(2)} AED` : "—"}
-                </p>
-                <p className="mt-3 text-xs text-slate-500">
-                  Range (UTC): {metrics?.date_from ?? dateFrom} → {metrics?.date_to ?? dateTo}
-                </p>
-              </div>
-              <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-5">
-                <h2 className="text-sm font-bold uppercase tracking-wide text-slate-400">How clicks are counted</h2>
-                <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-300">
-                  <li>One row per browser session when the URL (or stored params) includes Meta `fbclid`, TikTok `ttclid`, or Snap `ScCid` / `sc_click_id`.</li>
-                  <li>Organic visits without those parameters are not counted as clicks here.</li>
-                  <li>Conversion uses those clicks as the denominator; orders are COD checkouts in the same date range (UTC).</li>
-                </ul>
-              </div>
+            <div className="grid gap-4 lg:grid-cols-3">
+              <MetricCard
+                label="Average order value"
+                value={metrics?.average_order_value_aed != null ? `${metrics.average_order_value_aed.toFixed(2)} AED` : "—"}
+              />
+              <MetricCard
+                label="Upsell attach rate"
+                value={metrics?.upsell_attach_rate_percent != null ? `${metrics.upsell_attach_rate_percent.toFixed(1)}%` : "—"}
+                hint={`${metrics?.orders_with_upsell ?? 0} orders with upsell > 0`}
+              />
+              <MetricCard label="Sheet sync pending" value={metrics?.pending_sheet_sync_count ?? "—"} hint="Orders awaiting sheet push" />
             </div>
+            <div className="rounded-2xl border bg-white p-5 shadow-sm" style={{ borderColor: "var(--border-gold)" }}>
+              <h2 className="text-sm font-black uppercase tracking-wide text-[var(--muted)]">Orders by status</h2>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {metrics && Object.keys(metrics.orders_by_status).length === 0 && (
+                  <span className="text-sm text-[var(--muted)]">No orders in this UTC range.</span>
+                )}
+                {metrics &&
+                  Object.entries(metrics.orders_by_status)
+                    .sort((a, b) => b[1] - a[1])
+                    .map(([st, n]) => (
+                      <span
+                        key={st}
+                        className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm font-bold"
+                        style={{ borderColor: "var(--border-gold)", background: "var(--cream-100)" }}
+                      >
+                        <span className="text-[var(--emerald-950)]">{st}</span>
+                        <span style={{ color: "var(--gold-500)" }}>{n}</span>
+                      </span>
+                    ))}
+              </div>
+              <p className="mt-4 text-xs text-[var(--muted)]">
+                Range (UTC): {metrics?.date_from ?? dateFrom} → {metrics?.date_to ?? dateTo}
+              </p>
+            </div>
+            <div className="rounded-2xl border bg-white p-5 text-sm leading-7 shadow-sm" style={{ borderColor: "var(--border-gold)" }}>
+              <h2 className="text-sm font-black uppercase tracking-wide text-[var(--muted)]">How conversion is measured</h2>
+              <ul className="mt-3 list-disc space-y-2 pl-5 text-[var(--muted)]">
+                <li>Clicks count only sessions where the storefront recorded a paid click id (Meta, TikTok, or Snap).</li>
+                <li>Organic visits without those parameters are excluded from the click denominator.</li>
+                <li>Orders are COD checkouts created in the same UTC date window.</li>
+              </ul>
+            </div>
+            {loading && <p className="text-center text-sm font-semibold text-[var(--muted)]">Loading metrics…</p>}
           </section>
         )}
 
         {tab === "orders" && (
-          <section className="mt-8 overflow-x-auto rounded-2xl border border-slate-800">
-            <table className="min-w-full divide-y divide-slate-800 text-left text-sm">
-              <thead className="bg-slate-900/80">
-                <tr>
-                  <th className="px-4 py-3 font-semibold text-slate-400">Order</th>
-                  <th className="px-4 py-3 font-semibold text-slate-400">When</th>
-                  <th className="px-4 py-3 font-semibold text-slate-400">Customer</th>
-                  <th className="px-4 py-3 font-semibold text-slate-400">Phone</th>
-                  <th className="px-4 py-3 font-semibold text-slate-400">Total</th>
-                  <th className="px-4 py-3 font-semibold text-slate-400">UTM src</th>
-                  <th className="px-4 py-3 font-semibold text-slate-400">Items</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800 bg-slate-950/40">
-                {orders.map((o) => (
-                  <tr key={o.public_order_id ?? o.created_at} className="hover:bg-slate-900/60">
-                    <td className="px-4 py-3 font-mono text-xs text-amber-200">
-                      <button
-                        type="button"
-                        className="text-left underline decoration-amber-500/50 hover:text-amber-100"
-                        onClick={() => void openOrder(o.public_order_id)}
-                      >
-                        {o.public_order_id}
-                      </button>
-                    </td>
-                    <td className="px-4 py-3 text-slate-300">{new Date(o.created_at).toLocaleString()}</td>
-                    <td className="px-4 py-3 text-white">{o.customer_name}</td>
-                    <td className="px-4 py-3 text-slate-400">{o.phone_display}</td>
-                    <td className="px-4 py-3 font-semibold text-white">
-                      {o.total} {o.currency}
-                    </td>
-                    <td className="px-4 py-3 text-slate-400">{o.utm_source ?? "—"}</td>
-                    <td className="max-w-xs truncate px-4 py-3 text-slate-400" title={o.items_preview}>
-                      {o.items_preview}
-                    </td>
+          <section className="mt-8 space-y-4">
+            <div className="flex flex-wrap items-end gap-3">
+              <label className="text-sm font-bold text-[var(--emerald-950)]">
+                Status
+                <select
+                  className="mt-1 block min-w-[10rem] rounded-xl border px-3 py-2 text-sm"
+                  style={{ borderColor: "var(--border-gold)", background: "white" }}
+                  value={orderStatus}
+                  onChange={(e) => {
+                    setOrderStatus(e.target.value);
+                    setPage(0);
+                  }}
+                >
+                  <option value="">All</option>
+                  {statusOptions.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="min-w-[12rem] flex-1 text-sm font-bold text-[var(--emerald-950)]">
+                Search (this page)
+                <input
+                  className="mt-1 w-full rounded-xl border px-3 py-2 text-sm"
+                  style={{ borderColor: "var(--border-gold)" }}
+                  placeholder="Order id, name, phone…"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </label>
+              <button
+                type="button"
+                onClick={exportCsv}
+                className="rounded-full border px-4 py-2 text-sm font-black"
+                style={{ borderColor: "var(--border-gold)", color: "var(--emerald-950)" }}
+              >
+                Export CSV
+              </button>
+            </div>
+
+            <div className="overflow-x-auto rounded-2xl border bg-white shadow-sm" style={{ borderColor: "var(--border-gold)" }}>
+              <table className="min-w-full divide-y text-left text-sm" style={{ borderColor: "var(--border-gold)" }}>
+                <thead style={{ background: "var(--cream-100)" }}>
+                  <tr>
+                    <th className="px-4 py-3 font-black text-[var(--emerald-950)]">Order</th>
+                    <th className="px-4 py-3 font-black text-[var(--emerald-950)]">When</th>
+                    <th className="px-4 py-3 font-black text-[var(--emerald-950)]">Customer</th>
+                    <th className="px-4 py-3 font-black text-[var(--emerald-950)]">Phone</th>
+                    <th className="px-4 py-3 font-black text-[var(--emerald-950)]">Status</th>
+                    <th className="px-4 py-3 font-black text-[var(--emerald-950)]">Total</th>
+                    <th className="px-4 py-3 font-black text-[var(--emerald-950)]">UTM</th>
+                    <th className="px-4 py-3 font-black text-[var(--emerald-950)]">Items</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-            {orders.length === 0 && <p className="p-6 text-center text-slate-500">No orders in this range.</p>}
+                </thead>
+                <tbody className="divide-y" style={{ borderColor: "var(--border-gold)" }}>
+                  {filteredOrders.map((o) => (
+                    <tr key={o.public_order_id ?? o.created_at} className="hover:bg-[var(--cream-50)]">
+                      <td className="px-4 py-3 font-mono text-xs">
+                        <button
+                          type="button"
+                          className="font-bold underline decoration-[var(--gold-400)]"
+                          style={{ color: "var(--emerald-900)" }}
+                          onClick={() => void openOrder(o.public_order_id)}
+                        >
+                          {o.public_order_id}
+                        </button>
+                      </td>
+                      <td className="px-4 py-3 text-[var(--muted)]">{new Date(o.created_at).toLocaleString()}</td>
+                      <td className="px-4 py-3 font-semibold text-[var(--emerald-950)]">{o.customer_name}</td>
+                      <td className="px-4 py-3 text-[var(--muted)]">{o.phone_display}</td>
+                      <td className="px-4 py-3">
+                        <StatusPill status={o.status} />
+                      </td>
+                      <td className="px-4 py-3 font-black text-[var(--emerald-950)]">
+                        {o.total} {o.currency}
+                      </td>
+                      <td className="px-4 py-3 text-[var(--muted)]">{o.utm_source ?? "—"}</td>
+                      <td className="max-w-[14rem] truncate px-4 py-3 text-xs text-[var(--muted)]" title={o.items_preview}>
+                        {o.items_preview}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {ordersLoading && <p className="p-6 text-center text-sm text-[var(--muted)]">Loading orders…</p>}
+              {!ordersLoading && filteredOrders.length === 0 && (
+                <p className="p-6 text-center text-sm text-[var(--muted)]">No rows match filters on this page.</p>
+              )}
+            </div>
+
+            <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
+              <p className="font-semibold text-[var(--muted)]">
+                Total in range: <span className="text-[var(--emerald-950)]">{ordersPayload?.total ?? "—"}</span>
+                {search.trim() ? ` · showing ${filteredOrders.length} after search` : ""}
+              </p>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  disabled={page <= 0}
+                  onClick={() => setPage((p) => Math.max(0, p - 1))}
+                  className="rounded-full border px-3 py-1.5 text-xs font-black disabled:opacity-40"
+                  style={{ borderColor: "var(--border-gold)" }}
+                >
+                  Prev
+                </button>
+                <span className="text-xs font-bold text-[var(--muted)]">
+                  Page {page + 1} / {totalPages}
+                </span>
+                <button
+                  type="button"
+                  disabled={!ordersPayload || (page + 1) * pageSize >= ordersPayload.total}
+                  onClick={() => setPage((p) => p + 1)}
+                  className="rounded-full border px-3 py-1.5 text-xs font-black disabled:opacity-40"
+                  style={{ borderColor: "var(--border-gold)" }}
+                >
+                  Next
+                </button>
+              </div>
+            </div>
           </section>
         )}
+
+        {tab === "setup" && <SetupTab />}
       </div>
 
       {(detail || detailLoading) && (
-        <div className="fixed inset-0 z-[200] flex items-end justify-center bg-black/70 p-4 sm:items-center" role="dialog">
-          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-slate-700 bg-slate-900 p-6 shadow-2xl">
-            <div className="flex items-start justify-between gap-4">
+        <div className="fixed inset-0 z-[200] flex items-end justify-center bg-black/60 p-3 sm:items-center print:p-0" role="dialog">
+          <div
+            id="order-preview-panel"
+            className="max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-2xl border bg-white shadow-2xl print:max-h-none print:shadow-none sm:max-w-xl"
+            style={{ borderColor: "var(--border-gold)" }}
+          >
+            <div className="flex items-start justify-between gap-3 border-b px-5 py-4" style={{ borderColor: "var(--border-gold)" }}>
               <div>
-                <p className="text-xs font-bold uppercase tracking-wide text-amber-400">Order preview</p>
-                <h2 className="mt-1 font-mono text-lg text-white">{detail?.public_order_id}</h2>
+                <p className="text-xs font-black uppercase tracking-[0.2em]" style={{ color: "var(--gold-500)" }}>
+                  Order preview
+                </p>
+                <p className="font-mono text-lg font-black text-[var(--emerald-950)]">{detail?.public_order_id ?? "…"}</p>
+                <p className="text-xs text-[var(--muted)]">COD · pay on delivery</p>
               </div>
-              <button
-                type="button"
-                onClick={() => setDetail(null)}
-                className="rounded-full border border-slate-600 px-3 py-1 text-sm text-slate-300 hover:bg-slate-800"
-              >
-                Close
-              </button>
+              <div className="flex gap-2 print:hidden">
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="rounded-full border px-3 py-1 text-xs font-black"
+                  style={{ borderColor: "var(--border-gold)", color: "var(--emerald-950)" }}
+                >
+                  Print
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDetail(null)}
+                  className="rounded-full px-3 py-1 text-xs font-bold text-[var(--muted)] hover:bg-[var(--cream-100)]"
+                >
+                  Close
+                </button>
+              </div>
             </div>
-            {detailLoading && <p className="mt-6 text-slate-400">Loading…</p>}
+            {detailLoading && <p className="p-8 text-center text-[var(--muted)]">Loading…</p>}
             {detail && (
-              <div className="mt-6 space-y-5 text-sm">
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3">
-                    <p className="text-xs text-slate-500">Customer</p>
-                    <p className="font-semibold text-white">{detail.customer_name}</p>
-                    <p className="mt-1 font-mono text-amber-200">{detail.phone_e164}</p>
+              <div className="space-y-0 px-5 py-6 text-sm">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="rounded-xl border p-4" style={{ borderColor: "var(--border-gold)", background: "var(--cream-50)" }}>
+                    <p className="text-xs font-black uppercase text-[var(--muted)]">Customer</p>
+                    <p className="mt-1 text-lg font-black text-[var(--emerald-950)]">{detail.customer_name}</p>
+                    <p className="mt-2 font-mono text-sm font-bold" style={{ color: "var(--gold-500)" }}>
+                      {detail.phone_e164}
+                    </p>
                   </div>
-                  <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3">
-                    <p className="text-xs text-slate-500">Totals</p>
-                    <p className="text-white">
-                      Subtotal <span className="font-mono">{detail.subtotal}</span>
-                    </p>
-                    <p className="text-white">
-                      Upsell <span className="font-mono">{detail.upsell_total}</span>
-                    </p>
-                    <p className="mt-1 text-lg font-black text-amber-300">
-                      {detail.total} {detail.currency}
+                  <div className="rounded-xl border p-4" style={{ borderColor: "var(--border-gold)", background: "var(--cream-50)" }}>
+                    <p className="text-xs font-black uppercase text-[var(--muted)]">Fulfillment</p>
+                    <p className="mt-1 font-bold text-[var(--emerald-950)]">Status: {detail.status}</p>
+                    <p className="mt-2 text-xs text-[var(--muted)]">
+                      Sheet: {detail.sheet_sync_status}
+                      {detail.sheet_sync_error ? ` — ${detail.sheet_sync_error}` : ""}
                     </p>
                   </div>
                 </div>
-                <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3">
-                  <p className="text-xs font-bold text-slate-500">Line items</p>
-                  <ul className="mt-2 divide-y divide-slate-800">
-                    {detail.items.map((it) => (
-                      <li key={`${it.sku}-${it.name}`} className="flex flex-wrap justify-between gap-2 py-2">
-                        <span className="text-slate-200">
-                          {it.name}{" "}
-                          <span className="text-slate-500">
-                            ×{it.quantity} {it.is_upsell && <span className="text-amber-400">· upsell</span>}
-                          </span>
-                        </span>
-                        <span className="font-mono text-white">{it.line_total}</span>
-                      </li>
-                    ))}
-                  </ul>
+
+                <div className="mt-6 rounded-xl border" style={{ borderColor: "var(--border-gold)" }}>
+                  <table className="w-full text-left text-sm">
+                    <thead style={{ background: "var(--emerald-950)", color: "var(--gold-300)" }}>
+                      <tr>
+                        <th className="px-4 py-2 font-black">Item</th>
+                        <th className="px-4 py-2 font-black">Qty</th>
+                        <th className="px-4 py-2 text-right font-black">Line</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y" style={{ borderColor: "var(--border-gold)" }}>
+                      {detail.items.map((it) => (
+                        <tr key={`${it.sku}-${it.name}-${it.line_total}`}>
+                          <td className="px-4 py-3">
+                            <span className="font-bold text-[var(--emerald-950)]">{it.name}</span>
+                            <span className="mt-0.5 block font-mono text-xs text-[var(--muted)]">{it.sku}</span>
+                            {it.is_upsell && (
+                              <span className="mt-1 inline-block rounded-full px-2 py-0.5 text-[10px] font-black uppercase text-white" style={{ background: "var(--gold-500)" }}>
+                                Upsell
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 font-bold">{it.quantity}</td>
+                          <td className="px-4 py-3 text-right font-mono font-black">{it.line_total.toFixed(2)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <div className="space-y-1 border-t px-4 py-4 text-right" style={{ borderColor: "var(--border-gold)", background: "var(--cream-100)" }}>
+                    <p className="text-[var(--muted)]">
+                      Subtotal <span className="font-mono font-bold text-[var(--emerald-950)]">{detail.subtotal.toFixed(2)}</span>
+                    </p>
+                    <p className="text-[var(--muted)]">
+                      Upsells <span className="font-mono font-bold text-[var(--emerald-950)]">{detail.upsell_total.toFixed(2)}</span>
+                    </p>
+                    <p className="text-xl font-black text-[var(--emerald-950)]">
+                      Total {detail.total.toFixed(2)} {detail.currency}
+                    </p>
+                  </div>
                 </div>
-                <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3">
-                  <p className="text-xs font-bold text-slate-500">Attribution</p>
-                  <dl className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-slate-300">
+
+                <div className="mt-6 rounded-xl border p-4 text-xs" style={{ borderColor: "var(--border-gold)" }}>
+                  <p className="font-black uppercase text-[var(--muted)]">Attribution</p>
+                  <dl className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1">
                     {Object.entries(detail.utm).map(([k, v]) => (
                       <div key={k} className="contents">
-                        <dt className="text-slate-500">utm_{k}</dt>
-                        <dd className="font-mono">{v || "—"}</dd>
+                        <dt className="text-[var(--muted)]">utm_{k}</dt>
+                        <dd className="font-mono text-[var(--emerald-950)]">{v || "—"}</dd>
                       </div>
                     ))}
                   </dl>
-                  <p className="mt-2 text-xs text-slate-500">Tracking keys present: {detail.tracking_keys.join(", ") || "—"}</p>
+                  <p className="mt-3 text-[var(--muted)]">Tracking keys: {detail.tracking_keys.join(", ") || "—"}</p>
                 </div>
-                <pre className="max-h-48 overflow-auto rounded-xl border border-slate-800 bg-black/40 p-3 text-xs text-emerald-100/90">
-                  {JSON.stringify({ event_ids: detail.event_ids, source_url: detail.source_url, landing_page: detail.landing_page }, null, 2)}
+
+                <pre className="mt-4 max-h-40 overflow-auto rounded-xl border p-3 text-[11px] leading-relaxed" style={{ borderColor: "var(--border-gold)", background: "#0c1814", color: "#c8e6d8" }}>
+                  {JSON.stringify(
+                    { event_ids: detail.event_ids, source_url: detail.source_url, landing_page: detail.landing_page },
+                    null,
+                    2,
+                  )}
                 </pre>
-                <p className="text-xs text-slate-500">
-                  Sheet sync: {detail.sheet_sync_status}
-                  {detail.sheet_sync_error ? ` — ${detail.sheet_sync_error}` : ""}
+                <p className="mt-3 text-center text-[10px] text-[var(--muted)]">
+                  Internal id · <span className="font-mono">{detail.internal_id}</span>
                 </p>
               </div>
             )}
@@ -454,12 +730,78 @@ export default function AdminDashboardPage() {
   );
 }
 
-function MetricCard({ label, value, hint }: { label: string; value: string | number; hint?: string }) {
+function DatePresets({ onPick }: { onPick: (from: string, to: string) => void }) {
   return (
-    <div className="rounded-2xl border border-slate-800 bg-gradient-to-br from-slate-900 to-slate-950 p-5 shadow-lg">
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</p>
-      <p className="mt-2 text-3xl font-black text-white">{value}</p>
-      {hint && <p className="mt-2 text-xs text-slate-500">{hint}</p>}
+    <div className="flex flex-wrap gap-1">
+      {[
+        ["7d", 7],
+        ["30d", 30],
+        ["90d", 90],
+      ].map(([label, days]) => (
+        <button
+          key={label}
+          type="button"
+          onClick={() => {
+            const { from, to } = presetRange(days as number);
+            onPick(from, to);
+          }}
+          className="rounded-full border border-white/20 px-2 py-1 text-[11px] font-bold text-white hover:bg-white/10"
+        >
+          {label}
+        </button>
+      ))}
     </div>
   );
+}
+
+function MetricCard({ label, value, hint }: { label: string; value: string | number; hint?: string }) {
+  return (
+    <div className="rounded-2xl border bg-white p-5 shadow-sm" style={{ borderColor: "var(--border-gold)" }}>
+      <p className="text-xs font-black uppercase tracking-wide text-[var(--muted)]">{label}</p>
+      <p className="mt-2 text-3xl font-black text-[var(--emerald-950)]">{value}</p>
+      {hint && <p className="mt-2 text-xs text-[var(--muted)]">{hint}</p>}
+    </div>
+  );
+}
+
+function StatusPill({ status }: { status: string }) {
+  return (
+    <span className="inline-block rounded-full px-2.5 py-0.5 text-xs font-black" style={{ background: "var(--cream-100)", color: "var(--emerald-950)", border: "1px solid var(--border-gold)" }}>
+      {status}
+    </span>
+  );
+}
+
+function SetupTab() {
+  return (
+    <section className="mt-8 space-y-6 text-sm leading-7" dir="ltr">
+      <div className="rounded-2xl border bg-white p-6 shadow-sm" style={{ borderColor: "var(--border-gold)" }}>
+        <h2 className="text-lg font-black text-[var(--emerald-950)]">Backend environment</h2>
+        <p className="mt-2 text-[var(--muted)]">
+          Set these on the <strong>API</strong> service (not the Next.js storefront). The storefront proxies{" "}
+          <code className="rounded bg-[var(--cream-100)] px-1">/api/admin/*</code> to your API host.
+        </p>
+        <pre className="mt-4 overflow-x-auto rounded-xl border p-4 text-xs" style={{ borderColor: "var(--border-gold)", background: "var(--cream-50)" }}>{`# Required together for POST /admin/login + JWT-protected admin routes
+ADMIN_USERNAME=layali_ops
+ADMIN_PASSWORD=use_a_long_random_password_here
+ADMIN_JWT_SECRET=change_me_to_at_least_32_random_bytes_base64_or_hex
+
+# Example (do not commit real secrets)
+# ADMIN_JWT_SECRET=$(openssl rand -hex 32)`}</pre>
+      </div>
+      <div className="rounded-2xl border bg-white p-6 shadow-sm" style={{ borderColor: "var(--border-gold)" }}>
+        <h2 className="text-lg font-black text-[var(--emerald-950)]">Database</h2>
+        <p className="mt-2 text-[var(--muted)]">
+          If you manage Postgres manually, run the idempotent bootstrap script once (or use <code className="rounded bg-[var(--cream-100)] px-1">alembic upgrade head</code>).
+        </p>
+        <p className="mt-2 font-mono text-xs text-[var(--emerald-900)]">backend/migrations/sql/layali_cod_store_postgres_bootstrap.sql</p>
+        <p className="mt-2 text-[var(--muted)]">Includes: orders, order_items, tracking_events, ad_clicks.</p>
+      </div>
+    </section>
+  );
+}
+
+function csvEscape(s: string) {
+  if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+  return s;
 }

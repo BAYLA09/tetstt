@@ -91,6 +91,10 @@ class AdminMetricsOut(BaseModel):
     revenue_aed: float
     conversion_rate_percent: float | None
     average_order_value_aed: float | None
+    orders_by_status: dict[str, int] = Field(default_factory=dict)
+    pending_sheet_sync_count: int = 0
+    orders_with_upsell: int = 0
+    upsell_attach_rate_percent: float | None = None
 
 
 class OrderItemAdminOut(BaseModel):
@@ -109,8 +113,16 @@ class OrderAdminSummaryOut(BaseModel):
     phone_display: str
     total: float
     currency: str
+    status: str
     utm_source: str | None
     items_preview: str
+
+
+class AdminOrdersListOut(BaseModel):
+    total: int
+    limit: int
+    offset: int
+    orders: list[OrderAdminSummaryOut]
 
 
 class OrderAdminDetailOut(BaseModel):
