@@ -94,7 +94,7 @@ export const landingProducts: LandingProduct[] = [
       },
     ],
     upsell: {
-      enabled: true,
+      enabled: false,
       sku: "LB-UPSELL-MUSK-39",
       name: "سيروم مسك المطر الأبيض - عرض خاص",
       price: 39,
@@ -289,7 +289,7 @@ export const landingProducts: LandingProduct[] = [
       cities: ["دبي", "أبوظبي", "الشارقة", "عجمان", "رأس الخيمة", "الفجيرة", "أم القيوين", "العين"],
       carriers: ["شركات شحن معتادة داخل الإمارات", "تتبع حسب الرسالة بعد التأكيد"],
     },
-    relatedSlugs: ["aroma-flame-lamp"],
+    relatedSlugs: [],
     painSection: {
       headline: "إحساس الجفاف مع المكيف يبان قبل لا تلحقين تغيّرين الروتين كامل",
       subheadline:

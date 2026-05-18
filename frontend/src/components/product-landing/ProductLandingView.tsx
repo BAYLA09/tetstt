@@ -129,32 +129,50 @@ export function ProductLandingView({ product }: { product: LandingProduct }) {
 
   const ingredients = product.ingredientStack.map(normalizeIngredient);
 
+  const serumHeroFirst = product.slug === "dubai-palace-oud-serum";
+
+  const codStrip = (
+    <div className="border-b bg-[var(--lp-primary)] px-4 py-2 text-center text-xs font-bold text-white sm:text-sm">
+      <span className="inline-flex items-center justify-center gap-2">
+        <Truck className="size-4 shrink-0 text-[var(--lp-accent)]" aria-hidden />
+        {b.cod.paymentLabel} · {b.cod.deliveryPromise}
+      </span>
+    </div>
+  );
+
+  const heroAndBadges = (
+    <section className="bg-[var(--lp-bg)] px-4 pb-6 pt-4">
+      <div className="mx-auto max-w-lg">
+        <div className="overflow-hidden rounded-[2rem] border border-[var(--lp-border)] bg-[var(--lp-card)] shadow-[0_24px_80px_rgba(0,0,0,0.12)] ring-1 ring-[var(--lp-accent)]/25">
+          <HeroTopMedia product={product} />
+        </div>
+        <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {product.badges.map((text) => (
+            <div
+              key={text}
+              className="rounded-2xl border border-[var(--lp-border)] bg-[var(--lp-card)] px-2 py-3 text-center text-[11px] font-black leading-tight text-[var(--lp-primary)] shadow-sm sm:text-xs"
+            >
+              {text}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+
   return (
     <div className="product-landing-root pb-28" style={themeStyle()}>
-      <div className="border-b bg-[var(--lp-primary)] px-4 py-2 text-center text-xs font-bold text-white sm:text-sm">
-        <span className="inline-flex items-center justify-center gap-2">
-          <Truck className="size-4 shrink-0 text-[var(--lp-accent)]" aria-hidden />
-          {b.cod.paymentLabel} · {b.cod.deliveryPromise}
-        </span>
-      </div>
-
-      <section className="bg-[var(--lp-bg)] px-4 pb-6 pt-4">
-        <div className="mx-auto max-w-lg">
-          <div className="overflow-hidden rounded-[2rem] border border-[var(--lp-border)] bg-[var(--lp-card)] shadow-[0_24px_80px_rgba(0,0,0,0.12)] ring-1 ring-[var(--lp-accent)]/25">
-            <HeroTopMedia product={product} />
-          </div>
-          <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
-            {product.badges.map((text) => (
-              <div
-                key={text}
-                className="rounded-2xl border border-[var(--lp-border)] bg-[var(--lp-card)] px-2 py-3 text-center text-[11px] font-black leading-tight text-[var(--lp-primary)] shadow-sm sm:text-xs"
-              >
-                {text}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {serumHeroFirst ? (
+        <>
+          {heroAndBadges}
+          {codStrip}
+        </>
+      ) : (
+        <>
+          {codStrip}
+          {heroAndBadges}
+        </>
+      )}
 
       <section className="bg-[var(--lp-bg)] px-4 py-6" dir="rtl">
         <div className="mx-auto max-w-lg text-right">
