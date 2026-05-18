@@ -203,7 +203,7 @@ const catalogProducts: Product[] = [
         badge: "الأكثر توفيراً",
       },
     ],
-    image: "/products/aroma-lamp-pdp-hero-portrait.png",
+    image: "/products/aroma-lamp-pdp-hero-wide.png",
     cardImage: "/products/layali-flame-lamp-hero.png",
     heroPanorama: true,
     heroMediaShowCaption: false,
