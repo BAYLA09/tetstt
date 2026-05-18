@@ -94,7 +94,7 @@ export const landingProducts: LandingProduct[] = [
       },
     ],
     upsell: {
-      enabled: false,
+      enabled: true,
       sku: "LB-UPSELL-MUSK-39",
       name: "سيروم مسك المطر الأبيض - عرض خاص",
       price: 39,
@@ -102,7 +102,7 @@ export const landingProducts: LandingProduct[] = [
       subtitle: "لمسة مسك هادئة تكمل السلة إذا رغبتِ — السعر من إعدادات المنتج.",
     },
     images: {
-      heroBeforeAfter: "/products/dubai-palace-oud-serum-hero.png",
+      heroBeforeAfter: "/products/dubai-palace-oud-serum-before-after.png",
       heroProduct: "",
       problemImage: "",
       ingredientImage: "",
@@ -112,7 +112,7 @@ export const landingProducts: LandingProduct[] = [
       comparisonImage: "",
     },
     imageAlts: {
-      heroBeforeAfter: "صورة قبل وبعد مع عبوة المنتج — إحساس البشرة مع الروتين",
+      heroBeforeAfter: "صورة قبل وبعد: إحساس البشرة مع الروتين وعبوة المنتج في المقدمة",
       heroProduct: "عبوة سيروم عود قصر دبي",
       problemImage: "أجواء مكيف وهوى جاف حول الوجه",
       ingredientImage: "تفاصيل الملمس والعبوة",
@@ -289,7 +289,7 @@ export const landingProducts: LandingProduct[] = [
       cities: ["دبي", "أبوظبي", "الشارقة", "عجمان", "رأس الخيمة", "الفجيرة", "أم القيوين", "العين"],
       carriers: ["شركات شحن معتادة داخل الإمارات", "تتبع حسب الرسالة بعد التأكيد"],
     },
-    relatedSlugs: [],
+    relatedSlugs: ["aroma-flame-lamp"],
     painSection: {
       headline: "إحساس الجفاف مع المكيف يبان قبل لا تلحقين تغيّرين الروتين كامل",
       subheadline:
