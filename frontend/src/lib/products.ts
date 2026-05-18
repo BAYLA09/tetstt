@@ -34,6 +34,8 @@ export type Product = {
   heroMediaObjectFit?: "cover" | "contain";
   /** When true, hero uses a plain `<img>` (no Next.js image optimization) for pixel-identical /public assets. */
   heroMediaUnmodified?: boolean;
+  /** With dense contain hero: use a square frame so 1:1 art fills the slot without tall letterboxing. */
+  heroMediaSquareSlot?: boolean;
   /** Hero image + story blocks render above price and add-to-cart. */
   storyBeforeCommerce?: boolean;
   offerTiers?: ProductOfferTier[];
@@ -216,6 +218,7 @@ const catalogProducts: Product[] = [
     image: "/products/aroma-lamp-pdp-hero-exact.png",
     cardImage: "/products/layali-flame-lamp-hero.png",
     heroMediaObjectFit: "contain",
+    heroMediaSquareSlot: true,
     heroMediaUnmodified: true,
     heroMediaShowCaption: false,
     commerceShowIntro: false,

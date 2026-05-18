@@ -61,19 +61,25 @@ function HeroMedia({ product, contained }: { product: Product; contained?: boole
   const showCaption = product.heroMediaShowCaption !== false;
   const denseHero = !showCaption;
   const denseContain = denseHero && product.heroMediaObjectFit === "contain";
+  const squareSlot =
+    denseHero && denseContain && product.heroMediaSquareSlot === true;
   const emptyDenseHero = denseHero && !showImage;
   const serveHeroUnmodified = product.heroMediaUnmodified === true;
   const containPad =
     denseContain && serveHeroUnmodified ? "p-1 sm:p-2 md:p-3" : denseContain ? "p-3 sm:p-6 md:p-8" : "";
 
   const frameClass = showImage
-    ? `product-illustration has-product-image grid rounded-[2.5rem] ${
-        denseHero
-          ? "min-h-[min(92dvh,720px)] p-0 sm:p-1 lg:min-h-[640px] lg:p-2"
-          : "min-h-[380px] p-6 lg:min-h-[620px]"
-      } ${showCaption ? "place-items-end" : "place-items-stretch"} ${contained ? "" : "lg:mx-0"}`
+    ? squareSlot
+      ? `product-illustration has-product-image relative mx-auto grid aspect-square w-full max-w-[min(100%,min(92dvh,42rem))] overflow-hidden rounded-[2.5rem] p-1 sm:p-2 lg:max-w-[min(38rem,100%)] ${contained ? "" : "lg:mx-0"}`
+      : `product-illustration has-product-image grid rounded-[2.5rem] ${
+          denseHero
+            ? "min-h-[min(92dvh,720px)] p-0 sm:p-1 lg:min-h-[640px] lg:p-2"
+            : "min-h-[380px] p-6 lg:min-h-[620px]"
+        } ${showCaption ? "place-items-end" : "place-items-stretch"} ${contained ? "" : "lg:mx-0"}`
     : emptyDenseHero
-      ? `relative grid place-items-center rounded-[2.5rem] border border-dashed border-[var(--border-gold)]/70 bg-[var(--cream-50)] min-h-[min(92dvh,720px)] p-8 sm:p-10 lg:min-h-[640px] ${contained ? "" : "lg:mx-0"}`
+      ? squareSlot
+        ? `relative mx-auto grid aspect-square w-full max-w-[min(100%,min(92dvh,42rem))] place-items-center overflow-hidden rounded-[2.5rem] border border-dashed border-[var(--border-gold)]/70 bg-[var(--cream-50)] p-6 sm:p-8 lg:max-w-[min(38rem,100%)] ${contained ? "" : "lg:mx-0"}`
+        : `relative grid place-items-center rounded-[2.5rem] border border-dashed border-[var(--border-gold)]/70 bg-[var(--cream-50)] min-h-[min(92dvh,720px)] p-8 sm:p-10 lg:min-h-[640px] ${contained ? "" : "lg:mx-0"}`
       : `product-illustration grid rounded-[2.5rem] ${
           denseHero
             ? "min-h-[min(92dvh,720px)] p-0 sm:p-1 lg:min-h-[640px] lg:p-2"
