@@ -22,13 +22,18 @@ function HeroMedia({ product, contained }: { product: Product; contained?: boole
     );
   }
 
-  const panorama = product.heroPanorama === true && !contained;
+  const heroPanorama = product.heroPanorama === true;
+  /** Full-bleed frame: only when not squeezed into a grid column (`contained`). */
+  const fullBleed = heroPanorama && !contained;
 
-  const frameClass = panorama
+  const frameClass = fullBleed
     ? "relative w-screen max-w-none shrink-0 bg-[rgba(0,20,14,0.4)] mx-[calc(50%-50vw)] lg:mx-auto lg:w-full lg:max-w-[1180px] lg:overflow-hidden lg:rounded-[2.5rem] lg:bg-transparent"
-    : "relative min-h-[320px] overflow-hidden rounded-[2rem] border border-gold-400/20 bg-black/20 lg:min-h-[420px] lg:rounded-[2.5rem]";
+    : heroPanorama
+      ? "relative w-full overflow-hidden rounded-[2rem] border border-gold-400/20 bg-black/20 lg:rounded-[2.5rem]"
+      : "relative min-h-[320px] overflow-hidden rounded-[2rem] border border-gold-400/20 bg-black/20 lg:min-h-[420px] lg:rounded-[2.5rem]";
 
-  const imageClass = panorama
+  /** Panorama heroes must never use `object-cover` or fixed min-heights — that crops half the artwork (faces, label, lamp). */
+  const imageClass = heroPanorama
     ? "h-auto w-full object-contain"
     : "h-full min-h-[320px] w-full object-cover lg:min-h-[420px]";
 
@@ -42,7 +47,11 @@ function HeroMedia({ product, contained }: { product: Product; contained?: boole
         className={imageClass}
         priority
         sizes={
-          panorama ? "(max-width: 1024px) 100vw, 45vw" : "(max-width: 1024px) 100vw, 48vw"
+          fullBleed
+            ? "(max-width: 1024px) 100vw, min(1180px, 100vw)"
+            : heroPanorama
+              ? "(max-width: 1024px) 100vw, 50vw"
+              : "(max-width: 1024px) 100vw, 48vw"
         }
       />
     </div>
@@ -322,20 +331,36 @@ export function ProductHero({ product }: { product: Product }) {
     tiers?.length && selectedTier ? productSnapshotForOfferTier(product, selectedTier) : product;
 
   if (storyFirst) {
+    const stackedPanoramaHero = product.heroPanorama === true;
+
     return (
       <>
         <section className="hero-gradient relative overflow-hidden px-4 pb-10 pt-6 lg:pb-16 lg:pt-10">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(201,150,69,0.2),transparent_32%)]" />
-          <div className="container-grid relative z-10" dir="ltr">
-            <div className="grid items-start gap-10 lg:grid-cols-[1.05fr_0.95fr]">
-              <HeroMedia product={product} contained />
-              <CommercePanel
-                product={product}
-                selectedTier={selectedTier}
-                onTierChange={setSelectedTier}
-                onAdd={addOffer}
-              />
-            </div>
+          <div className="relative z-10" dir="ltr">
+            {stackedPanoramaHero ? (
+              <div className="flex flex-col gap-10 lg:gap-12">
+                <HeroMedia product={product} />
+                <div className="container-grid">
+                  <CommercePanel
+                    product={product}
+                    selectedTier={selectedTier}
+                    onTierChange={setSelectedTier}
+                    onAdd={addOffer}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="container-grid grid items-start gap-10 lg:grid-cols-[1.05fr_0.95fr]">
+                <HeroMedia product={product} contained />
+                <CommercePanel
+                  product={product}
+                  selectedTier={selectedTier}
+                  onTierChange={setSelectedTier}
+                  onAdd={addOffer}
+                />
+              </div>
+            )}
           </div>
         </section>
         <BeforeAfterSection product={product} />
