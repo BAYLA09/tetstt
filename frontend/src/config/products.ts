@@ -102,7 +102,7 @@ export const landingProducts: LandingProduct[] = [
       subtitle: "لمسة مسك هادئة تكمل السلة إذا رغبتِ — السعر من إعدادات المنتج.",
     },
     images: {
-      heroBeforeAfter: "/products/dubai-palace-oud-serum-pdp-portrait-beige.png",
+      heroBeforeAfter: "/products/dubai-palace-oud-serum-pdp-before-after.png",
       heroProduct: "",
       problemImage: "",
       ingredientImage: "",
@@ -112,7 +112,7 @@ export const landingProducts: LandingProduct[] = [
       comparisonImage: "",
     },
     imageAlts: {
-      heroBeforeAfter: "بورتريه بخلفية بيج — لحظة تواصل مع ملمس البشرة",
+      heroBeforeAfter: "صورة قبل وبعد مع عبوة زيت الصندل — إحساس البشرة مع الروتين",
       heroProduct: "عبوة سيروم عود قصر دبي",
       problemImage: "أجواء مكيف وهوى جاف حول الوجه",
       ingredientImage: "تفاصيل الملمس والعبوة",
