@@ -26,6 +26,77 @@ import { useCartStore } from "@/lib/cart-store";
 import { generateEventId, trackEvent, trackAddToCart } from "@/lib/events";
 import { PremiumImage, PremiumPlaceholder } from "./PremiumImage";
 
+/** When all three URLs are set: stacked hero in order — before/after, lifestyle portrait, product bottle. */
+function HeroTopMedia({ product }: { product: LandingProduct }) {
+  const strip1 = product.images.heroBeforeAfter?.trim();
+  const strip2 = product.images.lifestyleImage?.trim();
+  const strip3 = product.images.heroProduct?.trim();
+  if (strip1 && strip2 && strip3) {
+    return (
+      <div className="space-y-3 bg-[var(--lp-bg)] p-3">
+        <PremiumImage
+          src={strip1}
+          alt={product.imageAlts.heroBeforeAfter}
+          priority
+          objectFit="contain"
+          className="rounded-[1.25rem] border border-[var(--lp-border)]/70 shadow-sm"
+        />
+        <div className="relative mx-auto aspect-[4/5] w-full max-h-[min(72vh,560px)] max-w-md overflow-hidden rounded-[1.25rem] border border-[var(--lp-border)]/70 bg-[var(--lp-bg)] shadow-sm">
+          {/* eslint-disable-next-line @next/next/no-img-element -- same /public raster rule as PremiumImage */}
+          <img
+            src={strip2}
+            alt={product.imageAlts.lifestyleImage}
+            className="absolute inset-0 h-full w-full object-cover object-center"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+        <div className="flex justify-center px-1 pb-1">
+          <div className="w-full max-w-[min(100%,360px)]">
+            <PremiumImage
+              src={strip3}
+              alt={product.imageAlts.heroProduct}
+              objectFit="contain"
+              className="rounded-[1.25rem] border border-[var(--lp-border)]/70 shadow-sm"
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+  if (strip1) {
+    return (
+      <PremiumImage
+        src={strip1}
+        alt={product.imageAlts.heroBeforeAfter}
+        priority
+        objectFit="contain"
+      />
+    );
+  }
+  return (
+    <div className="grid gap-2 bg-[var(--lp-bg)] p-3 sm:grid-cols-2">
+      <PremiumPlaceholder alt={product.imageAlts.heroBeforeAfter} caption="قبل — إحساس الجفاف مع المكيف" />
+      <PremiumPlaceholder alt={product.imageAlts.heroBeforeAfter} caption="بعد — روتين أوضح مع الاستمرار" />
+      <div className="relative z-[1] -mt-8 flex justify-center sm:col-span-2">
+        <div className="w-[55%] max-w-[220px] rounded-2xl border-2 border-[var(--lp-accent)] bg-[var(--lp-card)] p-3 shadow-xl">
+          {strip3 ? (
+            <Image
+              src={strip3}
+              alt={product.imageAlts.heroProduct}
+              width={400}
+              height={520}
+              className="h-auto w-full object-contain"
+            />
+          ) : (
+            <PremiumPlaceholder alt={product.imageAlts.heroProduct} caption={product.shortName} className="aspect-square" />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function themeStyle() {
   const d = businessConfig.design;
   return {
@@ -118,34 +189,7 @@ export function ProductLandingView({ product }: { product: LandingProduct }) {
       <section className="bg-[var(--lp-bg)] px-4 pb-6 pt-4">
         <div className="mx-auto max-w-lg">
           <div className="overflow-hidden rounded-[2rem] border border-[var(--lp-border)] bg-[var(--lp-card)] shadow-[0_24px_80px_rgba(0,0,0,0.12)] ring-1 ring-[var(--lp-accent)]/25">
-            {product.images.heroBeforeAfter?.trim() ? (
-              <PremiumImage
-                src={product.images.heroBeforeAfter}
-                alt={product.imageAlts.heroBeforeAfter}
-                priority
-                objectFit="contain"
-              />
-            ) : (
-              <div className="grid gap-2 bg-[var(--lp-bg)] p-3 sm:grid-cols-2">
-                <PremiumPlaceholder alt={product.imageAlts.heroBeforeAfter} caption="قبل — إحساس الجفاف مع المكيف" />
-                <PremiumPlaceholder alt={product.imageAlts.heroBeforeAfter} caption="بعد — روتين أوضح مع الاستمرار" />
-                <div className="relative z-[1] -mt-8 flex justify-center sm:col-span-2">
-                  <div className="w-[55%] max-w-[220px] rounded-2xl border-2 border-[var(--lp-accent)] bg-[var(--lp-card)] p-3 shadow-xl">
-                    {product.images.heroProduct?.trim() ? (
-                      <Image
-                        src={product.images.heroProduct}
-                        alt={product.imageAlts.heroProduct}
-                        width={400}
-                        height={520}
-                        className="h-auto w-full object-contain"
-                      />
-                    ) : (
-                      <PremiumPlaceholder alt={product.imageAlts.heroProduct} caption={product.shortName} className="aspect-square" />
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
+            <HeroTopMedia product={product} />
           </div>
           <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
             {product.badges.map((text) => (
