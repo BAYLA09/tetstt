@@ -102,7 +102,7 @@ export const landingProducts: LandingProduct[] = [
       subtitle: "لمسة مسك هادئة تكمل السلة إذا رغبتِ — السعر من إعدادات المنتج.",
     },
     images: {
-      heroBeforeAfter: "/products/dubai-palace-oud-serum-pdp-before-after.png",
+      heroBeforeAfter: "/products/dubai-palace-oud-serum-handoff-before-after.png",
       heroProduct: "",
       problemImage: "",
       ingredientImage: "",

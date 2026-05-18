@@ -26,21 +26,53 @@ import { useCartStore } from "@/lib/cart-store";
 import { generateEventId, trackEvent, trackAddToCart } from "@/lib/events";
 import { PremiumImage, PremiumPlaceholder } from "./PremiumImage";
 
+/** Serum hero: native img + onError so missing/wrong CDN cache does not stick; only replace `handoff-before-after` PNG in /public. */
+function SerumHandoffHero({ src, alt }: { src: string; alt: string }) {
+  const [loadFailed, setLoadFailed] = useState(false);
+  if (loadFailed) {
+    return (
+      <PremiumPlaceholder
+        alt={alt}
+        caption="أضيفي ملف التصدير النهائي (قبل/بعد + العبوة) باسم dubai-palace-oud-serum-handoff-before-after.png داخل public/products"
+        className="aspect-[4/5] min-h-[220px]"
+      />
+    );
+  }
+  return (
+    <div className="relative w-full overflow-hidden rounded-[2rem] bg-[var(--lp-bg)]">
+      {/* eslint-disable-next-line @next/next/no-img-element -- handoff PNG; onError clears bad deploys */}
+      <img
+        src={src}
+        alt={alt}
+        className="block h-auto w-full object-contain"
+        decoding="async"
+        fetchPriority="high"
+        onError={() => setLoadFailed(true)}
+      />
+    </div>
+  );
+}
+
 function HeroTopMedia({ product }: { product: LandingProduct }) {
   const hero = product.images.heroBeforeAfter?.trim();
   const portrait = product.images.lifestyleImage?.trim();
   const bottle = product.images.heroProduct?.trim();
+  const serumHero = product.slug === "dubai-palace-oud-serum" && Boolean(hero);
 
   if (hero && portrait) {
     return (
       <div className="space-y-3 bg-[var(--lp-bg)] p-3">
-        <PremiumImage
-          src={hero}
-          alt={product.imageAlts.heroBeforeAfter}
-          priority
-          objectFit="contain"
-          className="rounded-[1.25rem] border border-[var(--lp-border)]/70 shadow-sm"
-        />
+        {serumHero ? (
+          <SerumHandoffHero src={hero} alt={product.imageAlts.heroBeforeAfter} />
+        ) : (
+          <PremiumImage
+            src={hero}
+            alt={product.imageAlts.heroBeforeAfter}
+            priority
+            objectFit="contain"
+            className="rounded-[1.25rem] border border-[var(--lp-border)]/70 shadow-sm"
+          />
+        )}
         <PremiumImage
           src={portrait}
           alt={product.imageAlts.lifestyleImage}
@@ -52,7 +84,11 @@ function HeroTopMedia({ product }: { product: LandingProduct }) {
   }
 
   if (hero) {
-    return <PremiumImage src={hero} alt={product.imageAlts.heroBeforeAfter} priority objectFit="contain" />;
+    return serumHero ? (
+      <SerumHandoffHero src={hero} alt={product.imageAlts.heroBeforeAfter} />
+    ) : (
+      <PremiumImage src={hero} alt={product.imageAlts.heroBeforeAfter} priority objectFit="contain" />
+    );
   }
   return (
     <div className="grid gap-2 bg-[var(--lp-bg)] p-3 sm:grid-cols-2">
