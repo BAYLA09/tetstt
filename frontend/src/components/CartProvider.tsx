@@ -2,17 +2,43 @@
 
 import { CheckCircle2, Minus, Plus, ShoppingBag, X } from "lucide-react";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
-import { useCartStore } from "@/lib/cart-store";
+import { useCartStore, type UpsellOfferPayload } from "@/lib/cart-store";
 import { createOrder, addUpsell } from "@/lib/api";
 import { getProductBySku, money, SKIP_POST_ORDER_UPSELL_MODAL } from "@/lib/products";
 import { normalizeUaePhone } from "@/lib/phone";
 import { generateEventId, getTrackingContext, trackEvent } from "@/lib/events";
 import { saveLastCheckoutSnapshot } from "@/lib/order-confirmation-storage";
 
-function UpsellModal({ orderId, onDone }: { orderId: string; onDone: () => void }) {
+function UpsellModal({
+  orderId,
+  pending,
+  onDone,
+}: {
+  orderId: string;
+  pending: UpsellOfferPayload | null;
+  onDone: () => void;
+}) {
   const [seconds, setSeconds] = useState(15);
   const [busy, setBusy] = useState(false);
-  const upsell = getProductBySku("LB-UPSELL-OUD-39")!;
+  const upsell = useMemo(() => {
+    const fallback = getProductBySku("LB-UPSELL-OUD-39");
+    return pending?.enabled
+      ? {
+          sku: pending.sku,
+          name: pending.name,
+          price: pending.price,
+          line: `${pending.label} — ${pending.subtitle}`,
+        }
+      : !SKIP_POST_ORDER_UPSELL_MODAL && fallback
+        ? { sku: fallback.sku, name: fallback.name, price: fallback.price, line: fallback.headline }
+        : null;
+  }, [pending]);
+
+  useEffect(() => {
+    if (upsell) {
+      trackEvent("UpsellView", { sku: upsell.sku, value: upsell.price });
+    }
+  }, [upsell]);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -28,11 +54,22 @@ function UpsellModal({ orderId, onDone }: { orderId: string; onDone: () => void 
     return () => window.clearInterval(timer);
   }, [onDone]);
 
+  if (!upsell) return null;
+
   async function accept() {
+    const offer = upsell;
+    if (!offer) return;
     setBusy(true);
     const eventId = generateEventId("upsell");
-    await addUpsell(orderId, upsell.sku, eventId);
-    trackEvent("UpsellAccepted", { eventId, value: upsell.price });
+    await addUpsell(orderId, offer.sku, eventId);
+    trackEvent("UpsellAccepted", { eventId, value: offer.price });
+    onDone();
+  }
+
+  function skip() {
+    const offer = upsell;
+    if (!offer) return;
+    trackEvent("UpsellSkipped", { sku: offer.sku });
     onDone();
   }
 
@@ -41,13 +78,16 @@ function UpsellModal({ orderId, onDone }: { orderId: string; onDone: () => void 
       <div className="max-w-md rounded-[2rem] border border-[var(--border-gold)] bg-[var(--emerald-950)] p-6 text-center text-white shadow-2xl">
         <p className="mx-auto mb-3 grid size-16 place-items-center rounded-full bg-[var(--gold-500)] text-3xl text-[var(--emerald-950)]">✦</p>
         <p className="text-sm font-bold text-[var(--gold-300)]">عرض خاص يظهر مرة واحدة فقط</p>
-        <h3 className="mt-2 text-2xl font-black">ضيفي لمسة عود فاخرة بـ 39 درهم</h3>
-        <p className="mt-3 text-sm leading-7 text-white/75">أكثر إضافة تزيد إحساس الفخامة في الطلب، بسعر خاص فقط قبل تجهيز الشحنة. ينتهي خلال {seconds} ثانية.</p>
+        <h3 className="mt-2 text-2xl font-black">{upsell.name}</h3>
+        <p className="mt-3 text-sm leading-7 text-white/75">{upsell.line}</p>
+        <p className="mt-2 text-xs text-white/60">ينتهى العرض خلال {seconds} ثانية.</p>
         <div className="mt-5 grid gap-3">
           <button disabled={busy} onClick={accept} className="rounded-full bg-[var(--gold-500)] px-5 py-4 font-black text-[var(--emerald-950)]">
-            {busy ? "جاري الإضافة..." : "ضيفيه لطلبج بـ 39 درهم"}
+            {busy ? "جاري الإضافة..." : `ضيفيه لطلبج — ${upsell.price} درهم`}
           </button>
-          <button onClick={onDone} className="text-sm font-bold text-white/75">لا شكراً، أكملي طلبج</button>
+          <button type="button" onClick={skip} className="text-sm font-bold text-white/75">
+            لا شكراً، أكملي طلبج
+          </button>
         </div>
       </div>
     </div>
@@ -70,6 +110,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [upsellOrderId, setUpsellOrderId] = useState<string | null>(null);
+  const [postUpsellSnapshot, setPostUpsellSnapshot] = useState<UpsellOfferPayload | null>(null);
   const submitGuardRef = useRef(false);
   const total = useMemo(() => items.reduce((sum, item) => sum + item.price * item.quantity, 0), [items]);
   const normalizedPhone = normalizeUaePhone(phone);
@@ -104,12 +145,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         skus,
         savedAt: Date.now(),
       });
+      const snap = useCartStore.getState().pendingUpsellOffer;
+      useCartStore.getState().setPendingUpsellOffer(null);
       closeCheckout();
       clearCart();
-      if (SKIP_POST_ORDER_UPSELL_MODAL) {
-        window.location.href = thankYouUrl(order.order_id, name.trim(), normalizedPhone, total, skus);
-      } else {
+      if (snap?.enabled) {
+        setPostUpsellSnapshot(snap);
         setUpsellOrderId(order.order_id);
+      } else if (!SKIP_POST_ORDER_UPSELL_MODAL) {
+        setUpsellOrderId(order.order_id);
+      } else {
+        window.location.href = thankYouUrl(order.order_id, name.trim(), normalizedPhone, total, skus);
       }
     } catch (e) {
       const msg =
@@ -128,6 +174,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   function finishOrder() {
     const id = upsellOrderId || "LB-DEMO";
     setUpsellOrderId(null);
+    setPostUpsellSnapshot(null);
     clearCart();
     window.location.href = `/thank-you/${id}`;
   }
@@ -193,7 +240,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
               </p>
               <button
                 disabled={!items.length}
-                onClick={openCheckout}
+                onClick={() => {
+                  trackEvent("InitiateCheckout", { value: total });
+                  openCheckout();
+                }}
                 className="w-full rounded-full bg-[var(--gold-500)] px-6 py-4 font-black text-[var(--emerald-950)] shadow-lg transition hover:bg-[var(--gold-400)] disabled:opacity-50"
               >
                 ثبتي الطلب للتأكيد
@@ -263,7 +313,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         </div>
       )}
 
-      {SKIP_POST_ORDER_UPSELL_MODAL ? null : upsellOrderId ? <UpsellModal orderId={upsellOrderId} onDone={finishOrder} /> : null}
+      {upsellOrderId && (postUpsellSnapshot?.enabled || !SKIP_POST_ORDER_UPSELL_MODAL) ? (
+        <UpsellModal orderId={upsellOrderId} pending={postUpsellSnapshot} onDone={finishOrder} />
+      ) : null}
     </>
   );
 }

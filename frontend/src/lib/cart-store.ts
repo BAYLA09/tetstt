@@ -1,7 +1,16 @@
-"use client";
-
 import { create } from "zustand";
-import { CartItem, Product } from "./products";
+import { CartItem } from "./products";
+
+export type LineAddable = { sku: string; name: string; price: number };
+
+export type UpsellOfferPayload = {
+  enabled: boolean;
+  sku: string;
+  name: string;
+  price: number;
+  label: string;
+  subtitle: string;
+};
 
 type CheckoutState = "closed" | "checkout" | "upsell";
 
@@ -11,7 +20,9 @@ type CartStore = {
   checkoutState: CheckoutState;
   lastOrderId?: string;
   lastTotal?: number;
-  addItem: (product: Product, quantity?: number) => void;
+  /** When set, post-order upsell modal uses this instead of a hardcoded catalog SKU. */
+  pendingUpsellOffer: UpsellOfferPayload | null;
+  addItem: (product: LineAddable, quantity?: number) => void;
   removeItem: (sku: string) => void;
   updateQuantity: (sku: string, quantity: number) => void;
   openCart: () => void;
@@ -19,6 +30,7 @@ type CartStore = {
   openCheckout: () => void;
   closeCheckout: () => void;
   openUpsell: (orderId: string, total: number) => void;
+  setPendingUpsellOffer: (offer: UpsellOfferPayload | null) => void;
   clearCart: () => void;
   subtotal: () => number;
 };
@@ -27,6 +39,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
   items: [],
   isCartOpen: false,
   checkoutState: "closed",
+  pendingUpsellOffer: null,
   addItem: (product, quantity = 1) =>
     set((state) => {
       const existing = state.items.find((item) => item.sku === product.sku);
@@ -73,6 +86,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
   closeCheckout: () => set({ checkoutState: "closed" }),
   openUpsell: (orderId, total) =>
     set({ checkoutState: "upsell", lastOrderId: orderId, lastTotal: total }),
+  setPendingUpsellOffer: (offer) => set({ pendingUpsellOffer: offer }),
   clearCart: () => set({ items: [], isCartOpen: false, checkoutState: "closed" }),
   subtotal: () =>
     get().items.reduce((total, item) => total + item.price * item.quantity, 0),
