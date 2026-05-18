@@ -26,53 +26,11 @@ import { useCartStore } from "@/lib/cart-store";
 import { generateEventId, trackEvent, trackAddToCart } from "@/lib/events";
 import { PremiumImage, PremiumPlaceholder } from "./PremiumImage";
 
-/** When all three URLs are set: stacked hero in order — before/after, lifestyle portrait, product bottle. */
 function HeroTopMedia({ product }: { product: LandingProduct }) {
-  const strip1 = product.images.heroBeforeAfter?.trim();
-  const strip2 = product.images.lifestyleImage?.trim();
-  const strip3 = product.images.heroProduct?.trim();
-  if (strip1 && strip2 && strip3) {
-    return (
-      <div className="space-y-3 bg-[var(--lp-bg)] p-3">
-        <PremiumImage
-          src={strip1}
-          alt={product.imageAlts.heroBeforeAfter}
-          priority
-          objectFit="contain"
-          className="rounded-[1.25rem] border border-[var(--lp-border)]/70 shadow-sm"
-        />
-        <div className="relative mx-auto aspect-[4/5] w-full max-h-[min(72vh,560px)] max-w-md overflow-hidden rounded-[1.25rem] border border-[var(--lp-border)]/70 bg-[var(--lp-bg)] shadow-sm">
-          {/* eslint-disable-next-line @next/next/no-img-element -- same /public raster rule as PremiumImage */}
-          <img
-            src={strip2}
-            alt={product.imageAlts.lifestyleImage}
-            className="absolute inset-0 h-full w-full object-cover object-center"
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
-        <div className="flex justify-center px-1 pb-1">
-          <div className="w-full max-w-[min(100%,360px)]">
-            <PremiumImage
-              src={strip3}
-              alt={product.imageAlts.heroProduct}
-              objectFit="contain"
-              className="rounded-[1.25rem] border border-[var(--lp-border)]/70 shadow-sm"
-            />
-          </div>
-        </div>
-      </div>
-    );
-  }
-  if (strip1) {
-    return (
-      <PremiumImage
-        src={strip1}
-        alt={product.imageAlts.heroBeforeAfter}
-        priority
-        objectFit="contain"
-      />
-    );
+  const hero = product.images.heroBeforeAfter?.trim();
+  const bottle = product.images.heroProduct?.trim();
+  if (hero) {
+    return <PremiumImage src={hero} alt={product.imageAlts.heroBeforeAfter} priority objectFit="contain" />;
   }
   return (
     <div className="grid gap-2 bg-[var(--lp-bg)] p-3 sm:grid-cols-2">
@@ -80,14 +38,8 @@ function HeroTopMedia({ product }: { product: LandingProduct }) {
       <PremiumPlaceholder alt={product.imageAlts.heroBeforeAfter} caption="بعد — روتين أوضح مع الاستمرار" />
       <div className="relative z-[1] -mt-8 flex justify-center sm:col-span-2">
         <div className="w-[55%] max-w-[220px] rounded-2xl border-2 border-[var(--lp-accent)] bg-[var(--lp-card)] p-3 shadow-xl">
-          {strip3 ? (
-            <Image
-              src={strip3}
-              alt={product.imageAlts.heroProduct}
-              width={400}
-              height={520}
-              className="h-auto w-full object-contain"
-            />
+          {bottle ? (
+            <Image src={bottle} alt={product.imageAlts.heroProduct} width={400} height={520} className="h-auto w-full object-contain" />
           ) : (
             <PremiumPlaceholder alt={product.imageAlts.heroProduct} caption={product.shortName} className="aspect-square" />
           )}
@@ -191,6 +143,25 @@ export function ProductLandingView({ product }: { product: LandingProduct }) {
           <div className="overflow-hidden rounded-[2rem] border border-[var(--lp-border)] bg-[var(--lp-card)] shadow-[0_24px_80px_rgba(0,0,0,0.12)] ring-1 ring-[var(--lp-accent)]/25">
             <HeroTopMedia product={product} />
           </div>
+          {product.upsell.enabled ? (
+            <div
+              className="mt-4 rounded-2xl border border-[var(--lp-border)] bg-[var(--lp-card)] p-4 text-right shadow-sm ring-1 ring-[var(--lp-accent)]/20"
+              dir="rtl"
+            >
+              <p className="text-xs font-black text-[var(--lp-accent)]">{product.upsell.label}</p>
+              <p className="mt-1 text-lg font-black leading-snug text-[var(--lp-primary)]">{product.upsell.name}</p>
+              <p className="mt-2 text-sm font-semibold leading-7 text-[var(--lp-muted)]">{product.upsell.subtitle}</p>
+              <p className="mt-3 text-base font-black text-[var(--lp-primary)]">{formatPrice(product.upsell.price, b)}</p>
+              <p className="mt-2 text-xs text-[var(--lp-muted)]">يظهر كخيار بعد ما تختارين عرض عود قصر دبي وتضيفينه للسلة.</p>
+              <button
+                type="button"
+                className="mt-4 w-full rounded-xl border-2 border-[var(--lp-primary)] bg-white py-3 text-sm font-black text-[var(--lp-primary)] transition hover:bg-[var(--lp-bg)]"
+                onClick={() => document.getElementById("offers")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+              >
+                اختاري عرض عود قصر دبي
+              </button>
+            </div>
+          ) : null}
           <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
             {product.badges.map((text) => (
               <div
