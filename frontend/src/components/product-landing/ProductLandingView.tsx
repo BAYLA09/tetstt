@@ -143,25 +143,6 @@ export function ProductLandingView({ product }: { product: LandingProduct }) {
           <div className="overflow-hidden rounded-[2rem] border border-[var(--lp-border)] bg-[var(--lp-card)] shadow-[0_24px_80px_rgba(0,0,0,0.12)] ring-1 ring-[var(--lp-accent)]/25">
             <HeroTopMedia product={product} />
           </div>
-          {product.upsell.enabled ? (
-            <div
-              className="mt-4 rounded-2xl border border-[var(--lp-border)] bg-[var(--lp-card)] p-4 text-right shadow-sm ring-1 ring-[var(--lp-accent)]/20"
-              dir="rtl"
-            >
-              <p className="text-xs font-black text-[var(--lp-accent)]">{product.upsell.label}</p>
-              <p className="mt-1 text-lg font-black leading-snug text-[var(--lp-primary)]">{product.upsell.name}</p>
-              <p className="mt-2 text-sm font-semibold leading-7 text-[var(--lp-muted)]">{product.upsell.subtitle}</p>
-              <p className="mt-3 text-base font-black text-[var(--lp-primary)]">{formatPrice(product.upsell.price, b)}</p>
-              <p className="mt-2 text-xs text-[var(--lp-muted)]">يظهر كخيار بعد ما تختارين عرض عود قصر دبي وتضيفينه للسلة.</p>
-              <button
-                type="button"
-                className="mt-4 w-full rounded-xl border-2 border-[var(--lp-primary)] bg-white py-3 text-sm font-black text-[var(--lp-primary)] transition hover:bg-[var(--lp-bg)]"
-                onClick={() => document.getElementById("offers")?.scrollIntoView({ behavior: "smooth", block: "start" })}
-              >
-                اختاري عرض عود قصر دبي
-              </button>
-            </div>
-          ) : null}
           <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
             {product.badges.map((text) => (
               <div
