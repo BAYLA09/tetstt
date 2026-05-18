@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans_Arabic, Inter } from "next/font/google";
+import { IBM_Plex_Sans_Arabic, Inter, Dancing_Script } from "next/font/google";
+import { AdClickBeacon } from "@/components/AdClickBeacon";
 import { CartProvider } from "@/components/CartProvider";
 import { Footer, SiteHeader } from "@/components/SiteChrome";
 import "./globals.css";
@@ -15,11 +16,21 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
+const dancingScript = Dancing_Script({
+  variable: "--font-script",
+  subsets: ["latin"],
+  weight: ["700"],
+});
+
 export const metadata: Metadata = {
-  title: "ليالي بيوتي | فخامة هادئة تليق بيومك",
+  title: "ليالي بيوتي | عود قصر دبي لجفاف البشرة في الإمارات",
   description:
-    "متجر ليالي بيوتي لباقة عناية عربية فاخرة مع الدفع عند الاستلام داخل الإمارات.",
+    "عود قصر دبي روتين عناية للبشرة الجافة من المكيف والحر في الإمارات، مع عروض عبوة وعبوتين وثلاث عبوات والدفع عند الاستلام.",
   metadataBase: new URL("https://layalibeauty.shop"),
+  icons: {
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/apple-icon", sizes: "180x180" }],
+  },
 };
 
 export default function RootLayout({
@@ -31,9 +42,10 @@ export default function RootLayout({
     <html
       lang="ar"
       dir="rtl"
-      className={`${arabic.variable} ${inter.variable} h-full scroll-smooth antialiased`}
+      className={`${arabic.variable} ${inter.variable} ${dancingScript.variable} h-full scroll-smooth antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <AdClickBeacon />
         <CartProvider>
           <SiteHeader />
           <main className="flex-1">{children}</main>

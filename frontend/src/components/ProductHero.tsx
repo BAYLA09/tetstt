@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { CheckCircle2, ShoppingCart } from "lucide-react";
+import { CheckCircle2, Droplets, Flame, ShieldCheck, ShoppingCart, Wind } from "lucide-react";
 import {
   Product,
   ProductOfferTier,
@@ -10,91 +10,175 @@ import {
   productSnapshotForOfferTier,
   resolveDefaultOfferTier,
 } from "@/lib/products";
+import { PRODUCT_OFFER_ANCHOR_ID } from "@/lib/product-experience";
 import { useCartStore } from "@/lib/cart-store";
 import { generateEventId, trackEvent } from "@/lib/events";
+import { ProductStickyNav } from "@/components/ProductStickyNav";
 
-function HeroMedia({ product, contained }: { product: Product; contained?: boolean }) {
-  if (!product.image) {
-    return (
-      <div className="placeholder-art min-h-[420px] rounded-[2.5rem] lg:mx-0">
-        <span>{product.shortName}</span>
-      </div>
-    );
-  }
-
-  const panorama = product.heroPanorama === true && !contained;
-
-  const frameClass = panorama
-    ? "relative w-screen max-w-none shrink-0 bg-[rgba(0,20,14,0.4)] mx-[calc(50%-50vw)] lg:mx-auto lg:w-full lg:max-w-[1180px] lg:overflow-hidden lg:rounded-[2.5rem] lg:bg-transparent"
-    : "relative min-h-[320px] overflow-hidden rounded-[2rem] border border-gold-400/20 bg-black/20 lg:min-h-[420px] lg:rounded-[2.5rem]";
-
-  const imageClass = panorama
-    ? "h-auto w-full object-contain"
-    : "h-full min-h-[320px] w-full object-cover lg:min-h-[420px]";
+function HeroMarketingBridge({
+  block,
+}: {
+  block: NonNullable<Product["heroMarketingBridge"]>;
+}) {
+  const icons = [Droplets, Flame, Wind, ShieldCheck];
 
   return (
-    <div className={frameClass}>
-      <Image
-        src={product.image}
-        alt={product.name}
-        width={1536}
-        height={1024}
-        className={imageClass}
-        priority
-        sizes={
-          panorama ? "(max-width: 1024px) 100vw, 45vw" : "(max-width: 1024px) 100vw, 48vw"
-        }
-      />
+    <div
+      className="rounded-[2rem] border border-[var(--border-gold)] bg-white px-4 py-6 shadow-[0_14px_50px_rgba(42,27,18,0.08)] sm:px-6 sm:py-7 md:px-8 md:py-8"
+      dir="rtl"
+    >
+      <h2 className="text-right text-2xl font-black leading-snug text-[var(--emerald-950)] sm:text-3xl sm:leading-tight">
+        {block.headline}
+      </h2>
+      <p className="mt-3 text-right text-[0.95rem] font-semibold leading-7 text-[var(--muted)] sm:mt-4 sm:text-base sm:leading-8">
+        {block.body}
+      </p>
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-7 md:grid-cols-4 md:gap-4">
+        {block.pills.map(([title, sub], i) => {
+          const Icon = icons[i] ?? Droplets;
+          return (
+            <div
+              key={title}
+              className="flex flex-col items-center rounded-2xl border border-[var(--border-gold)]/80 bg-[var(--cream-50)] px-3 py-4 text-center"
+            >
+              <p className="text-lg font-black leading-tight text-[var(--emerald-950)] sm:text-xl">{title}</p>
+              <p className="mt-1 text-[11px] font-semibold leading-5 text-[var(--muted)] sm:text-xs">{sub}</p>
+              <span className="mt-3 grid size-9 place-items-center rounded-full bg-[var(--emerald-950)] text-[var(--gold-300)]">
+                <Icon className="h-4 w-4" aria-hidden />
+              </span>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
 
-function BeforeAfterSection({ product }: { product: Product }) {
-  const block = product.beforeAfterStory;
-  if (!block) return null;
+function HeroMedia({ product, contained }: { product: Product; contained?: boolean }) {
+  const [imageFailed, setImageFailed] = useState(false);
+  const hasImageSrc = Boolean(product.image?.trim());
+  const showImage = hasImageSrc && !imageFailed;
+  const heroPanorama = product.heroPanorama === true;
 
-  const warmLeft = block.layout === "warm-left";
-  const columns = warmLeft
-    ? [
-        { src: block.afterSrc, label: block.afterLabel },
-        { src: block.beforeSrc, label: block.beforeLabel },
-      ]
-    : [
-        { src: block.beforeSrc, label: block.beforeLabel },
-        { src: block.afterSrc, label: block.afterLabel },
-      ];
+  /** Wide marketing composites (before/after + SKU in-frame): never force square slots or `object-cover`. */
+  if (heroPanorama && showImage) {
+    const fullBleed = !contained;
+    const frameClass = fullBleed
+      ? "relative w-screen max-w-none shrink-0 bg-[rgba(0,20,14,0.35)] mx-[calc(50%-50vw)] lg:mx-auto lg:w-full lg:max-w-[1180px] lg:overflow-hidden lg:rounded-[2.5rem] lg:bg-transparent"
+      : "relative w-full overflow-hidden rounded-[2.5rem] border border-gold-400/20 bg-black/10";
+    const unmodified = product.heroMediaUnmodified === true;
+    return (
+      <div className={frameClass}>
+        {unmodified ? (
+          // eslint-disable-next-line @next/next/no-img-element -- merchant hero must bypass next/image recompression
+          <img
+            src={product.image!}
+            alt={product.name}
+            className="block h-auto w-full object-contain object-center"
+            decoding="async"
+            fetchPriority="high"
+            onError={() => setImageFailed(true)}
+          />
+        ) : (
+          <Image
+            src={product.image!}
+            alt={product.name}
+            width={1536}
+            height={1024}
+            className="h-auto w-full object-contain"
+            priority
+            sizes={
+              fullBleed
+                ? "(max-width: 1024px) 100vw, min(1180px, 100vw)"
+                : "(max-width: 1024px) 100vw, 52vw"
+            }
+            onError={() => setImageFailed(true)}
+          />
+        )}
+      </div>
+    );
+  }
+
+  const showCaption = product.heroMediaShowCaption !== false;
+  const denseHero = !showCaption;
+  const denseContain = denseHero && product.heroMediaObjectFit === "contain";
+  const squareSlot =
+    denseHero && denseContain && product.heroMediaSquareSlot === true;
+  const emptyDenseHero = denseHero && !showImage;
+  const serveHeroUnmodified = product.heroMediaUnmodified === true;
+  const containPad =
+    denseContain && serveHeroUnmodified ? "p-1 sm:p-2 md:p-3" : denseContain ? "p-3 sm:p-6 md:p-8" : "";
+
+  const frameClass = showImage
+    ? squareSlot
+      ? `product-illustration has-product-image relative mx-auto grid aspect-square w-full max-w-[min(100%,min(92dvh,42rem))] overflow-hidden rounded-[2.5rem] p-1 sm:p-2 lg:max-w-[min(38rem,100%)] ${contained ? "" : "lg:mx-0"}`
+      : `product-illustration has-product-image grid rounded-[2.5rem] ${
+          denseHero
+            ? "min-h-[min(92dvh,720px)] p-0 sm:p-1 lg:min-h-[640px] lg:p-2"
+            : "min-h-[380px] p-6 lg:min-h-[620px]"
+        } ${showCaption ? "place-items-end" : "place-items-stretch"} ${contained ? "" : "lg:mx-0"}`
+    : emptyDenseHero
+      ? squareSlot
+        ? `relative mx-auto grid aspect-square w-full max-w-[min(100%,min(92dvh,42rem))] place-items-center overflow-hidden rounded-[2.5rem] border border-dashed border-[var(--border-gold)]/70 bg-[var(--cream-50)] p-6 sm:p-8 lg:max-w-[min(38rem,100%)] ${contained ? "" : "lg:mx-0"}`
+        : `relative grid place-items-center rounded-[2.5rem] border border-dashed border-[var(--border-gold)]/70 bg-[var(--cream-50)] min-h-[min(92dvh,720px)] p-8 sm:p-10 lg:min-h-[640px] ${contained ? "" : "lg:mx-0"}`
+      : `product-illustration grid rounded-[2.5rem] ${
+          denseHero
+            ? "min-h-[min(92dvh,720px)] p-0 sm:p-1 lg:min-h-[640px] lg:p-2"
+            : "min-h-[380px] p-6 lg:min-h-[620px]"
+        } ${showCaption ? "place-items-end" : "place-items-stretch"} ${contained ? "" : "lg:mx-0"}`;
 
   return (
-    <section className="bg-[var(--cream-50)] px-4 py-14">
-      <div className="container-grid">
-        <p className="badge">{block.kicker}</p>
-        <h2 className="mt-4 max-w-3xl text-3xl font-black leading-tight text-[var(--emerald-950)] md:text-4xl">
-          {block.title}
-        </h2>
-        <p className="mt-4 max-w-3xl text-lg leading-9 text-[var(--muted)]">{block.body}</p>
-        <div className="mt-10 grid gap-4 md:grid-cols-2" dir="ltr">
-          {columns.map((col) => (
-            <figure
-              key={`${col.src}-${col.label}`}
-              className="overflow-hidden rounded-2xl border border-[var(--border-gold)] bg-white shadow-sm"
-            >
-              <div className="relative aspect-[4/3] w-full bg-[var(--cream-100)]">
-                <Image
-                  src={col.src}
-                  alt={col.label}
-                  fill
-                  className="object-contain"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-              </div>
-              <figcaption className="px-3 py-2 text-center text-sm font-bold text-[var(--emerald-950)]">
-                {col.label}
-              </figcaption>
-            </figure>
-          ))}
+    <div className={frameClass}>
+      {showImage && serveHeroUnmodified ? (
+        // eslint-disable-next-line @next/next/no-img-element -- merchant hero must bypass next/image recompression
+        <img
+          src={product.image!}
+          alt={product.name}
+          className={`absolute inset-0 z-0 h-full w-full ${
+            denseContain
+              ? `object-contain object-center ${containPad}`
+              : denseHero
+                ? "object-cover object-center"
+                : "object-contain"
+          } ${showCaption ? "p-4 md:p-8" : denseHero && !denseContain ? "p-0" : !denseHero ? "p-2 md:p-4" : ""}`}
+          decoding="async"
+          fetchPriority="high"
+          onError={() => setImageFailed(true)}
+        />
+      ) : null}
+      {showImage && !serveHeroUnmodified ? (
+        <Image
+          src={product.image!}
+          alt={product.name}
+          fill
+          className={`z-0 ${
+            denseContain
+              ? `object-contain object-center ${containPad}`
+              : denseHero
+                ? "object-cover object-center"
+                : "object-contain"
+          } ${showCaption ? "p-4 md:p-8" : denseHero && !denseContain ? "p-0" : !denseHero ? "p-2 md:p-4" : ""}`}
+          priority
+          sizes="(max-width: 1024px) 100vw, 52vw"
+          onError={() => setImageFailed(true)}
+        />
+      ) : null}
+      {emptyDenseHero ? <span className="sr-only">صورة المنتج غير معروضة بعد</span> : null}
+      {showCaption ? (
+        <div className="copy-quote copy-quote--inverse relative z-10 max-w-sm p-5 text-white shadow-2xl">
+          <p className="text-sm font-black text-[var(--gold-300)]">ليالي بيوتي</p>
+          <h2 className="mt-2 text-3xl font-black">{product.shortName}</h2>
+          <p className="mt-3 text-sm leading-7 text-[var(--cream-100)]">{product.headline}</p>
+          <div className="mt-4 grid grid-cols-2 gap-2 text-xs font-bold text-[var(--gold-300)]">
+            {product.notes.slice(0, 4).map((note) => (
+              <span key={note} className="rounded-full border border-white/10 bg-white/10 px-3 py-2 text-center">
+                {note}
+              </span>
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      ) : null}
+    </div>
   );
 }
 
@@ -102,22 +186,73 @@ function InsightStrip({ product }: { product: Product }) {
   const strip = product.insightStrip;
   if (!strip) return null;
 
+  const hasImage = Boolean(strip.imageSrc?.trim());
+
   return (
-    <section className="border-y border-[var(--border-gold)] bg-white px-4 py-12">
-      <div className="relative mx-[calc(50%-50vw)] w-screen max-w-none px-0 lg:mx-auto lg:w-full lg:max-w-[1180px]">
-        <div className="overflow-hidden bg-[var(--emerald-950)] lg:rounded-2xl">
-          <Image
-            src={strip.imageSrc}
-            alt={strip.headline}
-            width={1536}
-            height={1024}
-            className="h-auto w-full object-contain"
-            sizes="100vw"
-          />
+    <section className="border-y border-[var(--border-gold)] bg-[var(--cream-50)] px-4 py-10">
+      <div className="container-grid">
+        {hasImage ? (
+          <div className="relative mx-auto w-full max-w-[1180px] overflow-hidden rounded-2xl border border-[var(--border-gold)] bg-[var(--emerald-950)] shadow-lg ring-1 ring-black/10">
+            <div className="relative aspect-[16/10] w-full md:aspect-[2/1]">
+              <Image
+                src={strip.imageSrc!}
+                alt={strip.headline}
+                fill
+                className="object-contain p-2 md:p-4"
+                sizes="(max-width: 768px) 100vw, 1180px"
+                loading="lazy"
+              />
+            </div>
+          </div>
+        ) : null}
+        {strip.statPercent ? (
+          <div className={`text-center ${hasImage ? "mt-5" : ""}`} dir="rtl">
+            <p
+              className="bg-gradient-to-l from-[var(--emerald-900)] to-[var(--emerald-950)] bg-clip-text text-5xl font-black leading-none tracking-tight text-transparent tabular-nums md:text-6xl"
+              aria-label={`نسبة مذكورة: ${strip.statPercent}`}
+            >
+              {strip.statPercent}
+            </p>
+          </div>
+        ) : null}
+        <div
+          className={`copy-quote mx-auto max-w-3xl text-center ${hasImage || strip.statPercent ? "mt-8" : ""}`}
+          dir="rtl"
+        >
+          <p className="text-xs font-black tracking-[0.28em] text-[var(--gold-500)]">ليالي بيوتي · لمحات</p>
+          <p className="mt-4 text-2xl font-black leading-snug text-[var(--emerald-950)] md:text-3xl">{strip.headline}</p>
+          <p className="mx-auto mt-3 max-w-3xl text-sm font-semibold leading-8 text-[var(--muted)]">{strip.subline}</p>
         </div>
-        <div className="container-grid pt-6">
-          <p className="text-xl font-black leading-snug text-[var(--emerald-950)] md:text-2xl">{strip.headline}</p>
-          <p className="mt-2 text-sm font-semibold text-[var(--muted)]">{strip.subline}</p>
+      </div>
+    </section>
+  );
+}
+
+function StoryGallerySection({ product }: { product: Product }) {
+  const images = product.storyGallery;
+  if (!images?.length) return null;
+
+  return (
+    <section className="border-t border-[var(--border-gold)] bg-white px-4 py-14">
+      <div className="container-grid">
+        <div className="grid gap-4 md:grid-cols-3" dir="ltr">
+          {images.map((item) => (
+            <figure
+              key={item.src}
+              className="overflow-hidden rounded-2xl border border-[var(--border-gold)] bg-[var(--cream-50)] shadow-md ring-1 ring-[rgba(201,150,69,0.06)] transition-shadow duration-300 hover:shadow-xl"
+            >
+              <div className="relative aspect-[4/3] w-full bg-[var(--cream-100)]">
+                <Image
+                  src={item.src}
+                  alt={item.alt}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  loading="lazy"
+                />
+              </div>
+            </figure>
+          ))}
         </div>
       </div>
     </section>
@@ -136,29 +271,38 @@ function CommercePanel({
   onAdd: (line: Product) => void;
 }) {
   const tiers = product.offerTiers;
+  const showCommerceIntro = product.commerceShowIntro !== false;
 
   if (!tiers?.length) {
     return (
       <div
+        id={PRODUCT_OFFER_ANCHOR_ID}
         dir="rtl"
-        className="relative z-10 rounded-[2rem] border border-gold-400/25 bg-emerald-950/72 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] backdrop-blur lg:p-8"
+        className="relative z-10 scroll-mt-28 rounded-[2rem] border border-gold-400/25 bg-emerald-950/72 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] backdrop-blur lg:p-8"
       >
-        <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">{product.badge}</p>
-        <h1 className="mt-5 text-4xl font-black leading-tight text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.75)] md:text-5xl">
-          {product.name}
-        </h1>
-        <p className="mt-5 text-xl font-semibold leading-9 text-cream-50 drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)]">
-          {product.headline}
-        </p>
-        <div className="mt-5 grid gap-2 rounded-2xl border border-gold-400/25 bg-white/8 p-4 text-sm font-bold text-cream-50 md:grid-cols-3">
-          {["تأكيد قبل الشحن", "الدفع عند الاستلام", "عرض محجوز لهذا الأسبوع"].map((item) => (
-            <span key={item} className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 shrink-0 text-gold-300" />
-              {item}
-            </span>
-          ))}
-        </div>
-        <div className="mt-8 rounded-[2rem] border border-gold-400/40 bg-black/22 p-5 shadow-inner">
+        {!showCommerceIntro ? <h1 className="sr-only">{product.name}</h1> : null}
+        {showCommerceIntro ? (
+          <>
+            <div className="copy-quote copy-quote--inverse mt-1">
+              <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">{product.badge}</p>
+              <h1 className="mt-4 text-4xl font-black leading-tight text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.75)] md:text-5xl">
+                {product.name}
+              </h1>
+              <p className="mt-4 text-xl font-semibold leading-9 text-cream-50 drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)]">
+                {product.headline}
+              </p>
+            </div>
+            <div className="mt-5 grid gap-2 rounded-2xl border border-gold-400/25 bg-white/10 p-4 text-sm font-bold text-cream-50 md:grid-cols-3">
+              {["تأكيد قبل الشحن", "الدفع عند الاستلام", "عرض محجوز لهذا الأسبوع"].map((item) => (
+                <span key={item} className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-gold-300" />
+                  {item}
+                </span>
+              ))}
+            </div>
+          </>
+        ) : null}
+        <div className={`${showCommerceIntro ? "mt-8" : "mt-0"} rounded-[2rem] border border-gold-400/40 bg-black/22 p-5 shadow-inner`}>
           <p className="text-sm text-gold-300">العرض الحالي</p>
           <div className="mt-2 flex flex-wrap items-end gap-3">
             <p className="text-4xl font-black text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)]">
@@ -169,7 +313,7 @@ function CommercePanel({
             )}
           </div>
           <p className="mt-3 text-sm font-semibold leading-7 text-cream-100">
-            لا دفع مسبق عبر الإنترنت. نؤكد طلبكِ بالاتصال قبل تجهيز الشحن، لتصلك التجربة كما اخترتِها على
+            ما فيه دفع إلكتروني مسبق. بنأكد طلبج بالاتصال قبل ما نجهز الشحن، عشان توصلج التجربة مثل ما اخترتيها على
             الموقع.
           </p>
         </div>
@@ -178,7 +322,7 @@ function CommercePanel({
           onClick={() => onAdd(product)}
           className="mt-6 w-full rounded-full bg-gold-500 px-8 py-5 text-lg font-black text-emerald-950 shadow-2xl transition hover:-translate-y-0.5 hover:bg-gold-400 md:w-auto"
         >
-          أضيفي العرض إلى السلة
+          أضيفي العرض للسلة
         </button>
       </div>
     );
@@ -192,34 +336,42 @@ function CommercePanel({
 
   return (
     <div
+      id={PRODUCT_OFFER_ANCHOR_ID}
       dir="rtl"
-      className="relative z-10 rounded-[2rem] border border-gold-400/25 bg-emerald-950/72 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] backdrop-blur lg:p-8"
+      className="relative z-10 scroll-mt-28 rounded-[2rem] border border-gold-400/25 bg-emerald-950/72 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] backdrop-blur lg:p-8"
     >
-      <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">{product.badge}</p>
-      <h1 className="mt-5 text-4xl font-black leading-tight text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.75)] md:text-5xl">
-        {product.name}
-      </h1>
-      <p className="mt-5 text-xl font-semibold leading-9 text-cream-50 drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)]">
-        {product.headline}
-      </p>
+      {!showCommerceIntro ? <h1 className="sr-only">{product.name}</h1> : null}
+      {showCommerceIntro ? (
+        <>
+          <div className="copy-quote copy-quote--inverse mt-1">
+            <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">{product.badge}</p>
+            <h1 className="mt-4 text-4xl font-black leading-tight text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.75)] md:text-5xl">
+              {product.name}
+            </h1>
+            <p className="mt-4 text-xl font-semibold leading-9 text-cream-50 drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)]">
+              {product.headline}
+            </p>
+          </div>
 
-      <div className="mt-5 grid gap-2 rounded-2xl border border-gold-400/25 bg-white/8 p-4 text-sm font-bold text-cream-50 md:grid-cols-3">
-        {["تأكيد قبل الشحن", "الدفع عند الاستلام", "عرض محجوز لهذا الأسبوع"].map((item) => (
-          <span key={item} className="flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 shrink-0 text-gold-300" />
-            {item}
-          </span>
-        ))}
-      </div>
+          <div className="mt-5 grid gap-2 rounded-2xl border border-gold-400/25 bg-white/10 p-4 text-sm font-bold text-cream-50 md:grid-cols-3">
+            {["تأكيد قبل الشحن", "الدفع عند الاستلام", "عرض محجوز لهذا الأسبوع"].map((item) => (
+              <span key={item} className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-gold-300" />
+                {item}
+              </span>
+            ))}
+          </div>
+        </>
+      ) : null}
 
-      <div className="mt-8 rounded-[2rem] border border-gold-400/50 bg-[var(--cream-50)] p-5 text-[var(--emerald-950)] shadow-inner">
+      <div className={`${showCommerceIntro ? "mt-8" : "mt-0"} rounded-[2rem] border border-gold-400/50 bg-[var(--cream-50)] p-5 text-[var(--emerald-950)] shadow-inner`}>
         {product.heroPromoLine && (
           <p className="flex items-center justify-center gap-2 text-center text-xs font-bold text-amber-700 md:text-sm">
             <span className="inline-block h-2 w-2 shrink-0 rounded-full bg-amber-500" aria-hidden />
             {product.heroPromoLine}
           </p>
         )}
-        <p className="mt-3 text-center text-lg font-black text-[var(--emerald-950)]">اختاري العرض:</p>
+        <p className="mt-3 text-center text-lg font-black text-[var(--emerald-950)]">اختاري عرضج — هنا يبدأ الطلب</p>
         <div className="mt-4 space-y-3" role="radiogroup" aria-label="اختيار العرض">
           {tiers.map((tier) => {
             const isOn = selectedTier.sku === tier.sku;
@@ -285,8 +437,8 @@ function CommercePanel({
 
       <div className="mt-5 grid gap-2 text-center text-xs font-bold text-cream-100/90 md:grid-cols-3 md:text-sm">
         {[
-          ["الدفع عند الاستلام", "من دون دفع إلكتروني مسبق"],
-          ["تأكيد قبل الشحن", "يتم الاتصال قبل إرسال الشحنة"],
+          ["الدفع عند الاستلام", "بدون دفع إلكتروني مسبق"],
+          ["تأكيد قبل الشحن", "نتصل قبل ما نرسل الشحنة"],
           ["التوصيل خلال 1–3 أيام", "حسب المنطقة داخل الإمارات"],
         ].map(([t, s]) => (
           <div key={t} className="rounded-xl border border-white/10 bg-white/5 px-2 py-2">
@@ -297,8 +449,7 @@ function CommercePanel({
       </div>
 
       <p className="mt-4 text-sm font-semibold leading-7 text-cream-100">
-        لا دفع مسبق عبر الإنترنت. نؤكد طلبكِ بالاتصال قبل تجهيز الشحن، لتصلك التجربة كما اخترتِها في هذه
-        الصفحة.
+        ما فيه دفع إلكتروني مسبق. بنأكد طلبج بالاتصال قبل ما نجهز الشحن، عشان توصلج التجربة مثل ما اخترتيها بهالصفحة.
       </p>
     </div>
   );
@@ -306,7 +457,6 @@ function CommercePanel({
 
 export function ProductHero({ product }: { product: Product }) {
   const addItem = useCartStore((state) => state.addItem);
-  const tiers = product.offerTiers;
   const [selectedTier, setSelectedTier] = useState<ProductOfferTier | null>(() =>
     resolveDefaultOfferTier(product),
   );
@@ -318,71 +468,81 @@ export function ProductHero({ product }: { product: Product }) {
   }
 
   const storyFirst = product.storyBeforeCommerce === true;
-  const stickyLine =
-    tiers?.length && selectedTier ? productSnapshotForOfferTier(product, selectedTier) : product;
 
   if (storyFirst) {
+    const bridge = product.heroMarketingBridge;
+    const stackedPanoramaHero = product.heroPanorama === true;
+
     return (
       <>
-        <section className="hero-gradient relative overflow-hidden px-4 pb-10 pt-6 lg:pb-16 lg:pt-10">
+        <section className="hero-gradient relative overflow-hidden px-4 pb-28 pt-6 lg:pb-32 lg:pt-10">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(201,150,69,0.2),transparent_32%)]" />
           <div className="container-grid relative z-10" dir="ltr">
-            <div className="grid items-start gap-10 lg:grid-cols-[1.05fr_0.95fr]">
-              <HeroMedia product={product} contained />
-              <CommercePanel
-                product={product}
-                selectedTier={selectedTier}
-                onTierChange={setSelectedTier}
-                onAdd={addOffer}
-              />
-            </div>
+            {stackedPanoramaHero ? (
+              <div className="flex flex-col gap-8 lg:gap-10">
+                <HeroMedia product={product} />
+                {bridge ? (
+                  <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-start lg:gap-x-10">
+                    <CommercePanel
+                      product={product}
+                      selectedTier={selectedTier}
+                      onTierChange={setSelectedTier}
+                      onAdd={addOffer}
+                    />
+                    <HeroMarketingBridge block={bridge} />
+                  </div>
+                ) : (
+                  <CommercePanel
+                    product={product}
+                    selectedTier={selectedTier}
+                    onTierChange={setSelectedTier}
+                    onAdd={addOffer}
+                  />
+                )}
+              </div>
+            ) : bridge ? (
+              <div className="flex flex-col gap-8 lg:grid lg:grid-cols-[0.95fr_1.05fr] lg:grid-rows-[auto_auto] lg:items-stretch lg:gap-x-10 lg:gap-y-8">
+                <div className="min-h-0 lg:col-start-2 lg:row-start-1">
+                  <HeroMedia product={product} contained />
+                </div>
+                <div className="lg:col-start-2 lg:row-start-2">
+                  <HeroMarketingBridge block={bridge} />
+                </div>
+                <div className="flex min-h-0 flex-col lg:col-start-1 lg:row-span-2 lg:row-start-1">
+                  <CommercePanel
+                    product={product}
+                    selectedTier={selectedTier}
+                    onTierChange={setSelectedTier}
+                    onAdd={addOffer}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="grid items-start gap-10 lg:grid-cols-[0.95fr_1.05fr]">
+                <div className="order-2 lg:order-1">
+                  <CommercePanel
+                    product={product}
+                    selectedTier={selectedTier}
+                    onTierChange={setSelectedTier}
+                    onAdd={addOffer}
+                  />
+                </div>
+                <div className="order-1 lg:order-2">
+                  <HeroMedia product={product} contained />
+                </div>
+              </div>
+            )}
           </div>
         </section>
-        <BeforeAfterSection product={product} />
         <InsightStrip product={product} />
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-gold-500/30 bg-emerald-950/95 p-3 backdrop-blur lg:hidden">
-          {tiers?.length && selectedTier ? (
-            <div className="space-y-2">
-              <select
-                className="w-full rounded-xl border border-gold-500/40 bg-white/10 px-3 py-2 text-sm font-bold text-white"
-                value={selectedTier.sku}
-                onChange={(e) => {
-                  const t = tiers.find((x) => x.sku === e.target.value);
-                  if (t) setSelectedTier(t);
-                }}
-                aria-label="اختيار العرض"
-              >
-                {tiers.map((t) => (
-                  <option key={t.sku} value={t.sku} className="text-emerald-950">
-                    {t.title} — {money(t.price)}
-                  </option>
-                ))}
-              </select>
-              <button
-                type="button"
-                onClick={() => addOffer(productSnapshotForOfferTier(product, selectedTier))}
-                className="flex w-full items-center justify-center gap-2 rounded-full bg-gold-500 px-5 py-4 font-black text-emerald-950"
-              >
-                <ShoppingCart className="h-5 w-5" aria-hidden />
-                أضيفي للسلة – {money(selectedTier.price)}
-              </button>
-            </div>
-          ) : (
-            <button
-              type="button"
-              onClick={() => addOffer(product)}
-              className="w-full rounded-full bg-gold-500 px-5 py-4 font-black text-emerald-950"
-            >
-              أضيفي العرض إلى السلة - {money(product.price)}
-            </button>
-          )}
-        </div>
+        <StoryGallerySection product={product} />
+        <ProductStickyNav slug={product.slug} />
       </>
     );
   }
 
   return (
-    <section className="hero-gradient relative overflow-hidden px-4 py-12 pb-28 text-white lg:py-20 lg:pb-20">
+    <section className="hero-gradient relative overflow-hidden px-4 py-12 pb-28 text-white lg:py-20 lg:pb-32">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(201,150,69,0.2),transparent_32%)]" />
       <div className="container-grid grid items-center gap-10 lg:grid-cols-[0.9fr_1fr]" dir="ltr">
         <div className="order-1 lg:order-1">
@@ -397,22 +557,7 @@ export function ProductHero({ product }: { product: Product }) {
           />
         </div>
       </div>
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-gold-500/30 bg-emerald-950/95 p-3 backdrop-blur lg:hidden">
-        <button
-          type="button"
-          onClick={() => addOffer(stickyLine)}
-          className="flex w-full items-center justify-center gap-2 rounded-full bg-gold-500 px-5 py-4 font-black text-emerald-950"
-        >
-          {tiers?.length ? (
-            <>
-              <ShoppingCart className="h-5 w-5" aria-hidden />
-              أضيفي للسلة – {money(stickyLine.price)}
-            </>
-          ) : (
-            <>أضيفي العرض إلى السلة - {money(product.price)}</>
-          )}
-        </button>
-      </div>
+      <ProductStickyNav slug={product.slug} />
     </section>
   );
 }

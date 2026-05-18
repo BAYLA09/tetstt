@@ -1,34 +1,51 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { Star } from "lucide-react";
-import { type Product } from "@/lib/products";
+import { ShoppingBag, Star } from "lucide-react";
+import { money, type Product } from "@/lib/products";
 import { useCartStore } from "@/lib/cart-store";
 
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({
+  product,
+  showAddButton = true,
+}: {
+  product: Product;
+  showAddButton?: boolean;
+}) {
   const addItem = useCartStore((state) => state.addItem);
+  const cardSrc = product.cardImage?.trim();
+  const showPhoto = Boolean(cardSrc);
+  /** `object-cover` was cropping the label off wide studio shots for the serum card. */
+  const cardImgClass =
+    product.slug === "dubai-palace-oud-serum"
+      ? "h-full w-full object-contain object-center p-2 sm:p-4 transition duration-300 group-hover:scale-[1.02]"
+      : "h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.03]";
 
   return (
-    <article className="rounded-[2rem] border border-[var(--border-gold)] bg-white p-4 shadow-[0_18px_60px_rgba(1,63,42,0.12)]">
+    <article className="group flex h-full flex-col overflow-hidden rounded-[2rem] border border-[var(--border-gold)] bg-white p-3 shadow-[0_18px_60px_rgba(42,27,18,0.10)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_24px_80px_rgba(42,27,18,0.14)]">
       <Link href={`/products/${product.slug}`} className="block">
-        {product.cardImage ? (
-          <div className="relative h-64 overflow-hidden rounded-[1.5rem] border border-[var(--border-gold)] bg-[var(--cream-50)]">
-            <Image
-              src={product.cardImage}
+        {showPhoto ? (
+          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[1.5rem] border border-[var(--border-gold)] bg-[var(--cream-50)] sm:aspect-[3/2]">
+            {/* eslint-disable-next-line @next/next/no-img-element -- static /public assets; next/image was tripping onError and showing the illustration fallback */}
+            <img
+              src={cardSrc}
               alt={product.name}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 33vw"
+              className={cardImgClass}
+              loading={showAddButton ? "lazy" : "eager"}
+              decoding="async"
+              fetchPriority={showAddButton ? "auto" : "high"}
             />
           </div>
         ) : (
-          <div className="placeholder-art h-64 rounded-[1.5rem]">
-            <span>{product.shortName}</span>
+          <div className="product-illustration grid aspect-[4/3] w-full place-items-end rounded-[1.5rem] p-6 sm:aspect-[3/2]">
+            <div className="relative z-10 w-full rounded-2xl border border-white/10 bg-white/10 p-4 text-center backdrop-blur-sm">
+              <p className="text-xs font-black text-[var(--gold-300)]">{product.badge}</p>
+              <p className="mt-1 text-2xl font-black text-white">{product.shortName}</p>
+            </div>
           </div>
         )}
       </Link>
-      <div className="mt-5 space-y-3">
+      <div className="flex flex-1 flex-col p-2 pt-5">
         <div className="flex items-center justify-between gap-3">
           <span className="rounded-full bg-[var(--emerald-950)] px-3 py-1 text-xs font-bold text-[var(--gold-300)]">
             {product.badge}
@@ -39,31 +56,43 @@ export function ProductCard({ product }: { product: Product }) {
             ))}
           </div>
         </div>
-        <Link href={`/products/${product.slug}`}>
-          <h3 className="text-2xl font-bold text-[var(--emerald-950)]">
-            {product.name}
-          </h3>
-        </Link>
-        <p className="min-h-12 text-sm leading-7 text-[var(--muted)]">
-          {product.subheading}
-        </p>
-        <div className="flex items-end justify-between">
+        <div className="copy-quote copy-quote--compact mt-4" dir="rtl">
+          <Link href={`/products/${product.slug}`}>
+            <h3 className="text-2xl font-black leading-snug text-[var(--emerald-950)] transition group-hover:text-[var(--gold-500)]">
+              {product.name}
+            </h3>
+          </Link>
+          <p className="mt-3 min-h-16 text-sm leading-7 text-[var(--muted)]">{product.subheading}</p>
+        </div>
+        <div className="mt-auto flex flex-col gap-4 pt-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
             {product.compareAt && (
-              <p className="text-sm text-[var(--muted)] line-through">
-                {product.compareAt} درهم
+              <p className="text-sm font-bold text-[var(--muted)] line-through">
+                {money(product.compareAt)}
               </p>
             )}
-            <p className="text-2xl font-black text-[var(--emerald-950)]">
-              {product.price} درهم
-            </p>
+            <div className="price-lockup">
+              <span>يبدأ من</span>
+              <strong>{product.price}</strong>
+              <span>درهم</span>
+            </div>
           </div>
-          <button
-            onClick={() => addItem(product)}
-            className="rounded-full bg-[var(--gold-500)] px-5 py-3 text-sm font-black text-[var(--emerald-950)] shadow-lg transition hover:-translate-y-0.5 hover:bg-[var(--gold-400)]"
-          >
-            أضيفي العرض
-          </button>
+          {showAddButton ? (
+            <button
+              onClick={() => addItem(product)}
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-[var(--gold-500)] px-5 py-3 text-sm font-black text-[var(--emerald-950)] shadow-lg transition hover:-translate-y-0.5 hover:bg-[var(--gold-400)]"
+            >
+              <ShoppingBag className="h-4 w-4" aria-hidden />
+              أضيفي العرض
+            </button>
+          ) : (
+            <Link
+              href={`/products/${product.slug}`}
+              className="inline-flex items-center justify-center rounded-full border border-[var(--border-gold)] px-5 py-3 text-sm font-black text-[var(--emerald-950)] transition hover:-translate-y-0.5 hover:bg-[var(--cream-50)]"
+            >
+              اكتشفي التفاصيل
+            </Link>
+          )}
         </div>
       </div>
     </article>

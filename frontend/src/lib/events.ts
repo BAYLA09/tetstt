@@ -54,6 +54,31 @@ export function getTrackingContext(): TrackingContext {
   };
 }
 
+/** Body for POST /analytics/click — only when a paid click id exists (Meta / TikTok / Snap). */
+export function buildAdClickBeaconBody():
+  | {
+      fbclid: string | null;
+      ttclid: string | null;
+      sc_click_id: string | null;
+      landing_page: string;
+      path: string;
+    }
+  | null {
+  if (typeof window === "undefined") return null;
+  const ctx = getTrackingContext();
+  const fb = ctx.tracking.fbclid;
+  const tt = ctx.tracking.ttclid;
+  const sc = ctx.tracking.sc_click_id;
+  if (!fb && !tt && !sc) return null;
+  return {
+    fbclid: fb ?? null,
+    ttclid: tt ?? null,
+    sc_click_id: sc ?? null,
+    landing_page: ctx.landing_page,
+    path: window.location.pathname || "/",
+  };
+}
+
 export function trackEvent(eventName: string, payload: Record<string, unknown> = {}) {
   if (process.env.NEXT_PUBLIC_ENABLE_PIXELS !== "true") {
     return;
@@ -61,11 +86,11 @@ export function trackEvent(eventName: string, payload: Record<string, unknown> =
   window.dispatchEvent(new CustomEvent("layali:track", { detail: { eventName, payload } }));
 }
 
-export function trackAddToCart(item: CartItem, eventId: string) {
+export function trackAddToCart(item: CartItem, eventId: string, currency = "AED") {
   trackEvent("AddToCart", {
     event_id: eventId,
     content_ids: [item.sku],
     value: item.price * item.quantity,
-    currency: "AED",
+    currency,
   });
 }
