@@ -17,19 +17,29 @@ import { ProductStickyNav } from "@/components/ProductStickyNav";
 
 function HeroMedia({ product, contained }: { product: Product; contained?: boolean }) {
   const [imageFailed, setImageFailed] = useState(false);
-  const showImage = Boolean(product.image) && !imageFailed;
+  const hasImageSrc = Boolean(product.image?.trim());
+  const showImage = hasImageSrc && !imageFailed;
   const showCaption = product.heroMediaShowCaption !== false;
   const denseHero = !showCaption;
   const denseContain = denseHero && product.heroMediaObjectFit === "contain";
+  const emptyDenseHero = denseHero && !showImage;
 
-  return (
-    <div
-      className={`product-illustration ${showImage ? "has-product-image" : ""} grid rounded-[2.5rem] ${
+  const frameClass = showImage
+    ? `product-illustration has-product-image grid rounded-[2.5rem] ${
         denseHero
           ? "min-h-[min(92dvh,720px)] p-0 sm:p-1 lg:min-h-[640px] lg:p-2"
           : "min-h-[380px] p-6 lg:min-h-[620px]"
-      } ${showCaption ? "place-items-end" : "place-items-stretch"} ${contained ? "" : "lg:mx-0"}`}
-    >
+      } ${showCaption ? "place-items-end" : "place-items-stretch"} ${contained ? "" : "lg:mx-0"}`
+    : emptyDenseHero
+      ? `relative grid place-items-center rounded-[2.5rem] border border-dashed border-[var(--border-gold)]/70 bg-[var(--cream-50)] min-h-[min(92dvh,720px)] p-8 sm:p-10 lg:min-h-[640px] ${contained ? "" : "lg:mx-0"}`
+      : `product-illustration grid rounded-[2.5rem] ${
+          denseHero
+            ? "min-h-[min(92dvh,720px)] p-0 sm:p-1 lg:min-h-[640px] lg:p-2"
+            : "min-h-[380px] p-6 lg:min-h-[620px]"
+        } ${showCaption ? "place-items-end" : "place-items-stretch"} ${contained ? "" : "lg:mx-0"}`;
+
+  return (
+    <div className={frameClass}>
       {showImage && (
         <Image
           src={product.image!}
@@ -47,6 +57,7 @@ function HeroMedia({ product, contained }: { product: Product; contained?: boole
           onError={() => setImageFailed(true)}
         />
       )}
+      {emptyDenseHero ? <span className="sr-only">صورة المنتج غير معروضة بعد</span> : null}
       {showCaption ? (
         <div className="copy-quote copy-quote--inverse relative z-10 max-w-sm p-5 text-white shadow-2xl">
           <p className="text-sm font-black text-[var(--gold-300)]">ليالي بيوتي</p>
