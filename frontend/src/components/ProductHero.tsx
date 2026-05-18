@@ -24,34 +24,32 @@ function HeroMarketingBridge({
 
   return (
     <div
-      className="rounded-[2rem] border border-[var(--border-gold)] bg-white p-5 shadow-[0_14px_50px_rgba(42,27,18,0.08)] md:p-8"
+      className="rounded-[2rem] border border-[var(--border-gold)] bg-white px-4 py-6 shadow-[0_14px_50px_rgba(42,27,18,0.08)] sm:px-6 sm:py-7 md:px-8 md:py-8"
       dir="rtl"
     >
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+      <h2 className="text-right text-2xl font-black leading-snug text-[var(--emerald-950)] sm:text-3xl sm:leading-tight">
+        {block.headline}
+      </h2>
+      <p className="mt-3 text-right text-[0.95rem] font-semibold leading-7 text-[var(--muted)] sm:mt-4 sm:text-base sm:leading-8">
+        {block.body}
+      </p>
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-7 md:grid-cols-4 md:gap-4">
         {block.pills.map(([title, sub], i) => {
           const Icon = icons[i] ?? Droplets;
           return (
             <div
               key={title}
-              className="flex gap-2.5 rounded-2xl border border-[var(--border-gold)]/80 bg-[var(--cream-50)] p-3 md:flex-col md:items-start md:gap-2"
+              className="flex flex-col items-center rounded-2xl border border-[var(--border-gold)]/80 bg-[var(--cream-50)] px-3 py-4 text-center"
             >
-              <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-[var(--emerald-950)] text-[var(--gold-300)]">
-                <Icon className="h-5 w-5" aria-hidden />
+              <p className="text-lg font-black leading-tight text-[var(--emerald-950)] sm:text-xl">{title}</p>
+              <p className="mt-1 text-[11px] font-semibold leading-5 text-[var(--muted)] sm:text-xs">{sub}</p>
+              <span className="mt-3 grid size-9 place-items-center rounded-full bg-[var(--emerald-950)] text-[var(--gold-300)]">
+                <Icon className="h-4 w-4" aria-hidden />
               </span>
-              <div className="min-w-0 text-right">
-                <p className="text-xs font-black leading-snug text-[var(--emerald-950)] md:text-sm">{title}</p>
-                <p className="mt-0.5 text-[11px] font-semibold leading-5 text-[var(--muted)] md:text-xs">{sub}</p>
-              </div>
             </div>
           );
         })}
       </div>
-      <h2 className="mt-7 text-2xl font-black leading-snug text-[var(--emerald-950)] md:mt-8 md:text-3xl md:leading-tight">
-        {block.headline}
-      </h2>
-      <p className="mt-4 text-[0.95rem] font-semibold leading-8 text-[var(--muted)] md:text-base md:leading-9">
-        {block.body}
-      </p>
     </div>
   );
 }
