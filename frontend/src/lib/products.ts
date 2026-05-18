@@ -30,6 +30,8 @@ export type Product = {
   commerceShowIntro?: boolean;
   /** When false, hero image area shows only the photo (no glass caption card). */
   heroMediaShowCaption?: boolean;
+  /** Dense hero only: `contain` keeps tall/square art uncropped (merchant-supplied PNG). */
+  heroMediaObjectFit?: "cover" | "contain";
   /** Hero image + story blocks render above price and add-to-cart. */
   storyBeforeCommerce?: boolean;
   offerTiers?: ProductOfferTier[];
@@ -206,11 +208,12 @@ const catalogProducts: Product[] = [
     image: "/products/aroma-lamp-pdp-hero-wide.png",
     cardImage: "/products/layali-flame-lamp-hero.png",
     heroPanorama: true,
+    heroMediaObjectFit: "contain",
     heroMediaShowCaption: false,
     commerceShowIntro: false,
     storyBeforeCommerce: true,
     insightStrip: {
-      imageSrc: "/products/aroma-lamp-insight-composite.png",
+      imageSrc: "/products/aroma-stat-woman.jpg",
       headline:
         "ليالي بيوتي تركّز على تجربة الغرفة: أقل جفاف في الهواء، نوم أهدأ، وطقس عود راقي يشبه فيلات دبي الأنيقة.",
       subline: "ملاحظات من فريق التجربة · الإمارات، ٢٠٢٤",

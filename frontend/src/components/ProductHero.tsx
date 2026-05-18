@@ -20,6 +20,7 @@ function HeroMedia({ product, contained }: { product: Product; contained?: boole
   const showImage = Boolean(product.image) && !imageFailed;
   const showCaption = product.heroMediaShowCaption !== false;
   const denseHero = !showCaption;
+  const denseContain = denseHero && product.heroMediaObjectFit === "contain";
 
   return (
     <div
@@ -34,9 +35,13 @@ function HeroMedia({ product, contained }: { product: Product; contained?: boole
           src={product.image!}
           alt={product.name}
           fill
-          className={`z-0 ${denseHero ? "object-cover object-center" : "object-contain"} ${
-            showCaption ? "p-4 md:p-8" : denseHero ? "p-0" : "p-2 md:p-4"
-          }`}
+          className={`z-0 ${
+            denseContain
+              ? "object-contain object-center p-3 sm:p-6 md:p-8"
+              : denseHero
+                ? "object-cover object-center"
+                : "object-contain"
+          } ${showCaption ? "p-4 md:p-8" : denseHero && !denseContain ? "p-0" : !denseHero ? "p-2 md:p-4" : ""}`}
           priority
           sizes="(max-width: 1024px) 100vw, 52vw"
           onError={() => setImageFailed(true)}
