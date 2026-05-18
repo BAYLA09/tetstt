@@ -52,7 +52,7 @@ export type Product = {
     layout?: "chronological" | "warm-left";
   };
   insightStrip?: {
-    imageSrc: string;
+    imageSrc?: string;
     headline: string;
     subline: string;
     /** Large figure directly under the insight image (optional). */
@@ -119,7 +119,6 @@ const catalogProducts: Product[] = [
     story:
       "مكيف السيارة، المكتب، والبيت يخلّون البشرة «تشرب» أي ترطيب بسرعة وتبقى باهتة. عود قصر دبي يعطيج طقس فاخر: رطوبة حسّية، لمعان خفيف، ورائحة عربية راقية بعد الاستحمام أو قبل النوم.",
     insightStrip: {
-      imageSrc: "/products/layali-essential-oil-studio.png",
       headline: "من أول الأيام: ملمس أنعم، إحساس أقل تشنج مع المكيف، ورائحة تفتح المزاج.",
       subline: "ملاحظات فريق ليالي بيوتي من تجارب العميلات — النتائج تختلف.",
     },
@@ -154,8 +153,6 @@ const catalogProducts: Product[] = [
         badge: "الأكثر توفيراً",
       },
     ],
-    image: "/products/layali-essential-oil-studio.png",
-    cardImage: "/products/layali-oud-home-card.png",
   },
   {
     sku: "LB-SERUM-SET-99",
@@ -215,12 +212,6 @@ const catalogProducts: Product[] = [
         badge: "الأكثر توفيراً",
       },
     ],
-    image: "/products/layali-flame-lamp-hero.png",
-    cardImage: "/products/layali-flame-lamp-hero.png",
-    heroPanorama: true,
-    heroMediaObjectFit: "contain",
-    heroMediaUnmodified: true,
-    heroMediaShowCaption: false,
     commerceShowIntro: false,
     storyBeforeCommerce: true,
     heroMarketingBridge: {
@@ -235,26 +226,11 @@ const catalogProducts: Product[] = [
         "الهوى حول الوجه ينشف مع التكييف. موقد الجو الجاف من ليالي بيوتي يرطّب الجو بلطف، يهدّي الليل بضوء دافي، وبوخور عود — بدون إبر ولا جلسات فيتامين سي.",
     },
     insightStrip: {
-      imageSrc: "/products/aroma-stat-woman.jpg",
       headline:
         "ليالي بيوتي تركّز على تجربة الغرفة: أقل جفاف في الهواء، نوم أهدأ، وطقس عود راقي يشبه فيلات دبي الأنيقة.",
       subline: "ملاحظات من فريق التجربة · الإمارات، ٢٠٢٤",
       statPercent: "٧٨٪",
     },
-    storyGallery: [
-      {
-        src: "/products/layali-flame-lamp-angle.png",
-        alt: "موقد الجو الجاف — زاوية جانبية على سطح خشبي",
-      },
-      {
-        src: "/products/layali-flame-lamp-hero.png",
-        alt: "موقد الجو الجاف — واجهة أمامية مع تأثير اللهب والضباب",
-      },
-      {
-        src: "/products/layali-oud-home-card.png",
-        alt: "سيروم عود قصر دبي — صورة العرض للاستعمال مع الموقد",
-      },
-    ],
   },
 ];
 

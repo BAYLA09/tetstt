@@ -195,7 +195,7 @@ function InsightStrip({ product }: { product: Product }) {
           <div className="relative mx-auto w-full max-w-[1180px] overflow-hidden rounded-2xl border border-[var(--border-gold)] bg-[var(--emerald-950)] shadow-lg ring-1 ring-black/10">
             <div className="relative aspect-[16/10] w-full md:aspect-[2/1]">
               <Image
-                src={strip.imageSrc}
+                src={strip.imageSrc!}
                 alt={strip.headline}
                 fill
                 className="object-contain p-2 md:p-4"
