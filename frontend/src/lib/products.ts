@@ -32,6 +32,8 @@ export type Product = {
   heroMediaShowCaption?: boolean;
   /** Dense hero only: `contain` keeps tall/square art uncropped (merchant-supplied PNG). */
   heroMediaObjectFit?: "cover" | "contain";
+  /** When true, hero uses a plain `<img>` (no Next.js image optimization) for pixel-identical /public assets. */
+  heroMediaUnmodified?: boolean;
   /** Hero image + story blocks render above price and add-to-cart. */
   storyBeforeCommerce?: boolean;
   offerTiers?: ProductOfferTier[];
@@ -205,9 +207,10 @@ const catalogProducts: Product[] = [
         badge: "الأكثر توفيراً",
       },
     ],
-    image: "/products/aroma-lamp-pdp-hero.png",
+    image: "/products/aroma-lamp-pdp-hero-exact.png",
     cardImage: "/products/layali-flame-lamp-hero.png",
     heroMediaObjectFit: "contain",
+    heroMediaUnmodified: true,
     heroMediaShowCaption: false,
     commerceShowIntro: false,
     storyBeforeCommerce: true,

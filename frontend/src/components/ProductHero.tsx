@@ -23,6 +23,9 @@ function HeroMedia({ product, contained }: { product: Product; contained?: boole
   const denseHero = !showCaption;
   const denseContain = denseHero && product.heroMediaObjectFit === "contain";
   const emptyDenseHero = denseHero && !showImage;
+  const serveHeroUnmodified = product.heroMediaUnmodified === true;
+  const containPad =
+    denseContain && serveHeroUnmodified ? "p-1 sm:p-2 md:p-3" : denseContain ? "p-3 sm:p-6 md:p-8" : "";
 
   const frameClass = showImage
     ? `product-illustration has-product-image grid rounded-[2.5rem] ${
@@ -40,14 +43,31 @@ function HeroMedia({ product, contained }: { product: Product; contained?: boole
 
   return (
     <div className={frameClass}>
-      {showImage && (
+      {showImage && serveHeroUnmodified ? (
+        // eslint-disable-next-line @next/next/no-img-element -- merchant hero must bypass next/image recompression
+        <img
+          src={product.image!}
+          alt={product.name}
+          className={`absolute inset-0 z-0 h-full w-full ${
+            denseContain
+              ? `object-contain object-center ${containPad}`
+              : denseHero
+                ? "object-cover object-center"
+                : "object-contain"
+          } ${showCaption ? "p-4 md:p-8" : denseHero && !denseContain ? "p-0" : !denseHero ? "p-2 md:p-4" : ""}`}
+          decoding="async"
+          fetchPriority="high"
+          onError={() => setImageFailed(true)}
+        />
+      ) : null}
+      {showImage && !serveHeroUnmodified ? (
         <Image
           src={product.image!}
           alt={product.name}
           fill
           className={`z-0 ${
             denseContain
-              ? "object-contain object-center p-3 sm:p-6 md:p-8"
+              ? `object-contain object-center ${containPad}`
               : denseHero
                 ? "object-cover object-center"
                 : "object-contain"
@@ -56,7 +76,7 @@ function HeroMedia({ product, contained }: { product: Product; contained?: boole
           sizes="(max-width: 1024px) 100vw, 52vw"
           onError={() => setImageFailed(true)}
         />
-      )}
+      ) : null}
       {emptyDenseHero ? <span className="sr-only">صورة المنتج غير معروضة بعد</span> : null}
       {showCaption ? (
         <div className="copy-quote copy-quote--inverse relative z-10 max-w-sm p-5 text-white shadow-2xl">
