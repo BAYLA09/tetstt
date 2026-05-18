@@ -54,11 +54,26 @@ class OrderItem(Base):
     order: Mapped[Order] = relationship(back_populates="items")
 
 
+class AdClick(Base):
+    """Paid click identifiers from landing URLs (fbclid / ttclid / sc_click_id)."""
+
+    __tablename__ = "ad_clicks"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid4()))
+    fbclid: Mapped[str | None] = mapped_column(String(512), nullable=True, index=True)
+    ttclid: Mapped[str | None] = mapped_column(String(512), nullable=True, index=True)
+    sc_click_id: Mapped[str | None] = mapped_column(String(512), nullable=True, index=True)
+    landing_page: Mapped[str | None] = mapped_column(Text, nullable=True)
+    path: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    user_agent: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
+
+
 class TrackingEvent(Base):
     __tablename__ = "tracking_events"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid4()))
-    order_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    order_id: Mapped[str | None] = mapped_column(String(36), ForeignKey("orders.id", ondelete="SET NULL"), nullable=True)
     provider: Mapped[str] = mapped_column(String(32))
     event_name: Mapped[str] = mapped_column(String(64))
     event_id: Mapped[str | None] = mapped_column(String(255), nullable=True)

@@ -45,6 +45,9 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     cors_allow_www: bool = True
     allow_lamp_bundle_client_price: bool = True
+    admin_username: str | None = None
+    admin_password: str | None = None
+    admin_jwt_secret: str | None = None
 
     @model_validator(mode="after")
     def apply_strict_bool_env(self) -> Self:

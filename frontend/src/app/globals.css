@@ -223,3 +223,20 @@ html {
   font-weight: 900;
   box-shadow: 0 24px 55px rgba(0, 0, 0, 0.22);
 }
+
+body:has(.admin-root) [data-site-chrome="header"],
+body:has(.admin-root) [data-site-chrome="footer"] {
+  display: none !important;
+}
+
+@media print {
+  body:has(.admin-root) {
+    background: white !important;
+  }
+
+  body:has(.admin-root) #order-preview-panel {
+    max-height: none !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+}
