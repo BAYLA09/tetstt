@@ -31,18 +31,30 @@ export function PremiumImage({
   alt,
   className = "",
   priority,
+  objectFit = "cover",
 }: {
   src: string;
   alt: string;
   className?: string;
   priority?: boolean;
+  /** `contain` keeps wide marketing composites (before/after) uncropped inside the frame. */
+  objectFit?: "cover" | "contain";
 }) {
   if (!src?.trim()) {
     return <PremiumPlaceholder alt={alt} />;
   }
+  const fitClass = objectFit === "contain" ? "object-contain" : "object-cover";
   return (
-    <div className={`relative w-full overflow-hidden rounded-[2rem] ${className}`}>
-      <Image src={src} alt={alt} width={1200} height={1500} className="h-auto w-full object-cover" priority={priority} sizes="100vw" />
+    <div className={`relative w-full overflow-hidden rounded-[2rem] bg-[var(--lp-card)] ${className}`}>
+      <Image
+        src={src}
+        alt={alt}
+        width={1200}
+        height={1500}
+        className={`h-auto w-full ${fitClass}`}
+        priority={priority}
+        sizes="100vw"
+      />
     </div>
   );
 }

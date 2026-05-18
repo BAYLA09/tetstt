@@ -116,9 +116,14 @@ export function ProductLandingView({ product }: { product: LandingProduct }) {
 
       <section className="bg-[var(--lp-bg)] px-4 pb-6 pt-4">
         <div className="mx-auto max-w-lg">
-          <div className="overflow-hidden rounded-[2rem] border border-[var(--lp-border)] bg-[var(--lp-card)] shadow-lg">
+          <div className="overflow-hidden rounded-[2rem] border border-[var(--lp-border)] bg-[var(--lp-card)] shadow-[0_24px_80px_rgba(0,0,0,0.12)] ring-1 ring-[var(--lp-accent)]/25">
             {product.images.heroBeforeAfter?.trim() ? (
-              <PremiumImage src={product.images.heroBeforeAfter} alt={product.imageAlts.heroBeforeAfter} priority />
+              <PremiumImage
+                src={product.images.heroBeforeAfter}
+                alt={product.imageAlts.heroBeforeAfter}
+                priority
+                objectFit="contain"
+              />
             ) : (
               <div className="grid gap-2 bg-[var(--lp-bg)] p-3 sm:grid-cols-2">
                 <PremiumPlaceholder alt={product.imageAlts.heroBeforeAfter} caption="قبل — إحساس الجفاف مع المكيف" />
