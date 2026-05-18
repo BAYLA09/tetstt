@@ -86,11 +86,11 @@ export function trackEvent(eventName: string, payload: Record<string, unknown> =
   window.dispatchEvent(new CustomEvent("layali:track", { detail: { eventName, payload } }));
 }
 
-export function trackAddToCart(item: CartItem, eventId: string) {
+export function trackAddToCart(item: CartItem, eventId: string, currency = "AED") {
   trackEvent("AddToCart", {
     event_id: eventId,
     content_ids: [item.sku],
     value: item.price * item.quantity,
-    currency: "AED",
+    currency,
   });
 }
