@@ -15,11 +15,9 @@ export function ProductCard({
   const addItem = useCartStore((state) => state.addItem);
   const cardSrc = product.cardImage?.trim();
   const showPhoto = Boolean(cardSrc);
-  /** `object-cover` was cropping the label off wide studio shots for the serum card. */
+  /** Fills the fixed aspect slot so every card photo uses the same frame size on the grid. */
   const cardImgClass =
-    product.slug === "dubai-palace-oud-serum" || product.slug === "aroma-flame-lamp"
-      ? "h-full w-full object-contain object-center p-2 sm:p-4 transition duration-300 group-hover:scale-[1.02]"
-      : "h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.03]";
+    "absolute inset-0 h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.03]";
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-[2rem] border border-[var(--border-gold)] bg-white p-3 shadow-[0_18px_60px_rgba(42,27,18,0.10)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_24px_80px_rgba(42,27,18,0.14)]">
