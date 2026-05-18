@@ -380,9 +380,9 @@ export const landingProducts: LandingProduct[] = [
       subtitle: "عرض يظهر بعد الطلب بسعر خاص من الإعدادات.",
     },
     images: {
-      heroBeforeAfter: "/products/aroma-fussile-image-1-hero-before-after.png",
+      heroBeforeAfter: "/merchant/aroma-fussile/01-before-after-diffuser-oud-composite.png",
       heroProduct: "",
-      problemImage: "/products/aroma-fussile-image-2-problem-portrait.jpg",
+      problemImage: "/merchant/aroma-fussile/02-portrait-beige-hijab.jpg",
       ingredientImage: "",
       authorityImage: "",
       lifestyleImage: "",
