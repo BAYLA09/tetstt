@@ -44,6 +44,22 @@ export function PremiumImage({
     return <PremiumPlaceholder alt={alt} />;
   }
   const fitClass = objectFit === "contain" ? "object-contain" : "object-cover";
+  /** Local merchant art under `/public/merchant/` — plain `<img>` avoids Next/Image optimizer blank frames on large PNG/JPEG. */
+  const useNativeImg = src.startsWith("/merchant/");
+  if (useNativeImg) {
+    return (
+      <div className={`relative w-full overflow-hidden rounded-[2rem] bg-[var(--lp-bg)] ${className}`}>
+        {/* eslint-disable-next-line @next/next/no-img-element -- static /public merchant assets */}
+        <img
+          src={src}
+          alt={alt}
+          className={`block h-auto w-full ${fitClass}`}
+          decoding="async"
+          fetchPriority={priority ? "high" : "auto"}
+        />
+      </div>
+    );
+  }
   return (
     <div className={`relative w-full overflow-hidden rounded-[2rem] bg-[var(--lp-card)] ${className}`}>
       <Image
