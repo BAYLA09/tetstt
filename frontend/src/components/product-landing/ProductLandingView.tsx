@@ -21,6 +21,7 @@ import { businessConfig } from "@/config/business";
 import type { LandingOffer, LandingProduct } from "@/config/landing-types";
 import { getLandingProduct } from "@/config/products";
 import { formatPrice } from "@/lib/format-price";
+import { getProduct } from "@/lib/products";
 import { useCartStore } from "@/lib/cart-store";
 import { generateEventId, trackEvent, trackAddToCart } from "@/lib/events";
 import { PremiumImage, PremiumPlaceholder } from "./PremiumImage";
@@ -663,14 +664,36 @@ function RelatedBlock({ related, b }: { related: LandingProduct[]; b: typeof bus
       <div className="mx-auto max-w-lg">
         <h2 className="text-xl font-black text-[var(--lp-primary)]">منتجات تكمّل طلبج</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          {related.map((p) => (
-            <Link key={p.slug} href={`/products/${p.slug}`} className="rounded-2xl border border-[var(--lp-border)] bg-[var(--lp-card)] p-4 shadow-sm transition hover:shadow-md">
-              <PremiumPlaceholder alt={p.name} caption={p.cardHeadline} className="aspect-[4/3]" />
-              <p className="mt-3 font-black text-[var(--lp-text)]">{p.name}</p>
-              <p className="mt-1 text-sm text-[var(--lp-muted)]">{p.cardSubheadline}</p>
-              <p className="mt-2 text-sm font-black text-[var(--lp-primary)]">يبدأ من {formatPrice(Math.min(...p.offers.map((o) => o.price)), b)}</p>
-            </Link>
-          ))}
+          {related.map((p) => {
+            const cardSrc = getProduct(p.slug)?.cardImage?.trim();
+            return (
+              <Link
+                key={p.slug}
+                href={`/products/${p.slug}`}
+                className="rounded-2xl border border-[var(--lp-border)] bg-[var(--lp-card)] p-4 shadow-sm transition hover:shadow-md"
+              >
+                {cardSrc ? (
+                  <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-[var(--lp-border)] bg-[var(--lp-bg)] sm:aspect-[3/2]">
+                    {/* eslint-disable-next-line @next/next/no-img-element -- same /public card art as home ProductCard */}
+                    <img
+                      src={cardSrc}
+                      alt={p.name}
+                      className="absolute inset-0 h-full w-full object-cover object-center"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                ) : (
+                  <PremiumPlaceholder alt={p.name} caption={p.cardHeadline} className="aspect-[4/3] sm:aspect-[3/2]" />
+                )}
+                <p className="mt-3 font-black text-[var(--lp-text)]">{p.name}</p>
+                <p className="mt-1 text-sm text-[var(--lp-muted)]">{p.cardSubheadline}</p>
+                <p className="mt-2 text-sm font-black text-[var(--lp-primary)]">
+                  يبدأ من {formatPrice(Math.min(...p.offers.map((o) => o.price)), b)}
+                </p>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </section>
