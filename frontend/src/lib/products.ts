@@ -157,17 +157,6 @@ const catalogProducts: Product[] = [
     cardImage: "/products/img-diffuser-card.jpg",
     heroPanorama: true,
     storyBeforeCommerce: true,
-    beforeAfterStory: {
-      kicker: "قبل وبعد",
-      title: "منزلك يبدو باردًا وفارغًا — حتى مع تنسيق الديكور",
-      body:
-        "الهواء الجاف والإضاءة الباردة وغياب الدفء يجعلكِ تفضّلين قضاء الوقت خارج الغرفة. المشكلة ليست في الأثاث بقدر ما هي في أجواء المكان.",
-      beforeSrc: "/products/before-diffuser.jpg",
-      afterSrc: "/products/after-family-aroma.jpg",
-      beforeLabel: "قبل",
-      afterLabel: "بعد",
-      layout: "warm-left",
-    },
     insightStrip: {
       imageSrc: "/products/aroma-stat-woman.jpg",
       headline:
