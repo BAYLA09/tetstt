@@ -210,7 +210,7 @@ const catalogProducts: Product[] = [
     commerceShowIntro: false,
     storyBeforeCommerce: true,
     insightStrip: {
-      imageSrc: "/products/aroma-stat-woman.jpg",
+      imageSrc: "/products/aroma-lamp-insight-composite.png",
       headline:
         "ليالي بيوتي تركّز على تجربة الغرفة: أقل جفاف في الهواء، نوم أهدأ، وطقس عود راقي يشبه فيلات دبي الأنيقة.",
       subline: "ملاحظات من فريق التجربة · الإمارات، ٢٠٢٤",
