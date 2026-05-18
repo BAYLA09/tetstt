@@ -1,5 +1,11 @@
 import type { LandingProduct } from "./landing-types";
 
+/** URL-safe path under `public/merchant/aroma-fussile/` (spaces, parentheses, etc.). */
+const AROMA_FUSSILE_MERCHANT = "/merchant/aroma-fussile";
+function aromaFussileMerchantSrc(filename: string): string {
+  return `${AROMA_FUSSILE_MERCHANT}/${encodeURIComponent(filename)}`;
+}
+
 /** Inline COD copy for FAQ entries (keeps `landingProducts` self-contained). */
 const codSnippet = {
   payment: "الدفع عند الاستلام — بدون دفع إلكتروني مسبق",
@@ -380,20 +386,20 @@ export const landingProducts: LandingProduct[] = [
       subtitle: "عرض يظهر بعد الطلب بسعر خاص من الإعدادات.",
     },
     images: {
-      heroBeforeAfter: "/products/01-before-after-diffuser-oud-composite.png",
+      heroBeforeAfter: aromaFussileMerchantSrc("adskull-image-f9dbbdc2-6987-4514-85ec-4a70890656f6 (3).png"),
       heroProduct: "",
-      problemImage: "/products/02-portrait-beige-hijab.jpg",
-      ingredientImage: "",
+      problemImage: aromaFussileMerchantSrc("WhatsApp Image 2026-05-18 at 21.07.58.jpeg"),
+      ingredientImage: aromaFussileMerchantSrc("after-family-aroma.png"),
       authorityImage: "",
       lifestyleImage: "",
       testimonialImage: "",
       comparisonImage: "",
     },
     imageAlts: {
-      heroBeforeAfter: "قبل وبعد — تحوّل لطيف مع موقد العطور وزيت الصندل",
+      heroBeforeAfter: "قبل وبعد — الموقد وزيت الصندل وتحوّل لطيف للجو",
       heroProduct: "موقد ليالي بيوتي",
-      problemImage: "لحظة هدوء — تفكير بإحساس البشرة والجو حول الوجه",
-      ingredientImage: "تفاصيل الجهاز والضباب",
+      problemImage: "لقطة قريبة — هدوء وتفكير بلمسة عناية يومية",
+      ingredientImage: "جو دافئ بعد الروتين — راحة للبيت والعائلة",
       authorityImage: "عناصر توضيحية للاستعمال",
       lifestyleImage: "لقطة مسائية داخل البيت",
       testimonialImage: "تجربة عميلة",
