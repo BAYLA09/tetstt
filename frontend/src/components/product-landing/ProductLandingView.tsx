@@ -28,7 +28,29 @@ import { PremiumImage, PremiumPlaceholder } from "./PremiumImage";
 
 function HeroTopMedia({ product }: { product: LandingProduct }) {
   const hero = product.images.heroBeforeAfter?.trim();
+  const portrait = product.images.lifestyleImage?.trim();
   const bottle = product.images.heroProduct?.trim();
+
+  if (hero && portrait) {
+    return (
+      <div className="space-y-3 bg-[var(--lp-bg)] p-3">
+        <PremiumImage
+          src={hero}
+          alt={product.imageAlts.heroBeforeAfter}
+          priority
+          objectFit="contain"
+          className="rounded-[1.25rem] border border-[var(--lp-border)]/70 shadow-sm"
+        />
+        <PremiumImage
+          src={portrait}
+          alt={product.imageAlts.lifestyleImage}
+          objectFit="contain"
+          className="rounded-[1.25rem] border border-[var(--lp-border)]/70 shadow-sm"
+        />
+      </div>
+    );
+  }
+
   if (hero) {
     return <PremiumImage src={hero} alt={product.imageAlts.heroBeforeAfter} priority objectFit="contain" />;
   }
