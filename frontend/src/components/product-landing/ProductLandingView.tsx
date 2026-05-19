@@ -26,21 +26,21 @@ import { useCartStore } from "@/lib/cart-store";
 import { generateEventId, trackEvent, trackAddToCart } from "@/lib/events";
 import { PremiumImage, PremiumPlaceholder } from "./PremiumImage";
 
-/** Serum hero: native img + onError so missing/wrong CDN cache does not stick; only replace `handoff-before-after` PNG in /public. */
+/** Serum hero: native img + onError so missing/wrong CDN cache does not stick; asset lives under /public/products. */
 function SerumHandoffHero({ src, alt }: { src: string; alt: string }) {
   const [loadFailed, setLoadFailed] = useState(false);
   if (loadFailed) {
     return (
       <PremiumPlaceholder
         alt={alt}
-        caption="أضيفي ملف التصدير النهائي (قبل/بعد + العبوة) باسم dubai-palace-oud-serum-handoff-before-after.png داخل public/products"
+        caption="تأكدي من وجود ملف adskull-image-3b76093b-906d-4b09-aacb-43ddddbf92e1.png داخل public/products"
         className="aspect-[4/5] min-h-[220px]"
       />
     );
   }
   return (
     <div className="relative w-full overflow-hidden rounded-[2rem] bg-[var(--lp-bg)]">
-      {/* eslint-disable-next-line @next/next/no-img-element -- handoff PNG; onError clears bad deploys */}
+      {/* eslint-disable-next-line @next/next/no-img-element -- serum handoff PNG; onError clears bad deploys */}
       <img
         src={src}
         alt={alt}
