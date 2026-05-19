@@ -117,34 +117,56 @@ export function ProductLandingView({ product }: { product: LandingProduct }) {
       <section className="bg-[var(--lp-bg)] px-4 pb-6 pt-4">
         <div className="mx-auto max-w-lg">
           <div className="overflow-hidden rounded-[2rem] border border-[var(--lp-border)] bg-[var(--lp-card)] shadow-[0_24px_80px_rgba(0,0,0,0.12)] ring-1 ring-[var(--lp-accent)]/25">
-            {product.images.heroBeforeAfter?.trim() ? (
-              <PremiumImage
-                src={product.images.heroBeforeAfter}
-                alt={product.imageAlts.heroBeforeAfter}
-                priority
-                objectFit="contain"
-              />
-            ) : (
-              <div className="grid gap-2 bg-[var(--lp-bg)] p-3 sm:grid-cols-2">
-                <PremiumPlaceholder alt={product.imageAlts.heroBeforeAfter} caption="قبل — إحساس الجفاف مع المكيف" />
-                <PremiumPlaceholder alt={product.imageAlts.heroBeforeAfter} caption="بعد — روتين أوضح مع الاستمرار" />
-                <div className="relative z-[1] -mt-8 flex justify-center sm:col-span-2">
-                  <div className="w-[55%] max-w-[220px] rounded-2xl border-2 border-[var(--lp-accent)] bg-[var(--lp-card)] p-3 shadow-xl">
-                    {product.images.heroProduct?.trim() ? (
-                      <Image
-                        src={product.images.heroProduct}
-                        alt={product.imageAlts.heroProduct}
-                        width={400}
-                        height={520}
-                        className="h-auto w-full object-contain"
-                      />
-                    ) : (
-                      <PremiumPlaceholder alt={product.imageAlts.heroProduct} caption={product.shortName} className="aspect-square" />
-                    )}
+            {(() => {
+              const gallery = (product.heroGallery ?? []).map((s) => s.trim()).filter(Boolean);
+              if (gallery.length > 0) {
+                const galAlts = product.heroGalleryAlts ?? [];
+                const altAt = (i: number) => galAlts[i]?.trim() || product.imageAlts.heroProduct;
+                return (
+                  <>
+                    <PremiumImage src={gallery[0]!} alt={altAt(0)} priority objectFit="contain" />
+                    {gallery.length > 1 ? (
+                      <div className="grid grid-cols-2 gap-2 border-t border-[var(--lp-border)] bg-[var(--lp-bg)] p-3">
+                        {gallery.slice(1).map((src, idx) => (
+                          <PremiumImage key={src} src={src} alt={altAt(idx + 1)} objectFit="contain" />
+                        ))}
+                      </div>
+                    ) : null}
+                  </>
+                );
+              }
+              if (product.images.heroBeforeAfter?.trim()) {
+                return (
+                  <PremiumImage
+                    src={product.images.heroBeforeAfter}
+                    alt={product.imageAlts.heroBeforeAfter}
+                    priority
+                    objectFit="contain"
+                  />
+                );
+              }
+              return (
+                <div className="grid gap-2 bg-[var(--lp-bg)] p-3 sm:grid-cols-2">
+                  <PremiumPlaceholder alt={product.imageAlts.heroBeforeAfter} caption="قبل — إحساس الجفاف مع المكيف" />
+                  <PremiumPlaceholder alt={product.imageAlts.heroBeforeAfter} caption="بعد — روتين أوضح مع الاستمرار" />
+                  <div className="relative z-[1] -mt-8 flex justify-center sm:col-span-2">
+                    <div className="w-[55%] max-w-[220px] rounded-2xl border-2 border-[var(--lp-accent)] bg-[var(--lp-card)] p-3 shadow-xl">
+                      {product.images.heroProduct?.trim() ? (
+                        <Image
+                          src={product.images.heroProduct}
+                          alt={product.imageAlts.heroProduct}
+                          width={400}
+                          height={520}
+                          className="h-auto w-full object-contain"
+                        />
+                      ) : (
+                        <PremiumPlaceholder alt={product.imageAlts.heroProduct} caption={product.shortName} className="aspect-square" />
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
           </div>
           <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
             {product.badges.map((text) => (

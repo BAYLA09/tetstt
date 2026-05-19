@@ -121,6 +121,16 @@ export const landingProducts: LandingProduct[] = [
       testimonialImage: "تجربة عميلة توضيحية",
       comparisonImage: "مقارنة بصرية بسيطة",
     },
+    heroGallery: [
+      "/products/adskull-image-3b76093b-906d-4b09-aacb-43ddddbf92e1.png",
+      "/products/adskull-image-567929c2-6d4a-480a-b0ec-54eb2889257b.png",
+      "/products/adskull-image-02003faa-dc16-4ce7-9f87-3e4bab8e98d1-5.png",
+    ],
+    heroGalleryAlts: [
+      "سيروم عود قصر دبي — اللقطة الرئيسية للعبوة",
+      "سيروم عود قصر دبي — لقطة إضافية للعبوة والملمس",
+      "سيروم عود قصر دبي — تفاصيل إضافية للمنتج",
+    ],
     exclusions: ["بدون وعود علاجية", "بدون ادعاءات تغيّر البشرة بين ليلة وضحاها", "بدون حاجة دفع إلكتروني مسبق"],
     authority: {
       certifications: ["تعليمات واضحة على العبوة", "تغليف مناسب للشحن", "تأكيد قبل الشحن", "دعم بالعربي"],
