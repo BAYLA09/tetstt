@@ -220,22 +220,35 @@ export function ProductLandingView({ product }: { product: LandingProduct }) {
     </div>
   );
 
+  const serumSlug = product.slug === "dubai-palace-oud-serum";
+
+  const landingBadgeGrid = (
+    <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+      {product.badges.map((text) => (
+        <div
+          key={text}
+          className="rounded-2xl border border-[var(--lp-border)] bg-[var(--lp-card)] px-2 py-3 text-center text-[11px] font-black leading-tight text-[var(--lp-primary)] shadow-sm sm:text-xs"
+        >
+          {text}
+        </div>
+      ))}
+    </div>
+  );
+
+  /** Serum: opening block is the photo only (no badges, lighter chrome). Other products keep badges under the hero card. */
   const heroAndBadges = (
     <section className="bg-[var(--lp-bg)] px-4 pb-6 pt-4">
       <div className="mx-auto max-w-lg">
-        <div className="overflow-hidden rounded-[2rem] border border-[var(--lp-border)] bg-[var(--lp-card)] shadow-[0_24px_80px_rgba(0,0,0,0.12)] ring-1 ring-[var(--lp-accent)]/25">
+        <div
+          className={
+            serumSlug
+              ? "overflow-hidden rounded-[2rem] shadow-[0_24px_80px_rgba(0,0,0,0.12)]"
+              : "overflow-hidden rounded-[2rem] border border-[var(--lp-border)] bg-[var(--lp-card)] shadow-[0_24px_80px_rgba(0,0,0,0.12)] ring-1 ring-[var(--lp-accent)]/25"
+          }
+        >
           <HeroTopMedia product={product} />
         </div>
-        <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {product.badges.map((text) => (
-            <div
-              key={text}
-              className="rounded-2xl border border-[var(--lp-border)] bg-[var(--lp-card)] px-2 py-3 text-center text-[11px] font-black leading-tight text-[var(--lp-primary)] shadow-sm sm:text-xs"
-            >
-              {text}
-            </div>
-          ))}
-        </div>
+        {serumSlug ? null : landingBadgeGrid}
       </div>
     </section>
   );
@@ -248,7 +261,10 @@ export function ProductLandingView({ product }: { product: LandingProduct }) {
       <section className="bg-[var(--lp-bg)] px-4 py-6" dir="rtl">
         <div className="mx-auto max-w-lg text-right">
           <h1 className="text-2xl font-black leading-snug text-[var(--lp-primary)] sm:text-3xl">{product.painSection.headline}</h1>
-          <p className="mt-3 text-sm font-semibold leading-7 text-[var(--lp-muted)] sm:text-base">{product.painSection.subheadline}</p>
+          {serumSlug ? landingBadgeGrid : null}
+          <p className={`text-sm font-semibold leading-7 text-[var(--lp-muted)] sm:text-base ${serumSlug ? "mt-4" : "mt-3"}`}>
+            {product.painSection.subheadline}
+          </p>
           <div className="mt-4 flex flex-wrap items-center justify-end gap-2 text-sm">
             <span className="inline-flex items-center gap-1 font-black text-[var(--lp-accent)]">
               <Star className="size-4 fill-current" aria-hidden />
