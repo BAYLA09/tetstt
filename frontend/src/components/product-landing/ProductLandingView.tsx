@@ -86,7 +86,35 @@ function HeroTopMedia({ product }: { product: LandingProduct }) {
   const bottle = product.images.heroProduct?.trim();
   const serumSlug = product.slug === "dubai-palace-oud-serum";
 
-  /** Dubai Palace Oud: hero opens on the composite alone — no second/third rows stacked here. */
+  /**
+   * Dubai Palace Oud: fixed gallery order (1 → 2 → 3).
+   * Config: heroBeforeAfter, lifestyleImage, heroProduct (third row only for this slug).
+   */
+  if (serumSlug && hero && portrait && bottle) {
+    return (
+      <div className="space-y-3 bg-[var(--lp-bg)] p-3">
+        <SerumHandoffHero src={hero} alt={product.imageAlts.heroBeforeAfter} />
+        <SerumGalleryRasterRow
+          src={portrait}
+          alt={product.imageAlts.lifestyleImage}
+          failCaption="تأكدي من وجود الملف الثاني في public/products: adskull-image-567929c2-6d4a-480a-b0ec-54eb2889257b.png"
+          rounded="1.25rem"
+          frameClassName="border border-[var(--lp-border)]/70 shadow-sm"
+          fetchPriority="auto"
+        />
+        <SerumGalleryRasterRow
+          src={bottle}
+          alt={product.imageAlts.heroProduct}
+          failCaption="تأكدي من وجود الملف الثالث في public/products: adskull-image-02003faa-dc16-4ce7-9f87-3e4bab8e98d1-5.png"
+          rounded="1.25rem"
+          frameClassName="border border-[var(--lp-border)]/70 shadow-sm"
+          fetchPriority="auto"
+        />
+      </div>
+    );
+  }
+
+  /** Serum: if 2nd/3rd paths missing, still show the main composite first. */
   if (serumSlug && hero) {
     return <SerumHandoffHero src={hero} alt={product.imageAlts.heroBeforeAfter} />;
   }
