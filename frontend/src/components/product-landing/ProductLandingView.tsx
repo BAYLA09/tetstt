@@ -53,11 +53,12 @@ function SerumGalleryRasterRow({
       />
     );
   }
+  const resolvedSrc = encodeURI(src);
   return (
     <div className={`relative w-full overflow-hidden ${roundClass} bg-[var(--lp-bg)] ${frameClassName}`}>
       {/* eslint-disable-next-line @next/next/no-img-element -- serum handoff PNGs under /public/products */}
       <img
-        src={src}
+        src={resolvedSrc}
         alt={alt}
         className="block h-auto w-full object-contain"
         decoding="async"
@@ -84,6 +85,31 @@ function HeroTopMedia({ product }: { product: LandingProduct }) {
   const portrait = product.images.lifestyleImage?.trim();
   const bottle = product.images.heroProduct?.trim();
   const serumHero = product.slug === "dubai-palace-oud-serum" && Boolean(hero);
+
+  /** Dubai Palace Oud: three handoff rows (heroProduct = third gallery image only here). */
+  if (hero && portrait && bottle && serumHero) {
+    return (
+      <div className="space-y-3 bg-[var(--lp-bg)] p-3">
+        <SerumHandoffHero src={hero} alt={product.imageAlts.heroBeforeAfter} />
+        <SerumGalleryRasterRow
+          src={portrait}
+          alt={product.imageAlts.lifestyleImage}
+          failCaption="تأكدي من وجود الملف الثاني في public/products: adskull-image-567929c2-6d4a-480a-b0ec-54eb2889257b.png"
+          rounded="1.25rem"
+          frameClassName="border border-[var(--lp-border)]/70 shadow-sm"
+          fetchPriority="auto"
+        />
+        <SerumGalleryRasterRow
+          src={bottle}
+          alt={product.imageAlts.heroProduct}
+          failCaption='تأكدي من وجود الملف الثالث في public/products: adskull-image-02003faa-dc16-4ce7-9f87-3e4bab8e98d1 (5).png'
+          rounded="1.25rem"
+          frameClassName="border border-[var(--lp-border)]/70 shadow-sm"
+          fetchPriority="auto"
+        />
+      </div>
+    );
+  }
 
   if (hero && portrait) {
     return (

@@ -103,7 +103,7 @@ export const landingProducts: LandingProduct[] = [
     },
     images: {
       heroBeforeAfter: "/products/adskull-image-3b76093b-906d-4b09-aacb-43ddddbf92e1.png",
-      heroProduct: "",
+      heroProduct: "/products/adskull-image-02003faa-dc16-4ce7-9f87-3e4bab8e98d1 (5).png",
       problemImage: "",
       ingredientImage: "",
       authorityImage: "",
@@ -113,7 +113,7 @@ export const landingProducts: LandingProduct[] = [
     },
     imageAlts: {
       heroBeforeAfter: "قبل وبعد مع عبوة زيت الصندل — الصورة الأولى في المعرض",
-      heroProduct: "عبوة سيروم عود قصر دبي",
+      heroProduct: "صورة تكميلية للروتين — الصورة الثالثة في المعرض",
       problemImage: "أجواء مكيف وهوى جاف حول الوجه",
       ingredientImage: "تفاصيل الملمس والعبوة",
       authorityImage: "عناصر تثقيفية حول الروتين",
