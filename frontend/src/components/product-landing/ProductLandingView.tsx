@@ -26,30 +26,56 @@ import { useCartStore } from "@/lib/cart-store";
 import { generateEventId, trackEvent, trackAddToCart } from "@/lib/events";
 import { PremiumImage, PremiumPlaceholder } from "./PremiumImage";
 
-/** Serum hero: native img + onError so missing/wrong CDN cache does not stick; asset lives under /public/products. */
-function SerumHandoffHero({ src, alt }: { src: string; alt: string }) {
+/** Serum gallery row: native img + onError so a missing handoff PNG never shows a broken frame or cached wrong asset. */
+function SerumGalleryRasterRow({
+  src,
+  alt,
+  failCaption,
+  rounded = "2rem",
+  frameClassName = "",
+  fetchPriority = "high",
+}: {
+  src: string;
+  alt: string;
+  failCaption: string;
+  rounded?: "2rem" | "1.25rem";
+  frameClassName?: string;
+  fetchPriority?: "high" | "auto";
+}) {
   const [loadFailed, setLoadFailed] = useState(false);
+  const roundClass = rounded === "2rem" ? "rounded-[2rem]" : "rounded-[1.25rem]";
   if (loadFailed) {
     return (
       <PremiumPlaceholder
         alt={alt}
-        caption="تأكدي من وجود ملف adskull-image-3b76093b-906d-4b09-aacb-43ddddbf92e1.png داخل public/products"
-        className="aspect-[4/5] min-h-[220px]"
+        caption={failCaption}
+        className={`aspect-[4/5] min-h-[220px] ${roundClass} ${frameClassName}`}
       />
     );
   }
   return (
-    <div className="relative w-full overflow-hidden rounded-[2rem] bg-[var(--lp-bg)]">
-      {/* eslint-disable-next-line @next/next/no-img-element -- serum handoff PNG; onError clears bad deploys */}
+    <div className={`relative w-full overflow-hidden ${roundClass} bg-[var(--lp-bg)] ${frameClassName}`}>
+      {/* eslint-disable-next-line @next/next/no-img-element -- serum handoff PNGs under /public/products */}
       <img
         src={src}
         alt={alt}
         className="block h-auto w-full object-contain"
         decoding="async"
-        fetchPriority="high"
+        fetchPriority={fetchPriority}
         onError={() => setLoadFailed(true)}
       />
     </div>
+  );
+}
+
+function SerumHandoffHero({ src, alt }: { src: string; alt: string }) {
+  return (
+    <SerumGalleryRasterRow
+      src={src}
+      alt={alt}
+      failCaption="تأكدي من وجود الملف الأول في public/products: adskull-image-3b76093b-906d-4b09-aacb-43ddddbf92e1.png"
+      rounded="2rem"
+    />
   );
 }
 
@@ -73,12 +99,23 @@ function HeroTopMedia({ product }: { product: LandingProduct }) {
             className="rounded-[1.25rem] border border-[var(--lp-border)]/70 shadow-sm"
           />
         )}
-        <PremiumImage
-          src={portrait}
-          alt={product.imageAlts.lifestyleImage}
-          objectFit="contain"
-          className="rounded-[1.25rem] border border-[var(--lp-border)]/70 shadow-sm"
-        />
+        {serumHero ? (
+          <SerumGalleryRasterRow
+            src={portrait}
+            alt={product.imageAlts.lifestyleImage}
+            failCaption="تأكدي من وجود الملف الثاني في public/products: adskull-image-567929c2-6d4a-480a-b0ec-54eb2889257b.png"
+            rounded="1.25rem"
+            frameClassName="border border-[var(--lp-border)]/70 shadow-sm"
+            fetchPriority="auto"
+          />
+        ) : (
+          <PremiumImage
+            src={portrait}
+            alt={product.imageAlts.lifestyleImage}
+            objectFit="contain"
+            className="rounded-[1.25rem] border border-[var(--lp-border)]/70 shadow-sm"
+          />
+        )}
       </div>
     );
   }
