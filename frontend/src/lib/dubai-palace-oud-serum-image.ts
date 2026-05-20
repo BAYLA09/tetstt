@@ -1,6 +1,8 @@
 /**
- * Dubai Palace Oud serum — single hero/card/SEO image under `public/products/`.
- * Replace the file on disk to swap creative; keep this path stable in code.
+ * Dubai Palace Oud serum — one static file for hero, cards, OG/Twitter, and preload.
+ * The bytes on disk must be the merchant’s original export (no re-encoding in app code).
+ * Chat uploads cannot be written into git from the agent: save your file as the filename
+ * below under `frontend/public/products/` and commit.
  */
 export const DUBAI_PALACE_OUD_SERUM_SLUG = "dubai-palace-oud-serum" as const;
 

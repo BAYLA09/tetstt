@@ -27,20 +27,19 @@ import { useCartStore } from "@/lib/cart-store";
 import { generateEventId, trackEvent, trackAddToCart } from "@/lib/events";
 import { PremiumImage, PremiumPlaceholder } from "./PremiumImage";
 
-/** Dubai Oud serum PDP: single raster above offers — no config URLs, no fallbacks. */
+/** Dubai Oud serum PDP: single `/public` raster above offers — native img, no Next/Image pipeline. */
 function DubaiPalaceOudSerumProductMedia({ product }: { product: LandingProduct }) {
   return (
     <div className="bg-[var(--lp-bg)] p-3">
-      <div className="relative w-full overflow-hidden rounded-[2rem] bg-[var(--lp-bg)] shadow-[0_24px_80px_rgba(0,0,0,0.12)]">
-        {/* eslint-disable-next-line @next/next/no-img-element -- raster under public/products */}
-        <img
-          src={DUBAI_PALACE_OUD_SERUM_IMAGE_SRC}
-          alt={product.imageAlts.heroBeforeAfter}
-          className="block h-auto w-full object-contain"
-          decoding="async"
-          fetchPriority="high"
-        />
-      </div>
+      {/* No rounded clip / heavy shadow — keeps the uploaded frame visually intact. */}
+      {/* eslint-disable-next-line @next/next/no-img-element -- exact /public file bytes */}
+      <img
+        src={DUBAI_PALACE_OUD_SERUM_IMAGE_SRC}
+        alt={product.imageAlts.heroBeforeAfter}
+        className="block h-auto w-full max-w-full object-contain"
+        decoding="async"
+        fetchPriority="high"
+      />
     </div>
   );
 }
@@ -729,10 +728,11 @@ function RelatedBlock({ related, b }: { related: LandingProduct[]; b: typeof bus
         <h2 className="text-xl font-black text-[var(--lp-primary)]">منتجات تكمّل طلبج</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           {related.map((p) => {
-            const cardSrc =
-              p.slug === DUBAI_PALACE_OUD_SERUM_SLUG
-                ? DUBAI_PALACE_OUD_SERUM_IMAGE_SRC
-                : getProduct(p.slug)?.cardImage?.trim();
+            const isSerum = p.slug === DUBAI_PALACE_OUD_SERUM_SLUG;
+            const cardSrc = isSerum ? DUBAI_PALACE_OUD_SERUM_IMAGE_SRC : getProduct(p.slug)?.cardImage?.trim();
+            const relatedImgClass = isSerum
+              ? "absolute inset-0 h-full w-full object-contain object-center bg-[var(--lp-bg)]"
+              : "absolute inset-0 h-full w-full object-cover object-center";
             return (
               <Link
                 key={p.slug}
@@ -745,7 +745,7 @@ function RelatedBlock({ related, b }: { related: LandingProduct[]; b: typeof bus
                     <img
                       src={cardSrc}
                       alt={p.name}
-                      className="absolute inset-0 h-full w-full object-cover object-center"
+                      className={relatedImgClass}
                       loading="lazy"
                       decoding="async"
                     />

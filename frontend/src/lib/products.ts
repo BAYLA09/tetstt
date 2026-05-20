@@ -126,7 +126,6 @@ const catalogProducts: Product[] = [
     },
     notes: ["لإحساس الجفاف والشد", "100مل", "رائحة عود دافئة", "دفع عند الاستلام"],
     cardImage: DUBAI_PALACE_OUD_SERUM_PRIMARY_IMAGE_SRC,
-    storyGallery: [{ src: DUBAI_PALACE_OUD_SERUM_PRIMARY_IMAGE_SRC, alt: "سيروم عود قصر دبي" }],
     heroPromoLine: "اختاري الكمية المناسبة: عبوة، عبوتين، أو ثلاث عبوات بسعر أوفر",
     offerTiers: [
       {

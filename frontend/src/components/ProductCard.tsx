@@ -14,14 +14,13 @@ export function ProductCard({
   showAddButton?: boolean;
 }) {
   const addItem = useCartStore((state) => state.addItem);
-  const cardSrc =
-    product.slug === DUBAI_PALACE_OUD_SERUM_SLUG
-      ? DUBAI_PALACE_OUD_SERUM_IMAGE_SRC
-      : (product.cardImage?.trim() ?? "");
+  const isSerum = product.slug === DUBAI_PALACE_OUD_SERUM_SLUG;
+  const cardSrc = isSerum ? DUBAI_PALACE_OUD_SERUM_IMAGE_SRC : (product.cardImage?.trim() ?? "");
   const showPhoto = Boolean(cardSrc);
-  /** Fills the fixed aspect slot so every card photo uses the same frame size on the grid. */
-  const cardImgClass =
-    "absolute inset-0 h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.03]";
+  /** Serum: full frame without crop (same file as PDP hero). Others: cover for consistent grid slots. */
+  const cardImgClass = isSerum
+    ? "absolute inset-0 h-full w-full object-contain object-center bg-[var(--cream-50)]"
+    : "absolute inset-0 h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.03]";
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-[2rem] border border-[var(--border-gold)] bg-white p-3 shadow-[0_18px_60px_rgba(42,27,18,0.10)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_24px_80px_rgba(42,27,18,0.14)]">
