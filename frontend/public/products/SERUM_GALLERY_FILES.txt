@@ -1,10 +1,9 @@
-Dubai Palace Oud serum — primary hero (top of PDP) and storefront card:
+Dubai Palace Oud serum — ONE image file for hero (PDP top) and storefront card:
 
-  COMMITTED FILE (served as static asset, works on desktop and mobile):
-    frontend/public/products/adskull-image-3b76093b-906d-4b09-aacb-43ddddbf92e1.png
+  File (commit this file; replace its bytes with your exact chat upload when ready):
+    frontend/public/products/dubai-palace-oud-serum-exact-upload.png
 
-  Public URL:
-    /products/adskull-image-3b76093b-906d-4b09-aacb-43ddddbf92e1.png
+  Public URL (only reference used in code for this SKU’s hero + card):
+    /products/dubai-palace-oud-serum-exact-upload.png
 
-  To use a different exact export without changing code: overwrite that PNG in place
-  (same path and filename) and commit the new bytes.
+  Replace in place: overwrite the PNG above without renaming so all references stay valid.

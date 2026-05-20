@@ -102,8 +102,8 @@ export const landingProducts: LandingProduct[] = [
       subtitle: "لمسة مسك هادئة تكمل السلة إذا رغبتِ — السعر من إعدادات المنتج.",
     },
     images: {
-      /** Raster in `public/products/` — replace this file in place with your exact export (same filename) if needed. */
-      heroBeforeAfter: "/products/adskull-image-3b76093b-906d-4b09-aacb-43ddddbf92e1.png",
+      /** Single raster for hero + cards — replace bytes in place with your exact chat upload; keep this filename. */
+      heroBeforeAfter: "/products/dubai-palace-oud-serum-exact-upload.png",
       heroProduct: "",
       problemImage: "",
       ingredientImage: "",
