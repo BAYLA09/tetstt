@@ -3,10 +3,7 @@ import { notFound } from "next/navigation";
 import { businessConfig } from "@/config/business";
 import { getLandingProduct, landingSlugs } from "@/config/products";
 import { ProductLandingView } from "@/components/product-landing/ProductLandingView";
-import {
-  DUBAI_PALACE_OUD_SERUM_IMAGE_ORDER,
-  DUBAI_PALACE_OUD_SERUM_SLUG,
-} from "@/lib/dubai-palace-oud-serum-image";
+import { DUBAI_PALACE_OUD_SERUM_IMAGE_SRC, DUBAI_PALACE_OUD_SERUM_SLUG } from "@/lib/dubai-palace-oud-serum-image";
 
 export function generateStaticParams() {
   return landingSlugs().map((slug) => ({ slug }));
@@ -24,11 +21,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (slug === DUBAI_PALACE_OUD_SERUM_SLUG && product) {
     const origin = businessConfig.site.origin;
-    const ogImages = DUBAI_PALACE_OUD_SERUM_IMAGE_ORDER.map((path) => ({
-      url: new URL(path, origin).href,
-      alt: product.name,
-    }));
-    const twitterImages = DUBAI_PALACE_OUD_SERUM_IMAGE_ORDER.map((path) => new URL(path, origin).href);
+    const heroUrl = new URL(DUBAI_PALACE_OUD_SERUM_IMAGE_SRC, origin).href;
+    const ogImages = [{ url: heroUrl, alt: product.name }];
+    const twitterImages = [heroUrl];
     return {
       title,
       description,
@@ -58,11 +53,7 @@ export default async function ProductPage({ params }: Props) {
 
   const serumPreload =
     slug === DUBAI_PALACE_OUD_SERUM_SLUG ? (
-      <>
-        {DUBAI_PALACE_OUD_SERUM_IMAGE_ORDER.map((href, i) => (
-          <link key={`dubai-oud-serum-img-${i}`} rel="preload" as="image" href={href} />
-        ))}
-      </>
+      <link rel="preload" as="image" href={DUBAI_PALACE_OUD_SERUM_IMAGE_SRC} />
     ) : null;
 
   return (

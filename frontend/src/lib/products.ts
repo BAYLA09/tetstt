@@ -1,8 +1,5 @@
 /** Bundle tier on the product hero (e.g. lamp + serums). */
-import {
-  DUBAI_PALACE_OUD_SERUM_PRIMARY_IMAGE_SRC,
-  DUBAI_PALACE_OUD_SERUM_SECONDARY_IMAGE_SRC,
-} from "@/lib/dubai-palace-oud-serum-image";
+import { DUBAI_PALACE_OUD_SERUM_PRIMARY_IMAGE_SRC } from "@/lib/dubai-palace-oud-serum-image";
 
 export type ProductOfferTier = {
   sku: string;
@@ -129,10 +126,7 @@ const catalogProducts: Product[] = [
     },
     notes: ["لإحساس الجفاف والشد", "100مل", "رائحة عود دافئة", "دفع عند الاستلام"],
     cardImage: DUBAI_PALACE_OUD_SERUM_PRIMARY_IMAGE_SRC,
-    storyGallery: [
-      { src: DUBAI_PALACE_OUD_SERUM_PRIMARY_IMAGE_SRC, alt: "سيروم عود قصر دبي — الصورة ١" },
-      { src: DUBAI_PALACE_OUD_SERUM_SECONDARY_IMAGE_SRC, alt: "سيروم عود قصر دبي — الصورة ٢" },
-    ],
+    storyGallery: [{ src: DUBAI_PALACE_OUD_SERUM_PRIMARY_IMAGE_SRC, alt: "سيروم عود قصر دبي" }],
     heroPromoLine: "اختاري الكمية المناسبة: عبوة، عبوتين، أو ثلاث عبوات بسعر أوفر",
     offerTiers: [
       {

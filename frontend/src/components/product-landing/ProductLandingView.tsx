@@ -22,38 +22,23 @@ import type { LandingOffer, LandingProduct } from "@/config/landing-types";
 import { getLandingProduct } from "@/config/products";
 import { formatPrice } from "@/lib/format-price";
 import { getProduct } from "@/lib/products";
-import {
-  DUBAI_PALACE_OUD_SERUM_IMAGE_SRC,
-  DUBAI_PALACE_OUD_SERUM_PRIMARY_IMAGE_SRC,
-  DUBAI_PALACE_OUD_SERUM_SECONDARY_IMAGE_SRC,
-  DUBAI_PALACE_OUD_SERUM_SLUG,
-} from "@/lib/dubai-palace-oud-serum-image";
+import { DUBAI_PALACE_OUD_SERUM_IMAGE_SRC, DUBAI_PALACE_OUD_SERUM_SLUG } from "@/lib/dubai-palace-oud-serum-image";
 import { useCartStore } from "@/lib/cart-store";
 import { generateEventId, trackEvent, trackAddToCart } from "@/lib/events";
 import { PremiumImage, PremiumPlaceholder } from "./PremiumImage";
 
-/** Dubai Oud serum PDP: fixed [primary, secondary] order — no config URLs, no fallbacks. */
+/** Dubai Oud serum PDP: single raster above offers — no config URLs, no fallbacks. */
 function DubaiPalaceOudSerumProductMedia({ product }: { product: LandingProduct }) {
   return (
-    <div className="space-y-3 bg-[var(--lp-bg)] p-3">
+    <div className="bg-[var(--lp-bg)] p-3">
       <div className="relative w-full overflow-hidden rounded-[2rem] bg-[var(--lp-bg)] shadow-[0_24px_80px_rgba(0,0,0,0.12)]">
-        {/* eslint-disable-next-line @next/next/no-img-element -- primary raster under public/products */}
+        {/* eslint-disable-next-line @next/next/no-img-element -- raster under public/products */}
         <img
-          src={DUBAI_PALACE_OUD_SERUM_PRIMARY_IMAGE_SRC}
+          src={DUBAI_PALACE_OUD_SERUM_IMAGE_SRC}
           alt={product.imageAlts.heroBeforeAfter}
           className="block h-auto w-full object-contain"
           decoding="async"
           fetchPriority="high"
-        />
-      </div>
-      <div className="relative w-full overflow-hidden rounded-[1.25rem] border border-[var(--lp-border)]/70 bg-[var(--lp-bg)] shadow-sm">
-        {/* eslint-disable-next-line @next/next/no-img-element -- secondary raster under public/products */}
-        <img
-          src={DUBAI_PALACE_OUD_SERUM_SECONDARY_IMAGE_SRC}
-          alt={product.imageAlts.heroProduct}
-          className="block h-auto w-full object-contain"
-          decoding="async"
-          fetchPriority="auto"
         />
       </div>
     </div>
