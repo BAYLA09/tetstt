@@ -74,7 +74,7 @@ function SerumHandoffHero({ src, alt }: { src: string; alt: string }) {
     <SerumGalleryRasterRow
       src={src}
       alt={alt}
-      failCaption="أضيفي ملف الصورة الأصلي بدون تعديل: public/products/dubai-palace-oud-serum-hero-original.png"
+      failCaption="تأكدي من وجود الملف في public/products: adskull-image-3b76093b-906d-4b09-aacb-43ddddbf92e1.png"
       rounded="2rem"
     />
   );

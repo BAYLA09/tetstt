@@ -102,8 +102,8 @@ export const landingProducts: LandingProduct[] = [
       subtitle: "لمسة مسك هادئة تكمل السلة إذا رغبتِ — السعر من إعدادات المنتج.",
     },
     images: {
-      /** Must be your exact, unmodified upload — binary is not committed; add `dubai-palace-oud-serum-hero-original.png` under `public/products/`. */
-      heroBeforeAfter: "/products/dubai-palace-oud-serum-hero-original.png",
+      /** Raster in `public/products/` — replace this file in place with your exact export (same filename) if needed. */
+      heroBeforeAfter: "/products/adskull-image-3b76093b-906d-4b09-aacb-43ddddbf92e1.png",
       heroProduct: "",
       problemImage: "",
       ingredientImage: "",
