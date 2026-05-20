@@ -123,7 +123,6 @@ const catalogProducts: Product[] = [
       subline: "ملاحظات فريق ليالي بيوتي من تجارب العميلات — النتائج تختلف.",
     },
     notes: ["لإحساس الجفاف والشد", "100مل", "رائحة عود دافئة", "دفع عند الاستلام"],
-    cardImage: "/products/dubai-palace-oud-serum-exact-upload.png",
     heroPromoLine: "اختاري الكمية المناسبة: عبوة، عبوتين، أو ثلاث عبوات بسعر أوفر",
     offerTiers: [
       {

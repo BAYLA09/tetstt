@@ -1,5 +1,9 @@
 /** Single source for market, COD, and visual tokens — edit here only for brand-wide values. */
 export const businessConfig = {
+  /** Canonical site origin for metadata (`metadataBase`, Open Graph absolute URLs). */
+  site: {
+    origin: "https://layalibeauty.shop",
+  },
   brand: {
     nameLocal: "ليالي بيوتي",
     nameEnglish: "Layali Beauty",

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ShoppingBag, Star } from "lucide-react";
 import { money, type Product } from "@/lib/products";
+import { DUBAI_PALACE_OUD_SERUM_IMAGE_SRC, DUBAI_PALACE_OUD_SERUM_SLUG } from "@/lib/dubai-palace-oud-serum-image";
 import { useCartStore } from "@/lib/cart-store";
 
 export function ProductCard({
@@ -13,7 +14,10 @@ export function ProductCard({
   showAddButton?: boolean;
 }) {
   const addItem = useCartStore((state) => state.addItem);
-  const cardSrc = product.cardImage?.trim();
+  const cardSrc =
+    product.slug === DUBAI_PALACE_OUD_SERUM_SLUG
+      ? DUBAI_PALACE_OUD_SERUM_IMAGE_SRC
+      : (product.cardImage?.trim() ?? "");
   const showPhoto = Boolean(cardSrc);
   /** Fills the fixed aspect slot so every card photo uses the same frame size on the grid. */
   const cardImgClass =

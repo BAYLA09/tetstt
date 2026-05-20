@@ -22,76 +22,37 @@ import type { LandingOffer, LandingProduct } from "@/config/landing-types";
 import { getLandingProduct } from "@/config/products";
 import { formatPrice } from "@/lib/format-price";
 import { getProduct } from "@/lib/products";
+import { DUBAI_PALACE_OUD_SERUM_IMAGE_SRC, DUBAI_PALACE_OUD_SERUM_SLUG } from "@/lib/dubai-palace-oud-serum-image";
 import { useCartStore } from "@/lib/cart-store";
 import { generateEventId, trackEvent, trackAddToCart } from "@/lib/events";
 import { PremiumImage, PremiumPlaceholder } from "./PremiumImage";
 
-/** Serum gallery row: native img + onError so a missing handoff PNG never shows a broken frame or cached wrong asset. */
-function SerumGalleryRasterRow({
-  src,
-  alt,
-  failCaption,
-  rounded = "2rem",
-  frameClassName = "",
-  fetchPriority = "high",
-}: {
-  src: string;
-  alt: string;
-  failCaption: string;
-  rounded?: "2rem" | "1.25rem";
-  frameClassName?: string;
-  fetchPriority?: "high" | "auto";
-}) {
-  const [loadFailed, setLoadFailed] = useState(false);
-  const roundClass = rounded === "2rem" ? "rounded-[2rem]" : "rounded-[1.25rem]";
-  if (loadFailed) {
-    return (
-      <PremiumPlaceholder
-        alt={alt}
-        caption={failCaption}
-        className={`aspect-[4/5] min-h-[220px] ${roundClass} ${frameClassName}`}
-      />
-    );
-  }
-  const resolvedSrc = encodeURI(src);
+/** Dubai Oud serum PDP: always the same `public/products` raster — no config, no fallbacks. */
+function DubaiPalaceOudSerumHeroImage({ alt }: { alt: string }) {
   return (
-    <div className={`relative w-full overflow-hidden ${roundClass} bg-[var(--lp-bg)] ${frameClassName}`}>
-      {/* eslint-disable-next-line @next/next/no-img-element -- serum handoff PNGs under /public/products */}
+    <div className="relative w-full overflow-hidden rounded-[2rem] bg-[var(--lp-bg)] shadow-[0_24px_80px_rgba(0,0,0,0.12)]">
+      {/* eslint-disable-next-line @next/next/no-img-element -- single committed raster under public/products */}
       <img
-        src={resolvedSrc}
+        src={DUBAI_PALACE_OUD_SERUM_IMAGE_SRC}
         alt={alt}
         className="block h-auto w-full object-contain"
         decoding="async"
-        fetchPriority={fetchPriority}
-        onError={() => setLoadFailed(true)}
+        fetchPriority="high"
       />
     </div>
   );
 }
 
-function SerumHandoffHero({ src, alt }: { src: string; alt: string }) {
-  return (
-    <SerumGalleryRasterRow
-      src={src}
-      alt={alt}
-      failCaption="تأكدي من وجود الملف في public/products: dubai-palace-oud-serum-exact-upload.png"
-      rounded="2rem"
-    />
-  );
-}
-
 function HeroTopMedia({ product }: { product: LandingProduct }) {
+  if (product.slug === DUBAI_PALACE_OUD_SERUM_SLUG) {
+    return <DubaiPalaceOudSerumHeroImage alt={product.imageAlts.heroBeforeAfter} />;
+  }
+
   const hero = product.images.heroBeforeAfter?.trim();
   const portrait = product.images.lifestyleImage?.trim();
   const bottle = product.images.heroProduct?.trim();
-  const serumSlug = product.slug === "dubai-palace-oud-serum";
 
-  /** Dubai Palace Oud: single hero image above the fold (ignore extra image paths in config). */
-  if (serumSlug && hero) {
-    return <SerumHandoffHero src={hero} alt={product.imageAlts.heroBeforeAfter} />;
-  }
-
-  if (!serumSlug && hero && portrait) {
+  if (hero && portrait) {
     return (
       <div className="space-y-3 bg-[var(--lp-bg)] p-3">
         <PremiumImage
@@ -220,7 +181,7 @@ export function ProductLandingView({ product }: { product: LandingProduct }) {
     </div>
   );
 
-  const serumSlug = product.slug === "dubai-palace-oud-serum";
+  const serumSlug = product.slug === DUBAI_PALACE_OUD_SERUM_SLUG;
 
   const landingBadgeGrid = (
     <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -766,7 +727,10 @@ function RelatedBlock({ related, b }: { related: LandingProduct[]; b: typeof bus
         <h2 className="text-xl font-black text-[var(--lp-primary)]">منتجات تكمّل طلبج</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           {related.map((p) => {
-            const cardSrc = getProduct(p.slug)?.cardImage?.trim();
+            const cardSrc =
+              p.slug === DUBAI_PALACE_OUD_SERUM_SLUG
+                ? DUBAI_PALACE_OUD_SERUM_IMAGE_SRC
+                : getProduct(p.slug)?.cardImage?.trim();
             return (
               <Link
                 key={p.slug}

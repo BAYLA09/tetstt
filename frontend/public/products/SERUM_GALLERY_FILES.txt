@@ -1,9 +1,0 @@
-Dubai Palace Oud serum — ONE image file for hero (PDP top) and storefront card:
-
-  File (commit this file; replace its bytes with your exact chat upload when ready):
-    frontend/public/products/dubai-palace-oud-serum-exact-upload.png
-
-  Public URL (only reference used in code for this SKU’s hero + card):
-    /products/dubai-palace-oud-serum-exact-upload.png
-
-  Replace in place: overwrite the PNG above without renaming so all references stay valid.
