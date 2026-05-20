@@ -123,7 +123,7 @@ const catalogProducts: Product[] = [
       subline: "ملاحظات فريق ليالي بيوتي من تجارب العميلات — النتائج تختلف.",
     },
     notes: ["لإحساس الجفاف والشد", "100مل", "رائحة عود دافئة", "دفع عند الاستلام"],
-    cardImage: "/products/adskull-image-3b76093b-906d-4b09-aacb-43ddddbf92e1.png",
+    cardImage: "/products/dubai-palace-oud-hero-upsell-above.png",
     heroPromoLine: "اختاري الكمية المناسبة: عبوة، عبوتين، أو ثلاث عبوات بسعر أوفر",
     offerTiers: [
       {
