@@ -102,7 +102,8 @@ export const landingProducts: LandingProduct[] = [
       subtitle: "لمسة مسك هادئة تكمل السلة إذا رغبتِ — السعر من إعدادات المنتج.",
     },
     images: {
-      heroBeforeAfter: "",
+      /** Single hero visual above offers — avoids the 3-tile placeholder collage when art is unset. */
+      heroBeforeAfter: "/products/adskull-image-3b76093b-906d-4b09-aacb-43ddddbf92e1.png",
       heroProduct: "",
       problemImage: "",
       ingredientImage: "",
@@ -112,7 +113,7 @@ export const landingProducts: LandingProduct[] = [
       comparisonImage: "",
     },
     imageAlts: {
-      heroBeforeAfter: "مقارنة قبل وبعد لإحساس البشرة مع الروتين",
+      heroBeforeAfter: "سيروم عود قصر دبي — صورة المنتج",
       heroProduct: "عبوة سيروم عود قصر دبي",
       problemImage: "أجواء مكيف وهوى جاف حول الوجه",
       ingredientImage: "تفاصيل الملمس والعبوة",
