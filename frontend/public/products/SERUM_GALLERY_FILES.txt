@@ -1,9 +1,13 @@
-Dubai Palace Oud serum — hero image (above offers / upsell wiring) lives here:
-  frontend/public/products/dubai-palace-oud-hero-upsell-above.png
+Dubai Palace Oud serum — primary hero (top of PDP) and storefront card:
 
-Public URL (Next.js serves from /public):
-  /products/dubai-palace-oud-hero-upsell-above.png
+  REQUIRED FILE (exact bytes of your design export — do not rename contents, only the filename):
+    frontend/public/products/dubai-palace-oud-serum-hero-original.png
 
-To swap the visual: replace that PNG file (same filename) with your final export — no code change needed.
+  Public URL:
+    /products/dubai-palace-oud-serum-hero-original.png
 
-The storefront card for this SKU uses the same file (see `frontend/src/lib/products.ts` cardImage).
+  Rules:
+    - One file only; no extra stacked images on the serum PDP.
+    - Do not replace this asset with AI-generated art in the repo — keep your original upload.
+
+  After you copy the PNG into this folder with that exact name, commit it so deploys ship the same file.
