@@ -102,7 +102,8 @@ export const landingProducts: LandingProduct[] = [
       subtitle: "لمسة مسك هادئة تكمل السلة إذا رغبتِ — السعر من إعدادات المنتج.",
     },
     images: {
-      heroBeforeAfter: "/products/dubai-palace-oud-serum-hero.png",
+      /** Tracked asset: `public/products/dubai-palace-oud-serum.png` (avoid `-hero` — that file is not in repo). */
+      heroBeforeAfter: "/products/dubai-palace-oud-serum.png",
       heroProduct: "",
       problemImage: "",
       ingredientImage: "",
