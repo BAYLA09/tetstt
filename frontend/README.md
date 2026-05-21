@@ -13,6 +13,14 @@ npm run dev -- --host 0.0.0.0
 
 Copy `.env.example` to `.env.local` and adjust values.
 
+## Performance (scroll & load)
+
+- **Caching:** `next.config.ts` sets long `Cache-Control` for `/_next/static` and `/_next/image` so JS/CSS/fonts stay in the browser cache. A previous blanket `no-store` on all routes was removed because it forced re-download on every visit and made scrolling feel heavy.
+- **Paint cost:** Sticky chrome avoids `backdrop-blur` (solid header/footer colors). Home below-the-fold sections use `content-visibility: auto` (`.cv-auto`) where supported.
+- **Motion:** Global `scroll-behavior` is `auto` (no smooth-scroll jank). Product sticky CTA uses `scrollIntoView({ behavior: "auto" })`.
+- **Code splitting:** Product PDP loads `ProductLandingView` via `next/dynamic` with an SSR-friendly skeleton (`ProductLandingClient.tsx`).
+- **Images:** Marketing rasters under `/public` use native `<img>` with `decoding="async"` and `loading="lazy"` when not `priority` (`PremiumImage`).
+
 ## Sheet template
 
 The order sheet CSV template is available at:

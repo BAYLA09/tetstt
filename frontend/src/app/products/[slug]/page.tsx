@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { businessConfig } from "@/config/business";
 import { getLandingProduct, landingSlugs } from "@/config/products";
-import { ProductLandingView } from "@/components/product-landing/ProductLandingView";
+import { ProductLandingClient } from "./ProductLandingClient";
 
 export function generateStaticParams() {
   return landingSlugs().map((slug) => ({ slug }));
@@ -26,5 +26,5 @@ export default async function ProductPage({ params }: Props) {
   if (!product) {
     notFound();
   }
-  return <ProductLandingView product={product} />;
+  return <ProductLandingClient product={product} />;
 }

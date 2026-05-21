@@ -9,17 +9,23 @@ const arabic = IBM_Plex_Sans_Arabic({
   variable: "--font-arabic",
   subsets: ["arabic"],
   weight: ["400", "500", "600", "700"],
+  display: "swap",
+  adjustFontFallback: true,
 });
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
+  adjustFontFallback: true,
 });
 
 const dancingScript = Dancing_Script({
   variable: "--font-script",
   subsets: ["latin"],
   weight: ["700"],
+  display: "swap",
+  adjustFontFallback: true,
 });
 
 export const metadata: Metadata = {
@@ -42,7 +48,7 @@ export default function RootLayout({
     <html
       lang="ar"
       dir="rtl"
-      className={`${arabic.variable} ${inter.variable} ${dancingScript.variable} h-full scroll-smooth antialiased`}
+      className={`${arabic.variable} ${inter.variable} ${dancingScript.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <AdClickBeacon />

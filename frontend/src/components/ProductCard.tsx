@@ -18,11 +18,11 @@ export function ProductCard({
   /** `object-cover` was cropping the label off wide studio shots for the serum card. */
   const cardImgClass =
     product.slug === "dubai-palace-oud-serum"
-      ? "h-full w-full object-contain object-center p-2 sm:p-4 transition duration-300 group-hover:scale-[1.02]"
-      : "h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.03]";
+      ? "h-full w-full object-contain object-center p-2 sm:p-4"
+      : "h-full w-full object-cover object-center";
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-[2rem] border border-[var(--border-gold)] bg-white p-3 shadow-[0_18px_60px_rgba(42,27,18,0.10)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_24px_80px_rgba(42,27,18,0.14)]">
+    <article className="group flex h-full flex-col overflow-hidden rounded-[2rem] border border-[var(--border-gold)] bg-white p-3 shadow-[0_18px_60px_rgba(42,27,18,0.10)] transition-shadow duration-200 hover:shadow-[0_24px_80px_rgba(42,27,18,0.14)]">
       <Link href={`/products/${product.slug}`} className="block">
         {showPhoto ? (
           <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[1.5rem] border border-[var(--border-gold)] bg-[var(--cream-50)] sm:aspect-[3/2]">
@@ -38,7 +38,7 @@ export function ProductCard({
           </div>
         ) : (
           <div className="product-illustration grid aspect-[4/3] w-full place-items-end rounded-[1.5rem] p-6 sm:aspect-[3/2]">
-            <div className="relative z-10 w-full rounded-2xl border border-white/10 bg-white/10 p-4 text-center backdrop-blur-sm">
+            <div className="relative z-10 w-full rounded-2xl border border-white/10 bg-white/18 p-4 text-center">
               <p className="text-xs font-black text-[var(--gold-300)]">{product.badge}</p>
               <p className="mt-1 text-2xl font-black text-white">{product.shortName}</p>
             </div>

@@ -278,7 +278,7 @@ function CommercePanel({
       <div
         id={PRODUCT_OFFER_ANCHOR_ID}
         dir="rtl"
-        className="relative z-10 scroll-mt-28 rounded-[2rem] border border-gold-400/25 bg-emerald-950/72 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] backdrop-blur lg:p-8"
+        className="relative z-10 scroll-mt-28 rounded-[2rem] border border-gold-400/25 bg-emerald-950/92 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] lg:p-8"
       >
         {!showCommerceIntro ? <h1 className="sr-only">{product.name}</h1> : null}
         {showCommerceIntro ? (
@@ -338,7 +338,7 @@ function CommercePanel({
     <div
       id={PRODUCT_OFFER_ANCHOR_ID}
       dir="rtl"
-      className="relative z-10 scroll-mt-28 rounded-[2rem] border border-gold-400/25 bg-emerald-950/72 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] backdrop-blur lg:p-8"
+      className="relative z-10 scroll-mt-28 rounded-[2rem] border border-gold-400/25 bg-emerald-950/92 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.35)] lg:p-8"
     >
       {!showCommerceIntro ? <h1 className="sr-only">{product.name}</h1> : null}
       {showCommerceIntro ? (

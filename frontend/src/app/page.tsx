@@ -71,7 +71,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="products" className="section-padding bg-cream-50">
+      <section id="products" className="cv-auto section-padding bg-cream-50">
         <div className="container-grid">
           <div className="section-heading">
             <p className="badge">روتينات ليالي</p>
@@ -88,7 +88,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section-padding">
+      <section className="cv-auto section-padding">
         <div className="container-grid">
           <div className="section-heading">
             <p className="badge">ليش ليالي؟</p>
@@ -107,7 +107,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section-padding bg-emerald-950 text-white">
+      <section className="cv-auto section-padding bg-emerald-950 text-white">
         <div className="container-grid">
           <div className="mx-auto max-w-3xl text-center">
             <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">
@@ -133,7 +133,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section-padding bg-cream-50">
+      <section className="cv-auto section-padding bg-cream-50">
         <div className="container-grid">
           <div className="section-heading">
             <p className="badge">طريقة الطلب</p>
@@ -154,7 +154,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section-padding bg-emerald-950 text-white">
+      <section className="cv-auto section-padding bg-emerald-950 text-white">
         <div className="container-grid grid gap-10 lg:grid-cols-2 lg:items-center">
           <div>
             <p className="badge border-gold-400/40 bg-gold-400/10 text-gold-300">
@@ -180,7 +180,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section-padding bg-cream-50">
+      <section className="cv-auto section-padding bg-cream-50">
         <div className="container-grid">
           <div className="section-heading">
             <p className="badge">أسئلة شائعة</p>
