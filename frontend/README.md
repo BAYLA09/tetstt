@@ -13,6 +13,10 @@ npm run dev -- --host 0.0.0.0
 
 Copy `.env.example` to `.env.local` and adjust values.
 
+### Checkout → Google Sheets
+
+Successful checkouts POST JSON to `CHECKOUT_SHEET_WEBHOOK_URL` via the same-origin route `POST /api/checkout-sheet` (so the browser does not hit cross-origin CORS limits on `script.google.com`). The payload uses: `date`, `orderid`, `country`, `name`, `phone`, `product`, `url`, `sku`, `quantity`, `totalprice`, `currency`, `status`. If `CHECKOUT_SHEET_WEBHOOK_URL` is unset, the proxy returns `{ ok: true, skipped: true }` and checkout is unchanged.
+
 ## Sheet template
 
 The order sheet CSV template is available at:

@@ -3,6 +3,7 @@
 import { CheckCircle2, Minus, Plus, ShoppingBag, X } from "lucide-react";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useCartStore, type UpsellOfferPayload } from "@/lib/cart-store";
+import { buildCheckoutSheetPayload, notifyCheckoutSheetWebhook } from "@/lib/checkout-sheet-webhook";
 import { createOrder, addUpsell } from "@/lib/api";
 import { getProductBySku, money, SKIP_POST_ORDER_UPSELL_MODAL } from "@/lib/products";
 import { normalizeUaePhone } from "@/lib/phone";
@@ -136,6 +137,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         tracking: getTrackingContext().tracking,
         utm: getTrackingContext().utm,
       });
+      notifyCheckoutSheetWebhook(
+        buildCheckoutSheetPayload({
+          order,
+          customerName: name.trim(),
+          phone: normalizedPhone,
+          items,
+          pageUrl: window.location.href,
+        }),
+      );
       trackEvent("Purchase", { eventId: purchaseEventId, value: order.total });
       const skus = items.map((i) => i.sku);
       saveLastCheckoutSnapshot({
