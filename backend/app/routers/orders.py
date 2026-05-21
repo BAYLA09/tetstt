@@ -212,6 +212,12 @@ async def create_order(
         await session.commit()
     except Exception:
         log.exception("order_sheet_webhook_failed order_id=%s", order.public_order_id)
+        try:
+            order.sheet_sync_status = "failed"
+            order.sheet_sync_error = "internal_error"
+            await session.commit()
+        except Exception:
+            log.exception("order_sheet_sync_persist_failed order_id=%s", order.public_order_id)
     try:
         await send_capi_events(sheet_payload, user_agent, client_ip)
     except Exception:

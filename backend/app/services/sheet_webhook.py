@@ -24,6 +24,15 @@ async def send_order_to_sheet(payload: dict) -> tuple[str, str | None]:
         async with httpx.AsyncClient(timeout=12, follow_redirects=True) as client:
             response = await client.post(webhook_url, json=body)
             response.raise_for_status()
+            # Apps Script doPost often returns HTTP 200 with JSON { ok: false } (e.g. wrong secret) — not an HTTP error.
+            try:
+                data = response.json()
+            except Exception:
+                data = None
+            if isinstance(data, dict) and data.get("ok") is False:
+                err = str(data.get("error") or data)
+                log.warning("sheet_webhook_app_script_error orderid=%r err=%s", payload.get("orderid"), err[:300])
+                return "failed", err[:500]
         return "sent", None
     except httpx.HTTPStatusError as exc:
         detail = (exc.response.text or "")[:500]
