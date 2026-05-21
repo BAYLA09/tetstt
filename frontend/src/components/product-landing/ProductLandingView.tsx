@@ -22,7 +22,11 @@ import type { LandingOffer, LandingProduct } from "@/config/landing-types";
 import { getLandingProduct } from "@/config/products";
 import { formatPrice } from "@/lib/format-price";
 import { getProduct } from "@/lib/products";
-import { DUBAI_PALACE_OUD_SERUM_IMAGE_SRC, DUBAI_PALACE_OUD_SERUM_SLUG } from "@/lib/dubai-palace-oud-serum-image";
+import {
+  DUBAI_PALACE_OUD_SERUM_IMAGE_SRC,
+  DUBAI_PALACE_OUD_SERUM_POST_OFFERS_IMAGE_SRC,
+  DUBAI_PALACE_OUD_SERUM_SLUG,
+} from "@/lib/dubai-palace-oud-serum-image";
 import { useCartStore } from "@/lib/cart-store";
 import { generateEventId, trackEvent, trackAddToCart } from "@/lib/events";
 import { PremiumImage, PremiumPlaceholder } from "./PremiumImage";
@@ -285,6 +289,21 @@ export function ProductLandingView({ product }: { product: LandingProduct }) {
         </div>
       </section>
 
+      {product.slug === DUBAI_PALACE_OUD_SERUM_SLUG ? (
+        <section className="bg-[var(--lp-bg)] px-4 pb-4 pt-1" dir="rtl" aria-label={product.imageAlts.problemImage}>
+          <div className="mx-auto max-w-lg">
+            {/* eslint-disable-next-line @next/next/no-img-element -- exact /public file under products */}
+            <img
+              src={DUBAI_PALACE_OUD_SERUM_POST_OFFERS_IMAGE_SRC}
+              alt={product.imageAlts.problemImage}
+              className="block h-auto w-full max-w-full object-contain"
+              decoding="async"
+              loading="lazy"
+            />
+          </div>
+        </section>
+      ) : null}
+
       <section className="bg-[var(--lp-primary)] px-4 py-6 text-white" dir="rtl">
         <div className="mx-auto grid max-w-lg grid-cols-2 gap-3 sm:grid-cols-4">
           {[
@@ -344,7 +363,7 @@ function ProblemBlock({ product }: { product: LandingProduct }) {
       <div className="mx-auto max-w-lg">
         {product.images.problemImage?.trim() ? (
           <PremiumImage src={product.images.problemImage} alt={product.imageAlts.problemImage} className="shadow-md" />
-        ) : (
+        ) : product.slug === DUBAI_PALACE_OUD_SERUM_SLUG ? null : (
           <PremiumPlaceholder alt={product.imageAlts.problemImage} caption={product.problem} />
         )}
         {product.proofInsight ? (
