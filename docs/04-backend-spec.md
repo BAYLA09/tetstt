@@ -129,10 +129,11 @@ Future statuses:
 
 ## Webhook to Google Sheets
 
-- Env var: `SHEET_WEBHOOK_URL`.
-- Send after DB order creation.
-- Use retries with timeout.
-- If sheet webhook fails, keep DB order and mark `sheet_sync_status=failed` for retry.
+- Env vars: `GOOGLE_SHEETS_WEBHOOK_URL` (preferred) or `SHEET_WEBHOOK_URL`. If neither is set, the API skips the webhook and sets `sheet_sync_status=skipped` (no rows in the sheet — set the URL on the backend service).
+- Optional shared secret: `SHEETS_WEBHOOK_SECRET` / `SHEET_WEBHOOK_SECRET` must match Apps Script property `LAYALI_WEBHOOK_SECRET` when that property is set; otherwise the script returns `Unauthorized` and no row is appended.
+- Send after DB order creation. The HTTP client follows redirects (`follow_redirects`) because Apps Script exec URLs often redirect.
+- On success or failure, `sheet_sync_status` is updated to `sent`, `failed`, or `skipped`, and `sheet_sync_error` holds a short message when failed (check admin order detail).
+- The bundled Apps Script targets a tab named **`Orders`**. New rows appear there, not necessarily on the first sheet tab.
 - Do not block customer success page indefinitely because the sheet is down.
 
 ## CAPI behavior

@@ -34,7 +34,10 @@ def _payload(sku: str, *, quantity: int = 1, line_price: float | None = None) ->
 @pytest.fixture
 def no_sidecars() -> None:
     with (
-        patch("app.routers.orders.send_order_to_sheet", new_callable=AsyncMock),
+        patch(
+            "app.routers.orders.send_order_to_sheet",
+            new=AsyncMock(return_value=("sent", None)),
+        ),
         patch("app.routers.orders.send_capi_events", new_callable=AsyncMock),
     ):
         yield
