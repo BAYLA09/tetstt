@@ -28,6 +28,7 @@ def test_version_ok() -> None:
     assert isinstance(skus, list)
     assert "LB-LAMP-OUD-379" in skus
     assert "LB-LAMP-TRIPLE-449" in skus
+    assert "LB-OUD-TWO-279" in skus
     lamp = data["lamp_bundle_prices_aed"]
     assert isinstance(lamp, dict)
     assert lamp["LB-LAMP-189"] == "299"

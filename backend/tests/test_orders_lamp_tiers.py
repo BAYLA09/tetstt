@@ -63,6 +63,12 @@ def test_post_orders_lb_lamp_triple_449(api: TestClient, no_sidecars) -> None:
     assert data["total"] == pytest.approx(449.0)
 
 
+def test_post_orders_lb_oud_two_279(api: TestClient, no_sidecars) -> None:
+    r = api.post("/orders", json=_payload("LB-OUD-TWO-279"))
+    assert r.status_code == 200, r.text
+    assert r.json()["total"] == pytest.approx(279.0)
+
+
 def test_post_orders_lb_lamp_189(api: TestClient, no_sidecars) -> None:
     r = api.post("/orders", json=_payload("LB-LAMP-189"))
     assert r.status_code == 200, r.text
