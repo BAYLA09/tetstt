@@ -43,6 +43,8 @@ async def version() -> dict[str, Any]:
         "disable_order_security_checks": bool(settings.disable_order_security_checks),
         "catalog_skus": sorted(PRODUCTS.keys()),
         "lamp_bundle_prices_aed": lamp_bundle_prices(),
+        "sheet_webhook_configured": bool(settings.effective_sheet_webhook_url),
+        "sheet_webhook_secret_configured": bool(settings.effective_sheet_webhook_secret),
     }
 
 

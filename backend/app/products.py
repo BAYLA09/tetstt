@@ -7,6 +7,10 @@ PRODUCTS = {
     "LB-BUNDLE-299": {"name": "باقة ليالي بيوتي الفاخرة", "price": Decimal("299"), "sheet_sku": "LY-8F3K2"},
     "LB-SERUM-MUSK-59": {"name": "سيروم مسك المطر الأبيض", "price": Decimal("59"), "sheet_sku": "LY-4M7Q9"},
     "LB-SERUM-OUD-69": {"name": "سيروم عود قصر دبي", "price": Decimal("69"), "sheet_sku": "LY-6D2P8"},
+    # Dubai Palace Oud PDP quantity tiers (must match storefront `offerTiers` / landing `offers`).
+    "LB-OUD-ONE-199": {"name": "سيروم عود قصر دبي — عبوة واحدة", "price": Decimal("199"), "sheet_sku": "LY-OUD1"},
+    "LB-OUD-TWO-279": {"name": "سيروم عود قصر دبي — عبوتان", "price": Decimal("279"), "sheet_sku": "LY-OUD2"},
+    "LB-OUD-THREE-349": {"name": "سيروم عود قصر دبي — ثلاث عبوات", "price": Decimal("349"), "sheet_sku": "LY-OUD3"},
     "LB-SERUM-SET-99": {"name": "ثنائي السيروم الفاخر", "price": Decimal("99"), "sheet_sku": "LY-9S5T1"},
     "LB-LAMP-189": {"name": "موقد ليالي الفاخر", "price": Decimal("299"), "sheet_sku": "LY-L2MP1"},
     "LB-LAMP-OUD-379": {"name": "موقد ليالي الفاخر + سيروم عود قصر دبي", "price": Decimal("379"), "sheet_sku": "LY-L3OU2"},

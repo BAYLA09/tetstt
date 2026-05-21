@@ -87,15 +87,16 @@ def order_to_sheet_payload(order: Order, items: list[dict]) -> dict:
     return {
         "date": datetime.now(UTC).strftime("%d/%m/%Y"),
         "orderid": order.public_order_id,
-        "country": "AED",
+        "country": "UAE",
         "name": order.customer_name,
         "phone": format_sheet_phone(order.phone_e164),
         "product": "/".join(str(item["name"]) for item in items),
+        "url": order.source_url or "",
         "sku": "/".join(str(item["sku"]) for item in items),
         "quantity": "/".join(str(item["quantity"]) for item in items),
         "totalprice": float(order.total),
         "currency": order.currency,
-        "status": "",
+        "status": order.status,
         "items": items,
         "created_at": order.created_at.isoformat() if order.created_at else datetime.now(UTC).isoformat(),
         "public_order_id": order.public_order_id,
@@ -205,9 +206,18 @@ async def create_order(
 
     sheet_payload = order_to_sheet_payload(order, order_items_payload)
     try:
-        await send_order_to_sheet(sheet_payload)
+        sheet_status, sheet_err = await send_order_to_sheet(sheet_payload)
+        order.sheet_sync_status = sheet_status
+        order.sheet_sync_error = sheet_err
+        await session.commit()
     except Exception:
         log.exception("order_sheet_webhook_failed order_id=%s", order.public_order_id)
+        try:
+            order.sheet_sync_status = "failed"
+            order.sheet_sync_error = "internal_error"
+            await session.commit()
+        except Exception:
+            log.exception("order_sheet_sync_persist_failed order_id=%s", order.public_order_id)
     try:
         await send_capi_events(sheet_payload, user_agent, client_ip)
     except Exception:

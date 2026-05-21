@@ -34,7 +34,10 @@ def _payload(sku: str, *, quantity: int = 1, line_price: float | None = None) ->
 @pytest.fixture
 def no_sidecars() -> None:
     with (
-        patch("app.routers.orders.send_order_to_sheet", new_callable=AsyncMock),
+        patch(
+            "app.routers.orders.send_order_to_sheet",
+            new=AsyncMock(return_value=("sent", None)),
+        ),
         patch("app.routers.orders.send_capi_events", new_callable=AsyncMock),
     ):
         yield
@@ -61,6 +64,12 @@ def test_post_orders_lb_lamp_triple_449(api: TestClient, no_sidecars) -> None:
     assert r.status_code == 200, r.text
     data = r.json()
     assert data["total"] == pytest.approx(449.0)
+
+
+def test_post_orders_lb_oud_two_279(api: TestClient, no_sidecars) -> None:
+    r = api.post("/orders", json=_payload("LB-OUD-TWO-279"))
+    assert r.status_code == 200, r.text
+    assert r.json()["total"] == pytest.approx(279.0)
 
 
 def test_post_orders_lb_lamp_189(api: TestClient, no_sidecars) -> None:

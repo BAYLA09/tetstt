@@ -1,6 +1,7 @@
 const SHEET_NAME = 'Orders';
 const SHARED_SECRET = PropertiesService.getScriptProperties().getProperty('LAYALI_WEBHOOK_SECRET');
 
+/** Column keys for appendRow. Add e.g. 'url' after 'product' for new spreadsheets if you need page URL. */
 const HEADERS = [
   'date',
   'orderid',
