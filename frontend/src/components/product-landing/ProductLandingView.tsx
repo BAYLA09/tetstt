@@ -204,7 +204,7 @@ export function ProductLandingView({ product }: { product: LandingProduct }) {
         <div
           className={
             serumSlug
-              ? "overflow-hidden rounded-[2rem] shadow-[0_24px_80px_rgba(0,0,0,0.12)]"
+              ? "rounded-[2rem] shadow-[0_24px_80px_rgba(0,0,0,0.12)]"
               : "overflow-hidden rounded-[2rem] border border-[var(--lp-border)] bg-[var(--lp-card)] shadow-[0_24px_80px_rgba(0,0,0,0.12)] ring-1 ring-[var(--lp-accent)]/25"
           }
         >
