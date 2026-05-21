@@ -1,7 +1,22 @@
+import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 import { businessConfig } from "@/config/business";
 import { getLandingProduct, landingSlugs } from "@/config/products";
-import { ProductLandingView } from "@/components/product-landing/ProductLandingView";
+
+const ProductLandingView = dynamic(
+  () =>
+    import("@/components/product-landing/ProductLandingView").then((mod) => mod.ProductLandingView),
+  {
+    ssr: true,
+    loading: () => (
+      <div
+        className="min-h-[50vh] bg-[#fffaf2]"
+        aria-busy="true"
+        aria-label="جاري تحميل صفحة المنتج"
+      />
+    ),
+  },
+);
 
 export function generateStaticParams() {
   return landingSlugs().map((slug) => ({ slug }));
