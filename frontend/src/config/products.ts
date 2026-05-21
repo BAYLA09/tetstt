@@ -102,7 +102,7 @@ export const landingProducts: LandingProduct[] = [
       subtitle: "لمسة مسك هادئة تكمل السلة إذا رغبتِ — السعر من إعدادات المنتج.",
     },
     images: {
-      heroBeforeAfter: "",
+      heroBeforeAfter: "/products/dubai-palace-oud-serum-hero.png",
       heroProduct: "",
       problemImage: "",
       ingredientImage: "",
@@ -112,12 +112,12 @@ export const landingProducts: LandingProduct[] = [
       comparisonImage: "",
     },
     imageAlts: {
-      heroBeforeAfter: "سيروم عود قصر دبي — الصورة الرئيسية للصفحة",
+      heroBeforeAfter: "مقارنة قبل وبعد لإحساس البشرة مع الروتين",
       heroProduct: "عبوة سيروم عود قصر دبي",
       problemImage: "أجواء مكيف وهوى جاف حول الوجه",
       ingredientImage: "تفاصيل الملمس والعبوة",
       authorityImage: "عناصر تثقيفية حول الروتين",
-      lifestyleImage: "لقطة lifestyle داخل البيت",
+      lifestyleImage: "لقطة لifestyle داخل البيت",
       testimonialImage: "تجربة عميلة توضيحية",
       comparisonImage: "مقارنة بصرية بسيطة",
     },
