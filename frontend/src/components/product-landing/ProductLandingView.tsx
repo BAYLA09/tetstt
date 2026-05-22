@@ -289,21 +289,6 @@ export function ProductLandingView({ product }: { product: LandingProduct }) {
         </div>
       </section>
 
-      {product.slug === DUBAI_PALACE_OUD_SERUM_SLUG ? (
-        <section className="bg-[var(--lp-bg)] px-4 pb-4 pt-1" dir="rtl" aria-label={product.imageAlts.problemImage}>
-          <div className="mx-auto max-w-lg">
-            {/* eslint-disable-next-line @next/next/no-img-element -- exact /public file under products */}
-            <img
-              src={DUBAI_PALACE_OUD_SERUM_POST_OFFERS_IMAGE_SRC}
-              alt={product.imageAlts.problemImage}
-              className="block h-auto w-full max-w-full object-contain"
-              decoding="async"
-              loading="lazy"
-            />
-          </div>
-        </section>
-      ) : null}
-
       <section className="bg-[var(--lp-primary)] px-4 py-6 text-white" dir="rtl">
         <div className="mx-auto grid max-w-lg grid-cols-2 gap-3 sm:grid-cols-4">
           {[
@@ -319,6 +304,21 @@ export function ProductLandingView({ product }: { product: LandingProduct }) {
           ))}
         </div>
       </section>
+
+      {product.slug === DUBAI_PALACE_OUD_SERUM_SLUG ? (
+        <section className="bg-[var(--lp-bg)] px-4 pb-6 pt-4" dir="rtl" aria-label={product.imageAlts.problemImage}>
+          <div className="mx-auto max-w-lg">
+            {/* eslint-disable-next-line @next/next/no-img-element -- exact /public file under products */}
+            <img
+              src={DUBAI_PALACE_OUD_SERUM_POST_OFFERS_IMAGE_SRC}
+              alt={product.imageAlts.problemImage}
+              className="block h-auto w-full max-w-full object-contain"
+              decoding="async"
+              loading="lazy"
+            />
+          </div>
+        </section>
+      ) : null}
 
       <ProblemBlock product={product} />
       <MechanismBlock product={product} ingredients={ingredients} />
