@@ -55,6 +55,7 @@ export function PremiumImage({
           src={src}
           alt={alt}
           className={`block h-auto w-full ${fitClass}`}
+          loading={priority ? "eager" : "lazy"}
           decoding="async"
           fetchPriority={priority ? "high" : "auto"}
         />

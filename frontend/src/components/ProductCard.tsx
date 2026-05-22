@@ -9,9 +9,12 @@ import { useCartStore } from "@/lib/cart-store";
 export function ProductCard({
   product,
   showAddButton = true,
+  /** Set on the first card when it is clearly above the fold (optional LCP hint). */
+  priorityCardImage = false,
 }: {
   product: Product;
   showAddButton?: boolean;
+  priorityCardImage?: boolean;
 }) {
   const addItem = useCartStore((state) => state.addItem);
   const isSerum = product.slug === DUBAI_PALACE_OUD_SERUM_SLUG;
@@ -32,9 +35,9 @@ export function ProductCard({
               src={cardSrc}
               alt={product.name}
               className={cardImgClass}
-              loading={showAddButton ? "lazy" : "eager"}
+              loading={priorityCardImage ? "eager" : "lazy"}
               decoding="async"
-              fetchPriority={showAddButton ? "auto" : "high"}
+              fetchPriority={priorityCardImage ? "high" : "auto"}
             />
           </div>
         ) : (
