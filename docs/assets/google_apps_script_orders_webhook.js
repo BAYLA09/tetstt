@@ -1,7 +1,11 @@
 const SHEET_NAME = 'Orders';
 const SHARED_SECRET = PropertiesService.getScriptProperties().getProperty('LAYALI_WEBHOOK_SECRET');
 
-/** Column keys for appendRow. Add e.g. 'url' after 'product' for new spreadsheets if you need page URL. */
+/**
+ * Column order must match the backend JSON from POST /orders → send_order_to_sheet:
+ * date, orderid, country, name, phone, product, url, sku, quantity, totalprice, currency, status
+ * (status is sent empty; secret is optional in JSON body when LAYALI_WEBHOOK_SECRET is set.)
+ */
 const HEADERS = [
   'date',
   'orderid',
@@ -9,6 +13,7 @@ const HEADERS = [
   'name',
   'phone',
   'product',
+  'url',
   'sku',
   'quantity',
   'totalprice',

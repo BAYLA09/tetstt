@@ -27,7 +27,7 @@ def test_send_order_to_sheet_treats_appscript_ok_false_as_failed() -> None:
             patch("app.services.sheet_webhook.settings", fake_settings),
             patch("app.services.sheet_webhook.httpx.AsyncClient", return_value=cm),
         ):
-            status, err = await sheet_webhook.send_order_to_sheet({"orderid": "nama-test-1"})
+            status, err = await sheet_webhook.send_order_to_sheet({"orderid": "layali-test-1"})
 
         assert status == "failed"
         assert err and "Unauthorized" in err
