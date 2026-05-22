@@ -56,6 +56,13 @@ At **runtime**, the API also reads **`GIT_SHA`**, **`GITHUB_SHA`**, or **`COMMIT
 
 Verify deployed revision (backend + frontend)
 ---------------------------------------------
+GitHub Actions (optional but recommended)
+-----------------------------------------
+- Repo → **Actions** tab: workflow **CI** runs on every **push** and **PR** to **`main`** (backend `pytest`, frontend `lint` + `build`).
+- If CI is **green** on the commit you deployed, you skip hunting “what broke in code” — failures are already visible in the workflow log before you touch EasyPanel.
+
+Quick check after EasyPanel Rebuild (same commands, ~60 seconds)
+----------------------------------------------------------------
 **API (public):**
 
 ```bash
