@@ -140,17 +140,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         tracking: getTrackingContext().tracking,
         utm: getTrackingContext().utm,
       });
-      const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+      const skus = items.map((i) => i.sku);
+      const numberItems = items.reduce((n, i) => n + i.quantity, 0);
       trackEvent("Purchase", {
         event_id: purchaseEventId,
-        eventId: purchaseEventId,
         transaction_id: order.order_id,
         value: order.total,
         currency: "AED",
-        content_ids: items.map((i) => i.sku),
-        number_items: itemCount,
+        content_ids: skus,
+        number_items: numberItems,
       });
-      const skus = items.map((i) => i.sku);
+      initiateCheckoutEventIdRef.current = null;
       saveLastCheckoutSnapshot({
         name: name.trim(),
         phone: normalizedPhone,
@@ -254,15 +254,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
               <button
                 disabled={!items.length}
                 onClick={() => {
-                  const checkoutEventId = generateEventId("initiate_checkout");
-                  initiateCheckoutEventIdRef.current = checkoutEventId;
-                  const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+                  const iid = generateEventId("initiate_checkout");
+                  initiateCheckoutEventIdRef.current = iid;
+                  const skuList = items.map((i) => i.sku);
+                  const n = items.reduce((acc, i) => acc + i.quantity, 0);
                   trackEvent("InitiateCheckout", {
-                    event_id: checkoutEventId,
+                    event_id: iid,
                     value: total,
                     currency: "AED",
-                    content_ids: items.map((i) => i.sku),
-                    number_items: itemCount,
+                    content_ids: skuList,
+                    number_items: n,
                   });
                   openCheckout();
                 }}

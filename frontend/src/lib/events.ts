@@ -11,15 +11,6 @@ type TrackingContext = {
 
 const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"];
 
-function readCookie(name: string): string {
-  if (typeof document === "undefined") return "";
-  const prefix = `; ${name}=`;
-  const parts = `; ${document.cookie}`.split(prefix);
-  if (parts.length < 2) return "";
-  const rest = parts.pop() ?? "";
-  return decodeURIComponent(rest.split(";")[0] ?? "");
-}
-
 export function generateEventId(eventName: string) {
   const random = typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
   return `evt_${eventName}_${random}`;
@@ -45,6 +36,15 @@ export function getTrackingContext(): TrackingContext {
 
   const trackingKeys = ["fbclid", "ttclid", "ScCid"];
   const tracking: Record<string, string> = {};
+  const readCookie = (name: string) => {
+    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const m = document.cookie.match(new RegExp(`(?:^|; )${escaped}=([^;]*)`));
+    return m?.[1] ? decodeURIComponent(m[1]) : "";
+  };
+  const scid = readCookie("_scid");
+  if (scid) {
+    tracking.sc_cookie1 = scid;
+  }
   trackingKeys.forEach((key) => {
     const storedKey = `layali_${key}`;
     const value = url.searchParams.get(key) || window.localStorage.getItem(storedKey) || "";
@@ -54,11 +54,6 @@ export function getTrackingContext(): TrackingContext {
       window.localStorage.setItem(storedKey, value);
     }
   });
-
-  const scCookie = readCookie("_scid");
-  if (scCookie) {
-    tracking.sc_cookie1 = scCookie;
-  }
 
   return {
     landing_page: landingPage,
@@ -105,7 +100,6 @@ export function trackAddToCart(item: CartItem, eventId: string, currency = "AED"
     event_id: eventId,
     content_ids: [item.sku],
     value: item.price * item.quantity,
-    number_items: item.quantity,
     currency,
   });
 }

@@ -1,183 +1,184 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
 
-declare global {
-  interface Window {
-    snaptr?: (...args: unknown[]) => void;
-  }
-}
+/** Snap Pixel + `layali:track` bridge (PAGE_VIEW, VIEW_CONTENT, ADD_CART, START_CHECKOUT, PURCHASE). */
 
-/** Snap base snippet: defines `snaptr` queue and loads `scevent.min.js`. */
-function installSnapBase(): void {
+function loadSnapSdk(): Promise<void> {
+  if (typeof window === "undefined") return Promise.resolve();
   const w = window as Window & { snaptr?: (...args: unknown[]) => void };
-  if (w.snaptr) return;
-  (function (e: Window & { snaptr?: (...args: unknown[]) => void }, t: Document, n: string) {
-    if (e.snaptr) return;
-    const a = function (...args: unknown[]) {
-      const fn = a as unknown as { handleRequest?: (...x: unknown[]) => void; queue: unknown[][] };
-      if (fn.handleRequest) fn.handleRequest.apply(a, args);
-      else fn.queue.push(args);
-    } as unknown as ((...args: unknown[]) => void) & { queue: unknown[][]; handleRequest?: (...x: unknown[]) => void };
-    a.queue = [];
-    e.snaptr = a;
-    const s = "script";
-    const r = t.createElement(s);
-    r.async = true;
-    r.src = n;
-    const u = t.getElementsByTagName(s)[0];
-    u?.parentNode?.insertBefore(r, u);
-  })(window, document, "https://sc-static.net/scevent.min.js");
+  if (w.snaptr) return Promise.resolve();
+
+  return new Promise((resolve, reject) => {
+    const existing = document.querySelector<HTMLScriptElement>('script[src="https://sc-static.net/scevent.min.js"]');
+    if (existing) {
+      if (w.snaptr) {
+        resolve();
+        return;
+      }
+      existing.addEventListener("load", () => resolve(), { once: true });
+      existing.addEventListener("error", () => reject(new Error("snap load error")), { once: true });
+      return;
+    }
+
+    const boot = document.createElement("script");
+    boot.textContent =
+      "(function(e,t,n){if(e.snaptr)return;var a=e.snaptr=function(){a.handleRequest?a.handleRequest.apply(a,arguments):a.queue.push(arguments)};a.queue=[];var s='script',r=t.createElement(s);r.async=!0;r.src=n;var u=t.getElementsByTagName(s)[0];u.parentNode.insertBefore(r,u);})(window,document,'https://sc-static.net/scevent.min.js');";
+    boot.async = true;
+    document.head.appendChild(boot);
+
+    const deadline = window.setTimeout(() => resolve(), 8000);
+    const check = window.setInterval(() => {
+      if (w.snaptr) {
+        window.clearInterval(check);
+        window.clearTimeout(deadline);
+        resolve();
+      }
+    }, 50);
+    window.setTimeout(() => {
+      window.clearInterval(check);
+      window.clearTimeout(deadline);
+      resolve();
+    }, 8000);
+  });
 }
 
-function dedupFromPayload(payload: Record<string, unknown>): string | undefined {
-  const id = payload.event_id ?? payload.eventId;
-  return typeof id === "string" && id.length > 0 ? id : undefined;
-}
-
-function asNumber(v: unknown): number | undefined {
-  if (typeof v === "number" && Number.isFinite(v)) return v;
-  if (typeof v === "string") {
-    const n = Number(v);
-    return Number.isFinite(n) ? n : undefined;
+function num(p: unknown, fallback = 0): number {
+  if (typeof p === "number" && !Number.isNaN(p)) return p;
+  if (typeof p === "string" && p.trim() !== "") {
+    const n = Number(p);
+    return Number.isNaN(n) ? fallback : n;
   }
-  return undefined;
+  return fallback;
 }
 
-function contentIdsFromPayload(payload: Record<string, unknown>): string[] {
-  const raw = payload.content_ids;
-  if (Array.isArray(raw)) {
-    return raw.filter((x): x is string => typeof x === "string" && x.length > 0);
-  }
-  if (typeof payload.sku === "string" && payload.sku.length > 0) return [payload.sku];
-  return [];
+function str(p: unknown): string {
+  return typeof p === "string" ? p : p != null ? String(p) : "";
 }
 
-function trackSnapRetail(eventName: string, payload: Record<string, unknown>) {
-  const snap = window.snaptr;
-  if (!snap) return;
+function compactParams(params: Record<string, unknown>): Record<string, unknown> {
+  return Object.fromEntries(Object.entries(params).filter(([, v]) => v !== undefined && v !== ""));
+}
 
-  const currency = typeof payload.currency === "string" ? payload.currency : "AED";
-  const itemIds = contentIdsFromPayload(payload);
-  const price = asNumber(payload.value);
-  const clientDedupId = dedupFromPayload(payload);
+function mapLayaliToSnap(detail: { eventName: string; payload: Record<string, unknown> }): { event: string; params: Record<string, unknown> } | null {
+  const { eventName, payload: p } = detail;
+  const currency = str(p.currency) || "AED";
 
   if (eventName === "ViewContent") {
-    snap("track", "VIEW_CONTENT", {
-      ...(clientDedupId ? { client_dedup_id: clientDedupId } : {}),
-      ...(itemIds.length ? { item_ids: itemIds } : {}),
-      ...(typeof payload.content_name === "string" ? { description: payload.content_name } : {}),
-      ...(price !== undefined ? { price } : {}),
-      currency,
-      ...(typeof payload.item_category === "string" ? { item_category: payload.item_category } : {}),
-    });
-    return;
+    const ids = (p.content_ids as string[] | undefined) ?? (p.sku ? [str(p.sku)] : []);
+    return {
+      event: "VIEW_CONTENT",
+      params: compactParams({
+        item_ids: ids.length ? ids : undefined,
+        item_category: str(p.content_category) || "product",
+        price: num(p.value, 0),
+        currency,
+        description: str(p.content_name) || undefined,
+      }),
+    };
   }
 
   if (eventName === "AddToCart") {
-    const qty = asNumber(payload.number_items) ?? 1;
-    snap("track", "ADD_CART", {
-      ...(clientDedupId ? { client_dedup_id: clientDedupId } : {}),
-      ...(itemIds.length ? { item_ids: itemIds } : {}),
-      ...(price !== undefined ? { price } : {}),
-      currency,
-      number_items: qty,
-    });
-    return;
+    const dedup = str(p.event_id) || str(p.eventId);
+    const ids = (p.content_ids as string[] | undefined) ?? (p.sku ? [str(p.sku)] : []);
+    return {
+      event: "ADD_CART",
+      params: compactParams({
+        client_dedup_id: dedup || undefined,
+        item_ids: ids.length ? ids : undefined,
+        item_category: str(p.content_category) || "product",
+        number_items: num(p.number_items, 1),
+        price: num(p.value, 0),
+        currency,
+      }),
+    };
   }
 
   if (eventName === "InitiateCheckout") {
-    const nItems = asNumber(payload.number_items);
-    snap("track", "START_CHECKOUT", {
-      ...(clientDedupId ? { client_dedup_id: clientDedupId } : {}),
-      ...(itemIds.length ? { item_ids: itemIds } : {}),
-      ...(price !== undefined ? { price } : {}),
-      currency,
-      ...(nItems !== undefined ? { number_items: nItems } : {}),
-    });
-    return;
+    const dedup = str(p.event_id) || str(p.eventId);
+    const ids = (p.content_ids as string[] | undefined) ?? [];
+    return {
+      event: "START_CHECKOUT",
+      params: compactParams({
+        client_dedup_id: dedup || undefined,
+        item_ids: ids.length ? ids : undefined,
+        item_category: str(p.content_category) || "product",
+        number_items: num(p.number_items, 0),
+        price: num(p.value, 0),
+        currency,
+      }),
+    };
   }
 
   if (eventName === "Purchase") {
-    const tx = typeof payload.transaction_id === "string" ? payload.transaction_id : undefined;
-    const nItems = asNumber(payload.number_items);
-    snap("track", "PURCHASE", {
-      ...(clientDedupId ? { client_dedup_id: clientDedupId } : {}),
-      ...(tx ? { transaction_id: tx } : {}),
-      ...(price !== undefined ? { price } : {}),
-      currency,
-      ...(itemIds.length ? { item_ids: itemIds } : {}),
-      ...(nItems !== undefined ? { number_items: nItems } : {}),
-    });
+    const dedup = str(p.event_id) || str(p.eventId);
+    const tx = str(p.transaction_id);
+    if (!tx) return null;
+    const ids = (p.content_ids as string[] | undefined) ?? [];
+    return {
+      event: "PURCHASE",
+      params: compactParams({
+        client_dedup_id: dedup || tx,
+        transaction_id: tx,
+        item_ids: ids.length ? ids : undefined,
+        item_category: str(p.content_category) || "product",
+        number_items: num(p.number_items, 0),
+        price: num(p.value, 0),
+        currency,
+      }),
+    };
   }
+
+  return null;
 }
 
-/**
- * Loads the Snap Pixel when `NEXT_PUBLIC_SNAP_PIXEL_ID` is set and maps `layali:track`
- * (from `trackEvent`) to Snap standard events.
- */
 export function AdPixelsClient() {
   const pathname = usePathname();
-  const pathKey = pathname;
+  const pixelId = process.env.NEXT_PUBLIC_SNAP_PIXEL_ID;
+  const enabled = process.env.NEXT_PUBLIC_ENABLE_PIXELS === "true";
+  const initedRef = useRef(false);
 
-  const pixelId = process.env.NEXT_PUBLIC_SNAP_PIXEL_ID?.trim();
-  const pixelsEnabled = process.env.NEXT_PUBLIC_ENABLE_PIXELS === "true";
-  const [snapReady, setSnapReady] = useState(false);
-  const routeKeyRef = useRef<string>("");
-
-  useEffect(() => {
-    if (!pixelsEnabled || !pixelId) return;
-
-    installSnapBase();
-    const scScript = [...document.getElementsByTagName("script")].find((s) => s.src.includes("sc-static.net/scevent.min.js")) as
-      | HTMLScriptElement
-      | undefined;
-    if (!scScript) return;
-
-    const boot = () => {
-      const gate = window as unknown as { __layaliSnapDidBoot?: string };
-      if (gate.__layaliSnapDidBoot === pixelId) return;
-      gate.__layaliSnapDidBoot = pixelId;
-      window.snaptr?.("init", pixelId);
-      routeKeyRef.current = `${window.location.pathname}${window.location.search}`;
-      window.snaptr?.("track", "PAGE_VIEW");
-      setSnapReady(true);
-    };
-
-    scScript.addEventListener("load", boot, { once: true });
-    if ((scScript as unknown as { complete?: boolean }).complete) {
-      boot();
+  async function ensureSnap(): Promise<void> {
+    if (!pixelId) return;
+    await loadSnapSdk();
+    const snap = (window as Window & { snaptr?: (...args: unknown[]) => void }).snaptr;
+    if (!snap) return;
+    if (!initedRef.current) {
+      snap("init", pixelId);
+      initedRef.current = true;
     }
-  }, [pixelsEnabled, pixelId]);
+  }
 
   useEffect(() => {
-    if (!pixelsEnabled || !pixelId || !snapReady) return;
-    if (routeKeyRef.current === pathKey) return;
-    routeKeyRef.current = pathKey;
-    window.snaptr?.("track", "PAGE_VIEW");
-  }, [pathKey, pixelsEnabled, pixelId, snapReady]);
+    if (!enabled || !pixelId) return;
+    let cancelled = false;
+    void (async () => {
+      await ensureSnap();
+      if (cancelled) return;
+      (window as Window & { snaptr?: (...args: unknown[]) => void }).snaptr?.("track", "PAGE_VIEW");
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [enabled, pixelId, pathname]);
 
   useEffect(() => {
-    if (!pixelsEnabled || !pixelId) return;
+    if (!enabled || !pixelId) return;
 
-    const handler = (ev: Event) => {
+    const onTrack = (ev: Event) => {
       const ce = ev as CustomEvent<{ eventName: string; payload: Record<string, unknown> }>;
-      const name = ce.detail?.eventName;
-      const payload = ce.detail?.payload ?? {};
-      if (!name) return;
-      if (name === "PageView") {
-        window.snaptr?.("track", "PAGE_VIEW");
-        return;
-      }
-      if (["ViewContent", "AddToCart", "InitiateCheckout", "Purchase"].includes(name)) {
-        trackSnapRetail(name, payload);
-      }
+      if (!ce.detail?.eventName) return;
+      const mapped = mapLayaliToSnap(ce.detail);
+      if (!mapped) return;
+      void ensureSnap().then(() => {
+        (window as Window & { snaptr?: (...args: unknown[]) => void }).snaptr?.("track", mapped.event, mapped.params);
+      });
     };
 
-    window.addEventListener("layali:track", handler as EventListener);
-    return () => window.removeEventListener("layali:track", handler as EventListener);
-  }, [pixelsEnabled, pixelId]);
+    window.addEventListener("layali:track", onTrack);
+    return () => window.removeEventListener("layali:track", onTrack);
+  }, [enabled, pixelId]);
 
   return null;
 }

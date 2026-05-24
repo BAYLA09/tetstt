@@ -116,46 +116,20 @@ async def _send_tiktok(order: dict[str, Any], user_agent: str | None, ip: str | 
 
 async def _send_snap(order: dict[str, Any], user_agent: str | None, ip: str | None) -> None:
     hashes = provider_hashes(order["phone_e164"])
+    tracking = order.get("tracking") or {}
     items = order.get("items") or []
-    contents: list[dict[str, str]] = []
-    num_items = 0
-    for item in items:
-        sku = str(item.get("sku") or item.get("content_id") or "")
-        if not sku:
-            continue
-        qty = int(item.get("quantity") or 1)
-        num_items += qty
-        price = item.get("price")
-        contents.append(
-            {
-                "id": sku,
-                "quantity": str(qty),
-                "item_price": str(price) if price is not None else "0",
-            }
-        )
-
-    order_id = str(order.get("public_order_id") or order.get("orderid") or "")
-
+    contents = [
+        {"id": str(item["sku"]), "quantity": int(item["quantity"]), "item_price": float(item["price"])}
+        for item in items
+    ]
+    num_items = sum(int(item["quantity"]) for item in items)
+    order_id = str(order.get("public_order_id") or "")
     user_data: dict[str, Any] = {
         "ph": [hashes["snap_ph"]],
         "client_ip_address": ip,
         "client_user_agent": user_agent,
+        "sc_click_id": tracking.get("sc_click_id"),
     }
-    if order["tracking"].get("sc_click_id"):
-        user_data["sc_click_id"] = order["tracking"].get("sc_click_id")
-    if order["tracking"].get("sc_cookie1"):
-        user_data["sc_cookie1"] = order["tracking"].get("sc_cookie1")
-
-    custom_data: dict[str, Any] = {
-        "currency": "AED",
-        "value": float(order["total"]),
-        "contents": contents,
-    }
-    if order_id:
-        custom_data["order_id"] = order_id
-    if num_items:
-        custom_data["num_items"] = str(num_items)
-
     payload = {
         "data": [
             {
@@ -165,15 +139,17 @@ async def _send_snap(order: dict[str, Any], user_agent: str | None, ip: str | No
                 "action_source": "WEB",
                 "event_source_url": order.get("source_url"),
                 "user_data": user_data,
-                "custom_data": custom_data,
+                "custom_data": {
+                    "currency": "AED",
+                    "value": float(order["total"]),
+                    "order_id": order_id,
+                    "num_items": str(num_items),
+                    "contents": contents,
+                },
             }
         ]
     }
+    url = f"https://tr.snapchat.com/v3/{settings.snap_pixel_id}/events"
     params = {"access_token": settings.snap_access_token or ""}
     async with httpx.AsyncClient(timeout=5) as client:
-        await client.post(
-            f"https://tr.snapchat.com/v3/{settings.snap_pixel_id}/events",
-            params=params,
-            json=payload,
-            headers={"Content-Type": "application/json"},
-        )
+        await client.post(url, json=payload, params=params)

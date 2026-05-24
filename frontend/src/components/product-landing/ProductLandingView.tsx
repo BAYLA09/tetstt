@@ -66,19 +66,16 @@ export function ProductLandingView({ product }: { product: LandingProduct }) {
   );
   const minPrice = useMemo(() => Math.min(...product.offers.map((o) => o.price)), [product.offers]);
   const b = businessConfig;
-  const defaultOffer = useMemo(() => pickDefaultOffer(product.offers), [product.offers]);
-  const viewContentEventId = useMemo(() => generateEventId("view_content"), [product.id]);
 
   useEffect(() => {
     trackEvent("ViewContent", {
-      event_id: viewContentEventId,
-      content_ids: [defaultOffer.sku],
+      content_ids: [selected.sku],
       content_name: product.name,
-      item_category: product.category,
-      value: minPrice,
+      content_category: "product",
+      value: selected.price,
       currency: b.market.currency,
     });
-  }, [product.id, product.name, product.category, minPrice, b.market.currency, defaultOffer.sku, viewContentEventId]);
+  }, [selected.sku, selected.price, product.id, product.name, b.market.currency]);
 
   const addOfferToCart = useCallback(() => {
     const lineName = `${product.name} — ${selected.label}`;
