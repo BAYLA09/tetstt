@@ -116,6 +116,20 @@ async def _send_tiktok(order: dict[str, Any], user_agent: str | None, ip: str | 
 
 async def _send_snap(order: dict[str, Any], user_agent: str | None, ip: str | None) -> None:
     hashes = provider_hashes(order["phone_e164"])
+    tracking = order.get("tracking") or {}
+    items = order.get("items") or []
+    contents = [
+        {"id": str(item["sku"]), "quantity": int(item["quantity"]), "item_price": float(item["price"])}
+        for item in items
+    ]
+    num_items = sum(int(item["quantity"]) for item in items)
+    order_id = str(order.get("public_order_id") or "")
+    user_data: dict[str, Any] = {
+        "ph": [hashes["snap_ph"]],
+        "client_ip_address": ip,
+        "client_user_agent": user_agent,
+        "sc_click_id": tracking.get("sc_click_id"),
+    }
     payload = {
         "data": [
             {
@@ -124,23 +138,18 @@ async def _send_snap(order: dict[str, Any], user_agent: str | None, ip: str | No
                 "event_id": order["event_ids"].get("purchase"),
                 "action_source": "WEB",
                 "event_source_url": order.get("source_url"),
-                "user_data": {
-                    "ph": [hashes["snap_ph"]],
-                    "client_ip_address": ip,
-                    "client_user_agent": user_agent,
-                    "sc_click_id": order["tracking"].get("sc_click_id"),
-                },
+                "user_data": user_data,
                 "custom_data": {
                     "currency": "AED",
-                    "value": str(order["total"]),
-                    "contents": order["items"],
+                    "value": float(order["total"]),
+                    "order_id": order_id,
+                    "num_items": str(num_items),
+                    "contents": contents,
                 },
             }
         ]
     }
+    url = f"https://tr.snapchat.com/v3/{settings.snap_pixel_id}/events"
+    params = {"access_token": settings.snap_access_token or ""}
     async with httpx.AsyncClient(timeout=5) as client:
-        await client.post(
-            f"https://tr.snapchat.com/v3/{settings.snap_pixel_id}/events",
-            json=payload,
-            headers={"Authorization": f"Bearer {settings.snap_access_token}"},
-        )
+        await client.post(url, json=payload, params=params)

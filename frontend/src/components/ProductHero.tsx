@@ -12,7 +12,7 @@ import {
 } from "@/lib/products";
 import { PRODUCT_OFFER_ANCHOR_ID } from "@/lib/product-experience";
 import { useCartStore } from "@/lib/cart-store";
-import { generateEventId, trackEvent } from "@/lib/events";
+import { generateEventId, trackAddToCart } from "@/lib/events";
 import { ProductStickyNav } from "@/components/ProductStickyNav";
 
 function HeroMarketingBridge({
@@ -464,7 +464,7 @@ export function ProductHero({ product }: { product: Product }) {
   function addOffer(line: Product) {
     const eventId = generateEventId("add_to_cart");
     addItem(line);
-    trackEvent("AddToCart", { eventId, sku: line.sku, value: line.price });
+    trackAddToCart({ sku: line.sku, name: line.name, price: line.price, quantity: 1 }, eventId, "AED");
   }
 
   const storyFirst = product.storyBeforeCommerce === true;

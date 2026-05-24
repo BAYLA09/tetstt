@@ -112,6 +112,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [upsellOrderId, setUpsellOrderId] = useState<string | null>(null);
   const [postUpsellSnapshot, setPostUpsellSnapshot] = useState<UpsellOfferPayload | null>(null);
   const submitGuardRef = useRef(false);
+  const initiateCheckoutEventIdRef = useRef<string | null>(null);
   const total = useMemo(() => items.reduce((sum, item) => sum + item.price * item.quantity, 0), [items]);
   const normalizedPhone = normalizeUaePhone(phone);
   const canSubmit = name.trim().length >= 2 && Boolean(normalizedPhone) && items.length > 0 && !submitting;
@@ -132,12 +133,24 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         currency: "AED",
         source_url: window.location.href,
         landing_page: window.location.origin,
-        event_ids: { purchase: purchaseEventId, initiate_checkout: generateEventId("checkout") },
+        event_ids: {
+          purchase: purchaseEventId,
+          initiate_checkout: initiateCheckoutEventIdRef.current ?? generateEventId("initiate_checkout"),
+        },
         tracking: getTrackingContext().tracking,
         utm: getTrackingContext().utm,
       });
-      trackEvent("Purchase", { eventId: purchaseEventId, value: order.total });
       const skus = items.map((i) => i.sku);
+      const numberItems = items.reduce((n, i) => n + i.quantity, 0);
+      trackEvent("Purchase", {
+        event_id: purchaseEventId,
+        transaction_id: order.order_id,
+        value: order.total,
+        currency: "AED",
+        content_ids: skus,
+        number_items: numberItems,
+      });
+      initiateCheckoutEventIdRef.current = null;
       saveLastCheckoutSnapshot({
         name: name.trim(),
         phone: normalizedPhone,
@@ -241,7 +254,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
               <button
                 disabled={!items.length}
                 onClick={() => {
-                  trackEvent("InitiateCheckout", { value: total });
+                  const iid = generateEventId("initiate_checkout");
+                  initiateCheckoutEventIdRef.current = iid;
+                  const skuList = items.map((i) => i.sku);
+                  const n = items.reduce((acc, i) => acc + i.quantity, 0);
+                  trackEvent("InitiateCheckout", {
+                    event_id: iid,
+                    value: total,
+                    currency: "AED",
+                    content_ids: skuList,
+                    number_items: n,
+                  });
                   openCheckout();
                 }}
                 className="w-full rounded-full bg-[var(--gold-500)] px-6 py-4 font-black text-[var(--emerald-950)] shadow-lg transition hover:bg-[var(--gold-400)] disabled:opacity-50"

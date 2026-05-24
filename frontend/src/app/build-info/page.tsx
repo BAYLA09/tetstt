@@ -7,6 +7,9 @@ export const metadata: Metadata = {
 
 /** Proves which bundle EasyPanel served (NEXT_PUBLIC_* baked at `next build`). */
 export default function BuildInfoPage() {
+  const enablePixels = process.env.NEXT_PUBLIC_ENABLE_PIXELS ?? null;
+  const snapPixelId = process.env.NEXT_PUBLIC_SNAP_PIXEL_ID?.trim() || null;
+
   const data = {
     "وقت البناء": process.env.NEXT_PUBLIC_BUILD_TIME ?? null,
     "رقم النسخة": process.env.NEXT_PUBLIC_COMMIT_SHA ?? null,
@@ -15,9 +18,11 @@ export default function BuildInfoPage() {
     "علامة بناء التطبيق": process.env.NEXT_PUBLIC_APP_BUILD_MARKER ?? null,
     "رابط الخدمة": process.env.NEXT_PUBLIC_API_BASE_URL ?? null,
     "استخدام وكيل نفس النطاق للطلبات": process.env.NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY ?? null,
+    "تفعيل البيكسلات (NEXT_PUBLIC_ENABLE_PIXELS)": enablePixels,
+    "Snap pixel ID (NEXT_PUBLIC_SNAP_PIXEL_ID)": snapPixelId,
     "بيئة التشغيل": process.env.NODE_ENV,
     "ملاحظة":
-      "إذا كانت بعض الخانات ناقصة، فهذا يعني أن النسخة ما انبنت من جديد بإعدادات البناء المطلوبة.",
+      "إذا كانت بعض الخانات ناقصة، فهذا يعني أن النسخة ما انبنت من جديد بإعدادات البناء المطلوبة. للتحقق من Snap: لازم NEXT_PUBLIC_ENABLE_PIXELS تكون true والـ pixel ID يبان هنا، ثم افتحي الموقع بدون ad blocker وشوفي Network لطلبات tr.snapchat.com أو sc-static.net.",
   };
 
   return (

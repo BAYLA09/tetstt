@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans_Arabic, Inter, Dancing_Script } from "next/font/google";
 import { AdClickBeacon } from "@/components/AdClickBeacon";
+import { AdPixelsClient } from "@/components/AdPixelsClient";
 import { CartProvider } from "@/components/CartProvider";
 import { Footer, SiteHeader } from "@/components/SiteChrome";
 import "./globals.css";

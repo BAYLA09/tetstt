@@ -36,6 +36,15 @@ export function getTrackingContext(): TrackingContext {
 
   const trackingKeys = ["fbclid", "ttclid", "ScCid"];
   const tracking: Record<string, string> = {};
+  const readCookie = (name: string) => {
+    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const m = document.cookie.match(new RegExp(`(?:^|; )${escaped}=([^;]*)`));
+    return m?.[1] ? decodeURIComponent(m[1]) : "";
+  };
+  const scid = readCookie("_scid");
+  if (scid) {
+    tracking.sc_cookie1 = scid;
+  }
   trackingKeys.forEach((key) => {
     const storedKey = `layali_${key}`;
     const value = url.searchParams.get(key) || window.localStorage.getItem(storedKey) || "";

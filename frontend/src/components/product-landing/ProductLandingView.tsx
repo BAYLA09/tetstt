@@ -69,12 +69,13 @@ export function ProductLandingView({ product }: { product: LandingProduct }) {
 
   useEffect(() => {
     trackEvent("ViewContent", {
-      content_ids: [product.id],
+      content_ids: [selected.sku],
       content_name: product.name,
-      value: minPrice,
+      content_category: "product",
+      value: selected.price,
       currency: b.market.currency,
     });
-  }, [product.id, product.name, minPrice, b.market.currency]);
+  }, [selected.sku, selected.price, product.id, product.name, b.market.currency]);
 
   const addOfferToCart = useCallback(() => {
     const lineName = `${product.name} — ${selected.label}`;
