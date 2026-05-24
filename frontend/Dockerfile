@@ -51,6 +51,8 @@ RUN set -e; \
     BT="${BUILD_TIME_UTC}"; \
     if [ -z "$BT" ]; then BT=$(date -u +%Y-%m-%dT%H:%M:%SZ); fi; \
     echo "NEXT_PUBLIC_BUILD_TIME=${BT}" >> .env.production; \
+    echo "NEXT_PUBLIC_ENABLE_PIXELS=${NEXT_PUBLIC_ENABLE_PIXELS}" >> .env.production; \
+    echo "NEXT_PUBLIC_SNAP_PIXEL_ID=${NEXT_PUBLIC_SNAP_PIXEL_ID}" >> .env.production; \
     echo "next_wrote_build_identity commit=${CMT} time=${BT}"
 
 RUN echo "next_build_env NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL" && \
