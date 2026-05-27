@@ -29,7 +29,8 @@ async def on_startup() -> None:
     lamp_prices_ok = all(sku in PRODUCTS for sku in LAMP_OFFER_SKUS)
     log.info(
         "app_startup commit_sha=%s build_time_utc=%s app_env=%s ENABLE_IP_FRAUD_CHECK=%s "
-        "DISABLE_ORDER_SECURITY_CHECKS=%s catalog_sku_count=%s lamp_offer_skus_ok=%s",
+        "DISABLE_ORDER_SECURITY_CHECKS=%s catalog_sku_count=%s lamp_offer_skus_ok=%s "
+        "sheet_webhook_configured=%s sheet_webhook_secret_configured=%s",
         deploy_commit_sha(),
         deploy_build_time_utc(),
         settings.app_env,
@@ -37,6 +38,8 @@ async def on_startup() -> None:
         settings.disable_order_security_checks,
         len(PRODUCTS),
         lamp_prices_ok,
+        bool(settings.effective_sheet_webhook_url),
+        bool(settings.effective_sheet_webhook_secret),
     )
     await init_db()
 
