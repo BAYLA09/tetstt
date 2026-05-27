@@ -241,9 +241,8 @@ export function ProductLandingView({ product }: { product: LandingProduct }) {
 
   return (
     <div className="product-landing-root pb-28" style={themeStyle()}>
-      {serumSlug ? heroAndBadges : null}
       {codStrip}
-      {serumSlug ? null : heroAndBadges}
+      {heroAndBadges}
 
       <section className="bg-[var(--lp-bg)] px-4 py-6" dir="rtl">
         <div className="mx-auto max-w-lg text-right">
