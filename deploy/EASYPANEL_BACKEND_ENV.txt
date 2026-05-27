@@ -1,0 +1,60 @@
+# =============================================================================
+# EasyPanel — BACKEND API — Runtime Environment (copy all lines below)
+# =============================================================================
+# Do NOT put COMMIT_SHA / CACHE_BUST here — use Build Arguments (see bottom).
+# No spaces after = on URL or secrets.
+#
+# IMPORTANT: GOOGLE_SHEETS_WEBHOOK_URL must return {"ok":true} when you curl it.
+# If not, Apps Script → Deploy → New deployment → Web app → paste NEW /exec URL.
+# SHEETS_WEBHOOK_SECRET must match Apps Script property LAYALI_WEBHOOK_SECRET,
+# or leave empty on BOTH sides. Do NOT use the deployment ID from the URL as secret.
+
+APP_ENV=production
+APP_NAME=Layali Beauty API
+API_BASE_URL=https://api.layalibeauty.shop
+FRONTEND_URL=https://layalibeauty.shop
+DATABASE_URL=postgres://layalibeauty:layalibeauty@layalibeauty_database:5432/layalibeauty?sslmode=disable
+CORS_ORIGINS=https://layalibeauty.shop,http://localhost:3000
+PORT=8000
+
+GOOGLE_SHEETS_WEBHOOK_URL=https://script.google.com/macros/s/AKfycbwdAg2nKcGC0GrCYscBTtjr4LO8sdJ-wxSpt5lwpeAmhxkYEK21N-xrkKCQ4rhFokr8/exec
+SHEETS_WEBHOOK_SECRET=
+
+ORDER_ALLOWED_COUNTRY=AE
+DISABLE_ORDER_SECURITY_CHECKS=true
+TRUST_UAE_E164_WITHOUT_GEO=true
+ENABLE_IP_FRAUD_CHECK=false
+WHITELISTED_PHONES=+971550603022,0550603022
+
+ENABLE_CAPT=false
+ENABLE_META_CAPT=false
+ENABLE_TIKTOK_CAPT=false
+ENABLE_SNAP_CAPT=false
+
+META_PIXEL_ID=
+META_ACCESS_TOKEN=
+META_API_VERSION=v20.0
+
+TIKTOK_PIXEL_CODE=7636408109996802066
+TIKTOK_ACCESS_TOKEN=
+TIKTOK_API_VERSION=v1.3
+
+SNAP_PIXEL_ID=62ce5297-74a9-4a82-a2fb-eb3e4dbfb23b
+SNAP_ACCESS_TOKEN=eyJhbGciOiJIUzI1NiIsImtpZCI6IkNhbnZhc1MyU0hNQUNQcm9kIiwidHlwIjoiSldUIn0.eyJhdWQiOiJjYW52YXMtY2FudmFzYXBpIiwiaXNzIjoiY2FudmFzLXMyc3Rva2VuIiwibmJmIjoxNzc5NjU5NjE4LCJzdWIiOiIxZjZmN2I4Yi0xOGM1LTQ3ZWUtYjhiMy01ZmI5MjdiNGI2YTd-UFJPRFVDVElPTn5hOTQ1YjliMy1hYzQyLTQ0MWQtOWVlMS0wMWU1MjRmNDMwYTEifQ.DDuoI_jXBI7Nh2NXqK52Z4ctGSB-jVHHWydnNxNfpuo
+
+MAXMIND_ACCOUNT_ID=1340072
+MAXMIND_LICENSE_KEY=
+MAXMIND_SERVICE=geolite
+
+LOG_LEVEL=INFO
+
+# =============================================================================
+# EasyPanel — Build Arguments ONLY (not runtime env)
+# Git branch: production-fix-v2
+# Disable cache / Use cache OFF / Docker cache OFF
+# =============================================================================
+#
+# COMMIT_SHA=5dddbfc
+# BUILD_TIME_UTC=2026-05-27T20:00:00Z
+# CACHE_BUST=production-fix-v2-env-fix-1
+# DEPLOY_BRANCH=production-fix-v2
