@@ -5,6 +5,7 @@ from datetime import UTC, datetime
 from decimal import Decimal, InvalidOperation
 from typing import Annotated
 from uuid import uuid4
+from zoneinfo import ZoneInfo
 from fastapi import APIRouter, Depends, Header, HTTPException, Request
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -22,6 +23,8 @@ from app.services.tracking import send_capi_events
 log = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/orders", tags=["orders"])
+
+_SHEET_TZ = ZoneInfo("Asia/Dubai")
 
 # Stale API images may lack tier rows in PRODUCTS — keep in sync with app/products.py.
 _LAMP_TIER_FALLBACK_SKUS: dict[str, tuple[Decimal, str, str]] = {
@@ -66,12 +69,6 @@ def _resolve_line_price_name_sheet(*, sku: str, client_price: float | None) -> t
     return None
 
 
-def format_sheet_phone(phone_e164: str) -> str:
-    if phone_e164.startswith("+971") and len(phone_e164) == 13:
-        return f"+971 {phone_e164[4:6]} {phone_e164[6:9]} {phone_e164[9:]}"
-    return phone_e164
-
-
 def line_total(price: Decimal, quantity: int) -> Decimal:
     return price * Decimal(quantity)
 
@@ -84,19 +81,20 @@ def get_client_ip(request: Request) -> str | None:
 
 
 def order_to_sheet_payload(order: Order, items: list[dict]) -> dict:
+    """Keys must match docs/assets/google_apps_script_orders_webhook.js HEADERS."""
     return {
-        "date": datetime.now(UTC).strftime("%d/%m/%Y"),
+        "date": datetime.now(_SHEET_TZ).strftime("%d/%m/%Y"),
         "orderid": order.public_order_id,
         "country": "UAE",
         "name": order.customer_name,
-        "phone": format_sheet_phone(order.phone_e164),
+        "phone": order.phone_e164,
         "product": "/".join(str(item["name"]) for item in items),
         "url": order.source_url or "",
         "sku": "/".join(str(item["sku"]) for item in items),
         "quantity": "/".join(str(item["quantity"]) for item in items),
         "totalprice": float(order.total),
-        "currency": order.currency,
-        "status": order.status,
+        "currency": "AED",
+        "status": "",
         "items": items,
         "created_at": order.created_at.isoformat() if order.created_at else datetime.now(UTC).isoformat(),
         "public_order_id": order.public_order_id,
@@ -200,7 +198,7 @@ async def create_order(
         sheet_sync_status="pending",
     )
     order.items = order_items
-    order.public_order_id = f"nama-{datetime.now(UTC):%Y%m%d}-{uuid4().hex[:8].upper()}"
+    order.public_order_id = f"layali-{datetime.now(_SHEET_TZ):%Y%m%d}-{uuid4().hex[:8].upper()}"
     session.add(order)
     await session.commit()
 
@@ -210,6 +208,12 @@ async def create_order(
         order.sheet_sync_status = sheet_status
         order.sheet_sync_error = sheet_err
         await session.commit()
+        log.info(
+            "order_sheet_sync order_id=%s status=%s error=%s",
+            order.public_order_id,
+            sheet_status,
+            (sheet_err or "")[:120],
+        )
     except Exception:
         log.exception("order_sheet_webhook_failed order_id=%s", order.public_order_id)
         try:
