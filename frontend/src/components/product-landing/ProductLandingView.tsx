@@ -23,6 +23,7 @@ import { getLandingProduct } from "@/config/products";
 import { formatPrice } from "@/lib/format-price";
 import { getProduct } from "@/lib/products";
 import {
+  DUBAI_PALACE_OUD_SERUM_IMAGE_SRC,
   DUBAI_PALACE_OUD_SERUM_PDP_IMAGE_SRCS,
   DUBAI_PALACE_OUD_SERUM_SLUG,
 } from "@/lib/dubai-palace-oud-serum-image";
