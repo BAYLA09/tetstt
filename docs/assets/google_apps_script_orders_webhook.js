@@ -2,6 +2,12 @@ const SHEET_NAME = 'Orders';
 const SHARED_SECRET = PropertiesService.getScriptProperties().getProperty('LAYALI_WEBHOOK_SECRET');
 
 /**
+ * Layali orders sheet — required when the web app is deployed as a standalone script
+ * (not "bound" to the spreadsheet). Override via Script property SPREADSHEET_ID.
+ */
+const DEFAULT_SPREADSHEET_ID = '1rjz3p7mUnL14uyAEqM4vRPdpVzJuFPX-gxCxSghwOvk';
+
+/**
  * Must match backend order_to_sheet_payload and your sheet header row (column order).
  * date, orderid, country, name, phone, product, url, sku, quantity, totalprice, currency, status
  */
@@ -43,8 +49,21 @@ function doPost(e) {
   }
 }
 
+function getSpreadsheetId_() {
+  const props = PropertiesService.getScriptProperties();
+  const id = (props.getProperty('SPREADSHEET_ID') || DEFAULT_SPREADSHEET_ID || '').trim();
+  if (!id) {
+    throw new Error('SPREADSHEET_ID not set in script properties');
+  }
+  return id;
+}
+
+function getSpreadsheet_() {
+  return SpreadsheetApp.openById(getSpreadsheetId_());
+}
+
 function getOrCreateSheet_() {
-  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  const spreadsheet = getSpreadsheet_();
   return spreadsheet.getSheetByName(SHEET_NAME) || spreadsheet.insertSheet(SHEET_NAME);
 }
 

@@ -134,6 +134,8 @@ Future statuses:
 - Send after DB order creation. The HTTP client follows redirects (`follow_redirects`) because Apps Script exec URLs often redirect.
 - On success or failure, `sheet_sync_status` is updated to `sent`, `failed`, or `skipped`, and `sheet_sync_error` holds a short message when failed (check admin order detail). Google Apps Script may return **HTTP 200** with JSON `{"ok":false,"error":"..."}` (e.g. wrong `secret`); the API treats that as `failed`, not `sent`.
 - The bundled Apps Script targets a tab named **`Orders`**. New rows appear there, not necessarily on the first sheet tab.
+- **Standalone web app deploy:** if the script is not bound to the spreadsheet, `getActiveSpreadsheet()` is null and rows never append. Use `docs/assets/google_apps_script_orders_webhook.js` (opens the sheet by ID via `SpreadsheetApp.openById`). After editing, **Deploy → New deployment → Web app**, then update `GOOGLE_SHEETS_WEBHOOK_URL` to the new `/exec` URL if it changed.
+- Script property **`SPREADSHEET_ID`** (optional) overrides the default Layali sheet ID baked into the script.
 - Do not block customer success page indefinitely because the sheet is down.
 
 ## CAPI behavior
