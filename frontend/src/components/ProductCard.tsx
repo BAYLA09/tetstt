@@ -3,23 +3,27 @@
 import Link from "next/link";
 import { ShoppingBag, Star } from "lucide-react";
 import { money, type Product } from "@/lib/products";
+import { DUBAI_PALACE_OUD_SERUM_HOME_IMAGE_SRC, DUBAI_PALACE_OUD_SERUM_SLUG } from "@/lib/dubai-palace-oud-serum-image";
 import { useCartStore } from "@/lib/cart-store";
 
 export function ProductCard({
   product,
   showAddButton = true,
+  /** Set on the first card when it is clearly above the fold (optional LCP hint). */
+  priorityCardImage = false,
 }: {
   product: Product;
   showAddButton?: boolean;
+  priorityCardImage?: boolean;
 }) {
   const addItem = useCartStore((state) => state.addItem);
-  const cardSrc = product.cardImage?.trim();
+  const isSerum = product.slug === DUBAI_PALACE_OUD_SERUM_SLUG;
+  const cardSrc = isSerum ? DUBAI_PALACE_OUD_SERUM_HOME_IMAGE_SRC : (product.cardImage?.trim() ?? "");
   const showPhoto = Boolean(cardSrc);
-  /** `object-cover` was cropping the label off wide studio shots for the serum card. */
-  const cardImgClass =
-    product.slug === "dubai-palace-oud-serum"
-      ? "h-full w-full object-contain object-center p-2 sm:p-4 transition duration-300 group-hover:scale-[1.02]"
-      : "h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.03]";
+  /** Serum: full frame without crop (same file as PDP hero). Others: cover for consistent grid slots. */
+  const cardImgClass = isSerum
+    ? "absolute inset-0 h-full w-full object-contain object-center bg-[var(--cream-50)]"
+    : "absolute inset-0 h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.03]";
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-[2rem] border border-[var(--border-gold)] bg-white p-3 shadow-[0_18px_60px_rgba(42,27,18,0.10)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_24px_80px_rgba(42,27,18,0.14)]">
@@ -31,9 +35,9 @@ export function ProductCard({
               src={cardSrc}
               alt={product.name}
               className={cardImgClass}
-              loading={showAddButton ? "lazy" : "eager"}
+              loading={priorityCardImage ? "eager" : "lazy"}
               decoding="async"
-              fetchPriority={showAddButton ? "auto" : "high"}
+              fetchPriority={priorityCardImage ? "high" : "auto"}
             />
           </div>
         ) : (

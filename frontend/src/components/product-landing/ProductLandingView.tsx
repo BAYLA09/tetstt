@@ -21,9 +21,101 @@ import { businessConfig } from "@/config/business";
 import type { LandingOffer, LandingProduct } from "@/config/landing-types";
 import { getLandingProduct } from "@/config/products";
 import { formatPrice } from "@/lib/format-price";
+import { getProduct } from "@/lib/products";
+import {
+  DUBAI_PALACE_OUD_SERUM_IMAGE_1_SRC,
+  DUBAI_PALACE_OUD_SERUM_IMAGE_2_SRC,
+  DUBAI_PALACE_OUD_SERUM_IMAGE_3_SRC,
+  DUBAI_PALACE_OUD_SERUM_IMAGE_SRC,
+  DUBAI_PALACE_OUD_SERUM_SLUG,
+} from "@/lib/dubai-palace-oud-serum-image";
 import { useCartStore } from "@/lib/cart-store";
 import { generateEventId, trackEvent, trackAddToCart } from "@/lib/events";
 import { PremiumImage, PremiumPlaceholder } from "./PremiumImage";
+
+/** Single merchant PNG — native img, exact /public bytes. */
+function SerumMerchantPhoto({
+  src,
+  alt,
+  priority = false,
+}: {
+  src: string;
+  alt: string;
+  priority?: boolean;
+}) {
+  return (
+    <div className="w-full bg-[var(--lp-bg)]">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt={alt}
+        className="block h-auto w-full max-w-full object-contain object-center"
+        decoding="async"
+        fetchPriority={priority ? "high" : "auto"}
+        loading={priority ? "eager" : "lazy"}
+      />
+    </div>
+  );
+}
+
+function DubaiPalaceOudSerumHeroMedia({ product }: { product: LandingProduct }) {
+  return (
+    <SerumMerchantPhoto
+      src={DUBAI_PALACE_OUD_SERUM_IMAGE_1_SRC}
+      alt={product.imageAlts.heroBeforeAfter}
+      priority
+    />
+  );
+}
+
+function HeroTopMedia({ product }: { product: LandingProduct }) {
+  if (product.slug === DUBAI_PALACE_OUD_SERUM_SLUG) {
+    return <DubaiPalaceOudSerumHeroMedia product={product} />;
+  }
+
+  const hero = product.images.heroBeforeAfter?.trim();
+  const portrait = product.images.lifestyleImage?.trim();
+  const bottle = product.images.heroProduct?.trim();
+
+  if (hero && portrait) {
+    return (
+      <div className="space-y-3 bg-[var(--lp-bg)] p-3">
+        <PremiumImage
+          src={hero}
+          alt={product.imageAlts.heroBeforeAfter}
+          priority
+          objectFit="contain"
+          className="rounded-[1.25rem] border border-[var(--lp-border)]/70 shadow-sm"
+        />
+        <PremiumImage
+          src={portrait}
+          alt={product.imageAlts.lifestyleImage}
+          objectFit="contain"
+          className="rounded-[1.25rem] border border-[var(--lp-border)]/70 shadow-sm"
+        />
+      </div>
+    );
+  }
+
+  if (hero) {
+    return <PremiumImage src={hero} alt={product.imageAlts.heroBeforeAfter} priority objectFit="contain" />;
+  }
+  return (
+    <div className="grid gap-2 bg-[var(--lp-bg)] p-3 sm:grid-cols-2">
+      <PremiumPlaceholder alt={product.imageAlts.heroBeforeAfter} caption="قبل — إحساس الجفاف مع المكيف" />
+      <PremiumPlaceholder alt={product.imageAlts.heroBeforeAfter} caption="بعد — روتين أوضح مع الاستمرار" />
+      <div className="relative z-[1] -mt-8 flex justify-center sm:col-span-2">
+        <div className="w-[55%] max-w-[220px] rounded-2xl border-2 border-[var(--lp-accent)] bg-[var(--lp-card)] p-3 shadow-xl">
+          {bottle ? (
+            <Image src={bottle} alt={product.imageAlts.heroProduct} width={400} height={520} className="h-auto w-full object-contain" />
+          ) : (
+            <PremiumPlaceholder alt={product.imageAlts.heroProduct} caption={product.shortName} className="aspect-square" />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function themeStyle() {
   const d = businessConfig.design;
@@ -105,64 +197,60 @@ export function ProductLandingView({ product }: { product: LandingProduct }) {
 
   const ingredients = product.ingredientStack.map(normalizeIngredient);
 
+  const codStrip = (
+    <div className="border-b bg-[var(--lp-primary)] px-4 py-2 text-center text-xs font-bold text-white sm:text-sm">
+      <span className="inline-flex items-center justify-center gap-2">
+        <Truck className="size-4 shrink-0 text-[var(--lp-accent)]" aria-hidden />
+        {b.cod.paymentLabel} · {b.cod.deliveryPromise}
+      </span>
+    </div>
+  );
+
+  const serumSlug = product.slug === DUBAI_PALACE_OUD_SERUM_SLUG;
+
+  const landingBadgeGrid = (
+    <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+      {product.badges.map((text) => (
+        <div
+          key={text}
+          className="rounded-2xl border border-[var(--lp-border)] bg-[var(--lp-card)] px-2 py-3 text-center text-[11px] font-black leading-tight text-[var(--lp-primary)] shadow-sm sm:text-xs"
+        >
+          {text}
+        </div>
+      ))}
+    </div>
+  );
+
+  /** Serum: opening block is the photo only (no badges, lighter chrome). Other products keep badges under the hero card. */
+  const heroAndBadges = (
+    <section className="bg-[var(--lp-bg)] px-0 pb-4 pt-0 sm:px-4 sm:pt-4">
+      <div className="mx-auto max-w-lg">
+        <div
+          className={
+            serumSlug
+              ? "overflow-hidden bg-[var(--lp-bg)]"
+              : "overflow-hidden rounded-[2rem] border border-[var(--lp-border)] bg-[var(--lp-card)] shadow-[0_24px_80px_rgba(0,0,0,0.12)] ring-1 ring-[var(--lp-accent)]/25"
+          }
+        >
+          <HeroTopMedia product={product} />
+        </div>
+        {serumSlug ? null : landingBadgeGrid}
+      </div>
+    </section>
+  );
+
   return (
     <div className="product-landing-root pb-28" style={themeStyle()}>
-      <div className="border-b bg-[var(--lp-primary)] px-4 py-2 text-center text-xs font-bold text-white sm:text-sm">
-        <span className="inline-flex items-center justify-center gap-2">
-          <Truck className="size-4 shrink-0 text-[var(--lp-accent)]" aria-hidden />
-          {b.cod.paymentLabel} · {b.cod.deliveryPromise}
-        </span>
-      </div>
-
-      <section className="bg-[var(--lp-bg)] px-4 pb-6 pt-4">
-        <div className="mx-auto max-w-lg">
-          <div className="overflow-hidden rounded-[2rem] border border-[var(--lp-border)] bg-[var(--lp-card)] shadow-[0_24px_80px_rgba(0,0,0,0.12)] ring-1 ring-[var(--lp-accent)]/25">
-            {product.images.heroBeforeAfter?.trim() ? (
-              <PremiumImage
-                src={product.images.heroBeforeAfter}
-                alt={product.imageAlts.heroBeforeAfter}
-                priority
-                objectFit="contain"
-              />
-            ) : (
-              <div className="grid gap-2 bg-[var(--lp-bg)] p-3 sm:grid-cols-2">
-                <PremiumPlaceholder alt={product.imageAlts.heroBeforeAfter} caption="قبل — إحساس الجفاف مع المكيف" />
-                <PremiumPlaceholder alt={product.imageAlts.heroBeforeAfter} caption="بعد — روتين أوضح مع الاستمرار" />
-                <div className="relative z-[1] -mt-8 flex justify-center sm:col-span-2">
-                  <div className="w-[55%] max-w-[220px] rounded-2xl border-2 border-[var(--lp-accent)] bg-[var(--lp-card)] p-3 shadow-xl">
-                    {product.images.heroProduct?.trim() ? (
-                      <Image
-                        src={product.images.heroProduct}
-                        alt={product.imageAlts.heroProduct}
-                        width={400}
-                        height={520}
-                        className="h-auto w-full object-contain"
-                      />
-                    ) : (
-                      <PremiumPlaceholder alt={product.imageAlts.heroProduct} caption={product.shortName} className="aspect-square" />
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
-            {product.badges.map((text) => (
-              <div
-                key={text}
-                className="rounded-2xl border border-[var(--lp-border)] bg-[var(--lp-card)] px-2 py-3 text-center text-[11px] font-black leading-tight text-[var(--lp-primary)] shadow-sm sm:text-xs"
-              >
-                {text}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {codStrip}
+      {heroAndBadges}
 
       <section className="bg-[var(--lp-bg)] px-4 py-6" dir="rtl">
         <div className="mx-auto max-w-lg text-right">
           <h1 className="text-2xl font-black leading-snug text-[var(--lp-primary)] sm:text-3xl">{product.painSection.headline}</h1>
-          <p className="mt-3 text-sm font-semibold leading-7 text-[var(--lp-muted)] sm:text-base">{product.painSection.subheadline}</p>
+          {serumSlug ? landingBadgeGrid : null}
+          <p className={`text-sm font-semibold leading-7 text-[var(--lp-muted)] sm:text-base ${serumSlug ? "mt-4" : "mt-3"}`}>
+            {product.painSection.subheadline}
+          </p>
           <div className="mt-4 flex flex-wrap items-center justify-end gap-2 text-sm">
             <span className="inline-flex items-center gap-1 font-black text-[var(--lp-accent)]">
               <Star className="size-4 fill-current" aria-hidden />
@@ -237,14 +325,33 @@ export function ProductLandingView({ product }: { product: LandingProduct }) {
         </div>
       </section>
 
+      {serumSlug ? (
+        <section className="bg-[var(--lp-bg)] px-0 pb-2 pt-4" dir="rtl" aria-label={product.imageAlts.problemImage}>
+          <div className="mx-auto max-w-lg">
+            <SerumMerchantPhoto src={DUBAI_PALACE_OUD_SERUM_IMAGE_2_SRC} alt={product.imageAlts.problemImage} />
+          </div>
+        </section>
+      ) : null}
+
       <ProblemBlock product={product} />
+
+      {serumSlug ? (
+        <section className="bg-white px-0 py-6" dir="rtl" aria-label={product.imageAlts.heroProduct}>
+          <div className="mx-auto max-w-lg">
+            <SerumMerchantPhoto src={DUBAI_PALACE_OUD_SERUM_IMAGE_3_SRC} alt={product.imageAlts.heroProduct} />
+          </div>
+        </section>
+      ) : null}
+
       <MechanismBlock product={product} ingredients={ingredients} />
+
       <AuthorityBlock product={product} />
       <TimelineBlock product={product} />
       <TestimonialsBlock product={product} />
       <ComparisonBlock product={product} />
       <OfferRecapBlock product={product} selected={selected} b={b} onAdd={addOfferToCart} />
       <GuaranteeBlock b={b} steps={product.guaranteeSteps} />
+
       <HowToBlock product={product} />
       <CodBlock b={b} />
       <CitiesBlock product={product} b={b} />
@@ -275,16 +382,18 @@ export function ProductLandingView({ product }: { product: LandingProduct }) {
 }
 
 function ProblemBlock({ product }: { product: LandingProduct }) {
+  const isSerum = product.slug === DUBAI_PALACE_OUD_SERUM_SLUG;
+
   return (
     <section className="bg-[var(--lp-bg)] px-4 py-8" dir="rtl">
       <div className="mx-auto max-w-lg">
-        {product.images.problemImage?.trim() ? (
+        {!isSerum && product.images.problemImage?.trim() ? (
           <PremiumImage src={product.images.problemImage} alt={product.imageAlts.problemImage} className="shadow-md" />
-        ) : (
+        ) : !isSerum ? (
           <PremiumPlaceholder alt={product.imageAlts.problemImage} caption={product.problem} />
-        )}
+        ) : null}
         {product.proofInsight ? (
-          <div className="mt-4 rounded-2xl border border-[var(--lp-border)] bg-[var(--lp-primary)] p-4 text-white shadow-md">
+          <div className={`rounded-2xl border border-[var(--lp-border)] bg-[var(--lp-primary)] p-4 text-white shadow-md ${isSerum ? "" : "mt-4"}`}>
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-3xl font-black text-[var(--lp-accent)]">{product.proofInsight.value}</p>
@@ -295,7 +404,7 @@ function ProblemBlock({ product }: { product: LandingProduct }) {
             </div>
           </div>
         ) : null}
-        <h2 className="mt-8 text-xl font-black text-[var(--lp-primary)]">هل تعانين من هالنقاط؟</h2>
+        <h2 className={`text-xl font-black text-[var(--lp-primary)] ${isSerum ? "mt-0" : "mt-8"}`}>هل تعانين من هالنقاط؟</h2>
         <div className="mt-4 space-y-3">
           {product.problemAgitation.map((row) => (
             <div key={row.pain} className="overflow-hidden rounded-2xl border border-[var(--lp-border)] bg-[var(--lp-card)] shadow-sm">
@@ -663,14 +772,40 @@ function RelatedBlock({ related, b }: { related: LandingProduct[]; b: typeof bus
       <div className="mx-auto max-w-lg">
         <h2 className="text-xl font-black text-[var(--lp-primary)]">منتجات تكمّل طلبج</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          {related.map((p) => (
-            <Link key={p.slug} href={`/products/${p.slug}`} className="rounded-2xl border border-[var(--lp-border)] bg-[var(--lp-card)] p-4 shadow-sm transition hover:shadow-md">
-              <PremiumPlaceholder alt={p.name} caption={p.cardHeadline} className="aspect-[4/3]" />
-              <p className="mt-3 font-black text-[var(--lp-text)]">{p.name}</p>
-              <p className="mt-1 text-sm text-[var(--lp-muted)]">{p.cardSubheadline}</p>
-              <p className="mt-2 text-sm font-black text-[var(--lp-primary)]">يبدأ من {formatPrice(Math.min(...p.offers.map((o) => o.price)), b)}</p>
-            </Link>
-          ))}
+          {related.map((p) => {
+            const isSerum = p.slug === DUBAI_PALACE_OUD_SERUM_SLUG;
+            const cardSrc = isSerum ? DUBAI_PALACE_OUD_SERUM_IMAGE_SRC : getProduct(p.slug)?.cardImage?.trim();
+            const relatedImgClass = isSerum
+              ? "absolute inset-0 h-full w-full object-contain object-center bg-[var(--lp-bg)]"
+              : "absolute inset-0 h-full w-full object-cover object-center";
+            return (
+              <Link
+                key={p.slug}
+                href={`/products/${p.slug}`}
+                className="rounded-2xl border border-[var(--lp-border)] bg-[var(--lp-card)] p-4 shadow-sm transition hover:shadow-md"
+              >
+                {cardSrc ? (
+                  <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-[var(--lp-border)] bg-[var(--lp-bg)] sm:aspect-[3/2]">
+                    {/* eslint-disable-next-line @next/next/no-img-element -- same /public card art as home ProductCard */}
+                    <img
+                      src={cardSrc}
+                      alt={p.name}
+                      className={relatedImgClass}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                ) : (
+                  <PremiumPlaceholder alt={p.name} caption={p.cardHeadline} className="aspect-[4/3] sm:aspect-[3/2]" />
+                )}
+                <p className="mt-3 font-black text-[var(--lp-text)]">{p.name}</p>
+                <p className="mt-1 text-sm text-[var(--lp-muted)]">{p.cardSubheadline}</p>
+                <p className="mt-2 text-sm font-black text-[var(--lp-primary)]">
+                  يبدأ من {formatPrice(Math.min(...p.offers.map((o) => o.price)), b)}
+                </p>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </section>

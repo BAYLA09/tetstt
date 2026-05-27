@@ -1,4 +1,6 @@
 /** Bundle tier on the product hero (e.g. lamp + serums). */
+import { DUBAI_PALACE_OUD_SERUM_HOME_IMAGE_SRC } from "@/lib/dubai-palace-oud-serum-image";
+
 export type ProductOfferTier = {
   sku: string;
   title: string;
@@ -123,6 +125,7 @@ const catalogProducts: Product[] = [
       subline: "ملاحظات فريق ليالي بيوتي من تجارب العميلات — النتائج تختلف.",
     },
     notes: ["لإحساس الجفاف والشد", "100مل", "رائحة عود دافئة", "دفع عند الاستلام"],
+    cardImage: DUBAI_PALACE_OUD_SERUM_HOME_IMAGE_SRC,
     heroPromoLine: "اختاري الكمية المناسبة: عبوة، عبوتين، أو ثلاث عبوات بسعر أوفر",
     offerTiers: [
       {
@@ -182,6 +185,7 @@ const catalogProducts: Product[] = [
     story:
       "مو بس «فواحة»: نبني أجواء — أقل جفاف في الهوى حول الوجه، رائحة عود ناعمة، ونوم أعمق بعد يوم طويل تحت المكيف.",
     notes: ["ضباب بارد", "لجو المكيف", "رائحة عود", "دفع عند الاستلام"],
+    cardImage: "/img-diffuser-card.png",
     heroPromoLine: "اختاري الموقد وحده أو مع عود قصر دبي لروتين الجفاف الكامل",
     offerTiers: [
       {
