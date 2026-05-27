@@ -22,11 +22,7 @@ import type { LandingOffer, LandingProduct } from "@/config/landing-types";
 import { getLandingProduct } from "@/config/products";
 import { formatPrice } from "@/lib/format-price";
 import { getProduct } from "@/lib/products";
-import {
-  DUBAI_PALACE_OUD_SERUM_IMAGE_SRC,
-  DUBAI_PALACE_OUD_SERUM_POST_OFFERS_IMAGE_SRC,
-  DUBAI_PALACE_OUD_SERUM_SLUG,
-} from "@/lib/dubai-palace-oud-serum-image";
+import { DUBAI_PALACE_OUD_SERUM_IMAGE_SRC, DUBAI_PALACE_OUD_SERUM_SLUG } from "@/lib/dubai-palace-oud-serum-image";
 import { useCartStore } from "@/lib/cart-store";
 import { generateEventId, trackEvent, trackAddToCart } from "@/lib/events";
 import { PremiumImage, PremiumPlaceholder } from "./PremiumImage";
@@ -304,21 +300,6 @@ export function ProductLandingView({ product }: { product: LandingProduct }) {
           ))}
         </div>
       </section>
-
-      {product.slug === DUBAI_PALACE_OUD_SERUM_SLUG ? (
-        <section className="bg-[var(--lp-bg)] px-4 pb-6 pt-4" dir="rtl" aria-label={product.imageAlts.problemImage}>
-          <div className="mx-auto max-w-lg">
-            {/* eslint-disable-next-line @next/next/no-img-element -- exact /public file under products */}
-            <img
-              src={DUBAI_PALACE_OUD_SERUM_POST_OFFERS_IMAGE_SRC}
-              alt={product.imageAlts.problemImage}
-              className="block h-auto w-full max-w-full object-contain"
-              decoding="async"
-              loading="lazy"
-            />
-          </div>
-        </section>
-      ) : null}
 
       <ProblemBlock product={product} />
       <MechanismBlock product={product} ingredients={ingredients} />

@@ -1,0 +1,6 @@
+Serum PDP uses exactly one file:
+
+  dubai-palace-oud-serum.png
+
+Replace that PNG with the merchant before/after hero (no edits in code).
+Do not add dubai-palace-oud-serum-hero.png or other serum art paths.
