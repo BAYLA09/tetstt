@@ -142,4 +142,11 @@ export type LandingProduct = {
   whyDifferentSub: string;
   notInsideIntro: string;
   guaranteeSteps: [string, string, string];
+  /**
+   * Ordered PDP hero photos: first entry is the main image; the rest render below in the same order.
+   * When set, this takes precedence over the empty `images.heroBeforeAfter` placeholder layout.
+   */
+  heroGallery?: readonly string[];
+  /** Parallel alt text for each `heroGallery` URL (missing entries fall back to `imageAlts.heroProduct`). */
+  heroGalleryAlts?: readonly string[];
 };
