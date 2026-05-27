@@ -83,6 +83,18 @@ class AdminLoginResponse(BaseModel):
     expires_in: int = 86400
 
 
+class SheetWebhookProbeOut(BaseModel):
+    configured: bool
+    host: str | None = None
+    secret_configured: bool = False
+    probe_orderid: str | None = None
+    follow_redirects: bool = True
+    without_redirect: dict | None = None
+    with_redirect: dict | None = None
+    verdict: str
+    error: str | None = None
+
+
 class AdminMetricsOut(BaseModel):
     date_from: str
     date_to: str

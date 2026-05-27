@@ -62,7 +62,9 @@ Verify deployed revision (backend + frontend)
 curl -sS "https://api.layalibeauty.shop/version" | jq .
 ```
 
-Expect JSON: `commit_sha`, `build_time_utc`, `enable_ip_fraud_check`, `disable_order_security_checks`, `catalog_skus`, `lamp_bundle_prices_aed` (booleans only — no DB URLs or keys).
+Expect JSON: `commit_sha`, `build_time_utc`, `enable_ip_fraud_check`, `disable_order_security_checks`, `catalog_skus`, `lamp_bundle_prices_aed`, `sheet_webhook_configured`, `sheet_webhook_host`, `sheet_webhook_capabilities` (booleans only — no DB URLs or keys).
+
+**Sheet sync:** `commit_sha` must match latest `main` on GitHub (not a May 2026 stale SHA). If `sheet_webhook_configured` is true but orders never appear, open admin → `POST /admin/diagnostics/sheet-webhook` (Bearer token) — expect `verdict: ok` and JSON `{"ok":true}`. Wrong `/exec` URLs often return `{"success":true}` without appending rows.
 
 **If checkout says `Unknown SKU: LB-LAMP-OUD-379` or `LB-LAMP-TRIPLE-449`:** open **`/version`** and confirm **`catalog_skus`** contains those exact strings. If not, the **API container is still an old image** — on EasyPanel use **Rebuild** (not only Restart) on the **backend/API** service, branch **`main`**, and bump **`CACHE_BUST`**. The backend Dockerfile **fails the image build** if `app/products.py` is missing those SKUs, so a successful rebuild proves the new catalog is inside the image.
 
