@@ -134,6 +134,7 @@ Future statuses:
 - Send after DB order creation. The HTTP client follows redirects (`follow_redirects`) because Apps Script exec URLs often redirect.
 - On success or failure, `sheet_sync_status` is updated to `sent`, `failed`, or `skipped`, and `sheet_sync_error` holds a short message when failed (check admin order detail). Google Apps Script may return **HTTP 200** with JSON `{"ok":false,"error":"..."}` (e.g. wrong `secret`); the API treats that as `failed`, not `sent`.
 - The bundled Apps Script targets a tab named **`Orders`**. New rows appear there, not necessarily on the first sheet tab.
+- Sheet row JSON (Google Apps Script / CSV): `date` (DD/MM/YYYY, Asia/Dubai), `orderid` (`layali-YYYYMMDD-XXXXXXXX`), `country` (`UAE`), `name`, `phone` (compact E.164 e.g. `+971501234567`), `product` and `sku` and `quantity` (slash-separated per line), `url` (checkout page URL), `totalprice`, `currency` (`AED`), `status` (empty string for the sheet).
 - Do not block customer success page indefinitely because the sheet is down.
 
 ## CAPI behavior

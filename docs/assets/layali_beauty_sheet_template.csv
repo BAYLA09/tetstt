@@ -1,2 +1,2 @@
-date,orderid,country,name,phone,product,sku,quantity,totalprice,currency,status
-04/05/2026,nama-20260504-ABC123,AED,فاطمة علي,+971 50 123 4567,باقة ليالي بيوتي الفاخرة/سيروم عود قصر دبي,LY-8F3K2/LY-6D2P8,1/2,437,AED,
+date,orderid,country,name,phone,product,url,sku,quantity,totalprice,currency,status
+22/05/2026,layali-20260522-A1B2C3D4,UAE,فاطمة علي,+971501234567,باقة ليالي بيوتي الفاخرة/سيروم عود قصر دبي,https://layalibeauty.shop/products/dubai-palace-oud-serum,LY-8F3K2/LY-6D2P8,1/2,437,AED,

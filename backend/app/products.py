@@ -4,6 +4,7 @@ from decimal import Decimal
 LAMP_OFFER_SKUS = frozenset({"LB-LAMP-189", "LB-LAMP-OUD-379", "LB-LAMP-TRIPLE-449"})
 
 PRODUCTS = {
+    # sheet_sku: stable short codes for Google Sheet / ops (one per catalog line).
     "LB-BUNDLE-299": {"name": "باقة ليالي بيوتي الفاخرة", "price": Decimal("299"), "sheet_sku": "LY-8F3K2"},
     "LB-SERUM-MUSK-59": {"name": "سيروم مسك المطر الأبيض", "price": Decimal("59"), "sheet_sku": "LY-4M7Q9"},
     "LB-SERUM-OUD-69": {"name": "سيروم عود قصر دبي", "price": Decimal("69"), "sheet_sku": "LY-6D2P8"},
