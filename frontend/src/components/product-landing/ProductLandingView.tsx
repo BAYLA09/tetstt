@@ -30,15 +30,16 @@ import { PremiumImage, PremiumPlaceholder } from "./PremiumImage";
 /** Dubai Oud serum PDP: single `/public` raster above offers — native img, no Next/Image pipeline. */
 function DubaiPalaceOudSerumProductMedia({ product }: { product: LandingProduct }) {
   return (
-    <div className="bg-[var(--lp-bg)] p-3">
-      {/* No rounded clip / heavy shadow — keeps the uploaded frame visually intact. */}
-      {/* eslint-disable-next-line @next/next/no-img-element -- exact /public file bytes */}
+    <div className="w-full bg-[var(--lp-bg)]">
+      {/* eslint-disable-next-line @next/next/no-img-element -- exact /public file bytes, no next/image */}
       <img
         src={DUBAI_PALACE_OUD_SERUM_IMAGE_SRC}
         alt={product.imageAlts.heroBeforeAfter}
-        className="block h-auto w-full max-w-full object-contain"
+        className="block h-auto w-full max-w-full object-contain object-center"
         decoding="async"
         fetchPriority="high"
+        width={1024}
+        height={1024}
       />
     </div>
   );
@@ -199,12 +200,12 @@ export function ProductLandingView({ product }: { product: LandingProduct }) {
 
   /** Serum: opening block is the photo only (no badges, lighter chrome). Other products keep badges under the hero card. */
   const heroAndBadges = (
-    <section className="bg-[var(--lp-bg)] px-4 pb-6 pt-4">
+    <section className="bg-[var(--lp-bg)] px-0 pb-4 pt-0 sm:px-4 sm:pt-4">
       <div className="mx-auto max-w-lg">
         <div
           className={
             serumSlug
-              ? "rounded-[2rem] shadow-[0_24px_80px_rgba(0,0,0,0.12)]"
+              ? "overflow-hidden bg-[var(--lp-bg)]"
               : "overflow-hidden rounded-[2rem] border border-[var(--lp-border)] bg-[var(--lp-card)] shadow-[0_24px_80px_rgba(0,0,0,0.12)] ring-1 ring-[var(--lp-accent)]/25"
           }
         >
@@ -217,8 +218,9 @@ export function ProductLandingView({ product }: { product: LandingProduct }) {
 
   return (
     <div className="product-landing-root pb-28" style={themeStyle()}>
+      {serumSlug ? heroAndBadges : null}
       {codStrip}
-      {heroAndBadges}
+      {serumSlug ? null : heroAndBadges}
 
       <section className="bg-[var(--lp-bg)] px-4 py-6" dir="rtl">
         <div className="mx-auto max-w-lg text-right">

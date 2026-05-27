@@ -1,6 +1,8 @@
-Serum PDP uses exactly one file:
+REQUIRED: Replace this file with your merchant before/after hero (MAYJAM / عود قصر دبي art):
 
   dubai-palace-oud-serum.png
 
-Replace that PNG with the merchant before/after hero (no edits in code).
-Do not add dubai-palace-oud-serum-hero.png or other serum art paths.
+The live site cannot show your chat upload until those exact PNG bytes are saved here.
+After replacing, bump DUBAI_PALACE_OUD_SERUM_IMAGE_VERSION in src/lib/dubai-palace-oud-serum-image.ts and rebuild frontend.
+
+Do not use a different filename — the PDP reads only dubai-palace-oud-serum.png.

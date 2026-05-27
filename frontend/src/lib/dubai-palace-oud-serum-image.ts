@@ -4,8 +4,11 @@
  */
 export const DUBAI_PALACE_OUD_SERUM_SLUG = "dubai-palace-oud-serum" as const;
 
+/** Bump when replacing `public/products/dubai-palace-oud-serum.png` so CDN/browser pick up the new bytes. */
+export const DUBAI_PALACE_OUD_SERUM_IMAGE_VERSION = "merchant-before-after-v1" as const;
+
 export const DUBAI_PALACE_OUD_SERUM_PRIMARY_IMAGE_SRC =
-  "/products/dubai-palace-oud-serum.png" as const;
+  `/products/dubai-palace-oud-serum.png?v=${DUBAI_PALACE_OUD_SERUM_IMAGE_VERSION}` as const;
 
 /** PDP top (above offers), cards, OG/Twitter, preload. */
 export const DUBAI_PALACE_OUD_SERUM_IMAGE_SRC = DUBAI_PALACE_OUD_SERUM_PRIMARY_IMAGE_SRC;
