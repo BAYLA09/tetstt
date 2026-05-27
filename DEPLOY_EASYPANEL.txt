@@ -7,12 +7,35 @@ Layali Beauty API — EasyPanel (exact settings)
 
 **Scripts (repo root):** `scripts/build-backend-fresh.sh`, `scripts/verify-backend-deploy.sh`, `scripts/probe-webhook-from-container.sh`
 
-Use branch: **`main`** (recommended — includes lamp bundle SKUs and order fixes). If you use **`deploy-backend`** / **`layali-api`** / **`layali-backend-prod`**, those branches must be **merged with `main`** or they will ship an old `app/products.py` and checkout returns **`Unknown SKU: LB-LAMP-OUD-379`**.
+## Backend API — use branch `production-fix-v2` (cache bypass)
+
+EasyPanel stuck on old images? Point the **backend/API** service Git branch to:
+
+```text
+production-fix-v2
+```
+
+Full steps: **`deploy/PRODUCTION_FIX_V2.md`**. Branch marker file: **`deploy/EASYPANEL_BACKEND_BRANCH.txt`**.
+
+Build args for first deploy on this branch:
+
+```text
+COMMIT_SHA=<sha on production-fix-v2>
+BUILD_TIME_UTC=<now UTC>
+CACHE_BUST=production-fix-v2-1
+DEPLOY_BRANCH=production-fix-v2
+```
+
+**`main` stays as-is** — do not delete it. Frontend can stay on `main` unless you also need a cache bypass there.
+
+---
+
+Use branch: **`main`** for day-to-day dev (recommended — includes lamp bundle SKUs and order fixes). If you use **`deploy-backend`** / **`layali-api`** / **`layali-backend-prod`**, those branches must be **merged with `main`** or they will ship an old `app/products.py` and checkout returns **`Unknown SKU: LB-LAMP-OUD-379`**.
 
 Git
 ---
 - **Repository:** your GitHub repo (e.g. BAYLA09/tetstt).
-- **Branch:** **`main`** (recommended), or any deploy branch that **tracks the same commit as `main`** for the API.
+- **Branch (backend API):** **`production-fix-v2`** until `/version` shows a fresh `commit_sha` (see `deploy/PRODUCTION_FIX_V2.md`). **`main`** for normal dev / frontend.
 - **Push:** always from repo root (`git push`). No `cd backend` required for git.
 
 Build (critical — fixes `failed to read dockerfile: open code`)

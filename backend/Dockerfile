@@ -5,6 +5,7 @@ WORKDIR /app
 ARG COMMIT_SHA=unknown
 ARG BUILD_TIME_UTC=unknown
 ARG CACHE_BUST=manual
+ARG DEPLOY_BRANCH=unknown
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
@@ -15,7 +16,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 RUN echo "==== backend_docker_build_clock_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ) ====" && \
     echo "DEPLOY_COMMIT_SHA=${COMMIT_SHA}" && \
     echo "DEPLOY_BUILD_TIME_UTC=${BUILD_TIME_UTC}" && \
-    echo "CACHE_BUST=${CACHE_BUST}"
+    echo "CACHE_BUST=${CACHE_BUST}" && \
+    echo "DEPLOY_BRANCH=${DEPLOY_BRANCH}"
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt

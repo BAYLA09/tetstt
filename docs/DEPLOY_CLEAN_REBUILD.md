@@ -29,7 +29,7 @@ Use this when EasyPanel shows “deploy success” but `GET /version` still repo
 
 | Setting | Value |
 |---------|--------|
-| Git branch | `main` |
+| Git branch | **`production-fix-v2`** (backend API on EasyPanel) — see `deploy/PRODUCTION_FIX_V2.md`. Use `main` for dev only. |
 | Build context / root | **Repository root** (folder that contains root `Dockerfile` + `backend/`) |
 | Dockerfile path | `Dockerfile` (root file — **not** `backend/Dockerfile` unless context is `backend/`) |
 

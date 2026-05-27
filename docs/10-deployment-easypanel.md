@@ -1,5 +1,10 @@
 # Deployment on EasyPanel
 
+## Backend Git branch (cache bypass)
+
+For the **layali-backend** API service, set Git branch to **`production-fix-v2`** and rebuild.  
+See **`deploy/PRODUCTION_FIX_V2.md`**. Keep **`main`** for development; do not delete it.
+
 ## Services
 
 Create two app services:

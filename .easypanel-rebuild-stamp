@@ -1,4 +1,5 @@
 # Bump this file (or CACHE_BUST build arg) when forcing a no-cache EasyPanel backend rebuild.
-# See docs/DEPLOY_CLEAN_REBUILD.md
-last_updated_utc=2026-05-27T20:00:00Z
-target_main_sha=9a91289
+# See docs/DEPLOY_CLEAN_REBUILD.md and deploy/PRODUCTION_FIX_V2.md
+easypanel_backend_branch=production-fix-v2
+last_updated_utc=2026-05-27T21:00:00Z
+cache_bust_hint=production-fix-v2-initial

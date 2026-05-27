@@ -8,7 +8,8 @@ cd "$ROOT"
 
 COMMIT_SHA="${1:-$(git rev-parse --short HEAD 2>/dev/null || echo unknown)}"
 BUILD_TIME_UTC="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-CACHE_BUST="local-nocache-$(date +%s)"
+CACHE_BUST="${CACHE_BUST:-production-fix-v2-$(date +%s)}"
+DEPLOY_BRANCH="${DEPLOY_BRANCH:-production-fix-v2}"
 IMAGE_TAG="layali-api:${COMMIT_SHA}"
 
 echo "Building ${IMAGE_TAG} (no cache)"
@@ -21,6 +22,7 @@ docker build --no-cache --pull \
   --build-arg "COMMIT_SHA=${COMMIT_SHA}" \
   --build-arg "BUILD_TIME_UTC=${BUILD_TIME_UTC}" \
   --build-arg "CACHE_BUST=${CACHE_BUST}" \
+  --build-arg "DEPLOY_BRANCH=${DEPLOY_BRANCH}" \
   -t "${IMAGE_TAG}" \
   .
 
