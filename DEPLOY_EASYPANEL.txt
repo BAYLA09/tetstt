@@ -1,6 +1,12 @@
 Layali Beauty API — EasyPanel (exact settings)
 ===============================================
 
+**Stale image / cache / wrong `commit_sha`:** use **`docs/DEPLOY_CLEAN_REBUILD.md`** (nuclear rebuild + `docker inspect` + in-container webhook probe).
+
+**Leave EasyPanel:** use **`docs/DEPLOY_HOSTING_MIGRATION.md`** (Railway, Render, Fly, Coolify, VPS Compose).
+
+**Scripts (repo root):** `scripts/build-backend-fresh.sh`, `scripts/verify-backend-deploy.sh`, `scripts/probe-webhook-from-container.sh`
+
 Use branch: **`main`** (recommended — includes lamp bundle SKUs and order fixes). If you use **`deploy-backend`** / **`layali-api`** / **`layali-backend-prod`**, those branches must be **merged with `main`** or they will ship an old `app/products.py` and checkout returns **`Unknown SKU: LB-LAMP-OUD-379`**.
 
 Git
