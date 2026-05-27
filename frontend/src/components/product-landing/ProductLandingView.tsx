@@ -335,8 +335,6 @@ export function ProductLandingView({ product }: { product: LandingProduct }) {
 
       <ProblemBlock product={product} />
 
-      <MechanismBlock product={product} ingredients={ingredients} />
-
       {serumSlug ? (
         <section className="bg-white px-0 py-6" dir="rtl" aria-label={product.imageAlts.heroProduct}>
           <div className="mx-auto max-w-lg">
@@ -344,6 +342,8 @@ export function ProductLandingView({ product }: { product: LandingProduct }) {
           </div>
         </section>
       ) : null}
+
+      <MechanismBlock product={product} ingredients={ingredients} />
 
       <AuthorityBlock product={product} />
       <TimelineBlock product={product} />
