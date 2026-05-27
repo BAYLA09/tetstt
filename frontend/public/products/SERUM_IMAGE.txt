@@ -1,7 +1,7 @@
-Serum PDP image stack (top to bottom):
+Serum PDP — three images at different scroll positions:
 
-1. adskull-image-3b76093b-906d-4b09-aacb-43ddddbf92e1.png
-2. adskull-image-567929c2-6d4a-480a-b0ec-54eb2889257b.png
-3. dubai-palace-oud-serum.png
+1. TOP — adskull-image-3b76093b-906d-4b09-aacb-43ddddbf92e1.png
+2. After COD icons, before 78% block — adskull-image-567929c2-6d4a-480a-b0ec-54eb2889257b.png
+3. After problem section, before mechanism — dubai-palace-oud-serum.png
 
-Paths are wired in src/lib/dubai-palace-oud-serum-image.ts
+See src/lib/dubai-palace-oud-serum-image.ts

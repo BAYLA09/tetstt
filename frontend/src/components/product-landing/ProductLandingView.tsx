@@ -23,43 +23,54 @@ import { getLandingProduct } from "@/config/products";
 import { formatPrice } from "@/lib/format-price";
 import { getProduct } from "@/lib/products";
 import {
+  DUBAI_PALACE_OUD_SERUM_IMAGE_1_SRC,
+  DUBAI_PALACE_OUD_SERUM_IMAGE_2_SRC,
+  DUBAI_PALACE_OUD_SERUM_IMAGE_3_SRC,
   DUBAI_PALACE_OUD_SERUM_IMAGE_SRC,
-  DUBAI_PALACE_OUD_SERUM_PDP_IMAGE_SRCS,
   DUBAI_PALACE_OUD_SERUM_SLUG,
 } from "@/lib/dubai-palace-oud-serum-image";
 import { useCartStore } from "@/lib/cart-store";
 import { generateEventId, trackEvent, trackAddToCart } from "@/lib/events";
 import { PremiumImage, PremiumPlaceholder } from "./PremiumImage";
 
-/** Dubai Oud serum PDP: three merchant PNGs stacked above offers — native img, no next/image. */
-function DubaiPalaceOudSerumProductMedia({ product }: { product: LandingProduct }) {
+/** Single merchant PNG — native img, exact /public bytes. */
+function SerumMerchantPhoto({
+  src,
+  alt,
+  priority = false,
+}: {
+  src: string;
+  alt: string;
+  priority?: boolean;
+}) {
   return (
-    <div className="flex w-full flex-col gap-0 bg-[var(--lp-bg)]">
-      {DUBAI_PALACE_OUD_SERUM_PDP_IMAGE_SRCS.map((src, index) => (
-        // eslint-disable-next-line @next/next/no-img-element -- exact /public file bytes
-        <img
-          key={src}
-          src={src}
-          alt={
-            index === 0
-              ? product.imageAlts.heroBeforeAfter
-              : index === 1
-                ? product.imageAlts.problemImage
-                : product.imageAlts.heroProduct
-          }
-          className="block h-auto w-full max-w-full object-contain object-center"
-          decoding="async"
-          fetchPriority={index === 0 ? "high" : "auto"}
-          loading={index === 0 ? "eager" : "lazy"}
-        />
-      ))}
+    <div className="w-full bg-[var(--lp-bg)]">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt={alt}
+        className="block h-auto w-full max-w-full object-contain object-center"
+        decoding="async"
+        fetchPriority={priority ? "high" : "auto"}
+        loading={priority ? "eager" : "lazy"}
+      />
     </div>
+  );
+}
+
+function DubaiPalaceOudSerumHeroMedia({ product }: { product: LandingProduct }) {
+  return (
+    <SerumMerchantPhoto
+      src={DUBAI_PALACE_OUD_SERUM_IMAGE_1_SRC}
+      alt={product.imageAlts.heroBeforeAfter}
+      priority
+    />
   );
 }
 
 function HeroTopMedia({ product }: { product: LandingProduct }) {
   if (product.slug === DUBAI_PALACE_OUD_SERUM_SLUG) {
-    return <DubaiPalaceOudSerumProductMedia product={product} />;
+    return <DubaiPalaceOudSerumHeroMedia product={product} />;
   }
 
   const hero = product.images.heroBeforeAfter?.trim();
@@ -315,7 +326,16 @@ export function ProductLandingView({ product }: { product: LandingProduct }) {
         </div>
       </section>
 
+      {serumSlug ? (
+        <section className="bg-[var(--lp-bg)] px-0 pb-2 pt-4" dir="rtl" aria-label={product.imageAlts.problemImage}>
+          <div className="mx-auto max-w-lg">
+            <SerumMerchantPhoto src={DUBAI_PALACE_OUD_SERUM_IMAGE_2_SRC} alt={product.imageAlts.problemImage} />
+          </div>
+        </section>
+      ) : null}
+
       <ProblemBlock product={product} />
+
       <MechanismBlock product={product} ingredients={ingredients} />
       <AuthorityBlock product={product} />
       <TimelineBlock product={product} />
@@ -353,16 +373,18 @@ export function ProductLandingView({ product }: { product: LandingProduct }) {
 }
 
 function ProblemBlock({ product }: { product: LandingProduct }) {
+  const isSerum = product.slug === DUBAI_PALACE_OUD_SERUM_SLUG;
+
   return (
     <section className="bg-[var(--lp-bg)] px-4 py-8" dir="rtl">
       <div className="mx-auto max-w-lg">
-        {product.images.problemImage?.trim() ? (
+        {!isSerum && product.images.problemImage?.trim() ? (
           <PremiumImage src={product.images.problemImage} alt={product.imageAlts.problemImage} className="shadow-md" />
-        ) : product.slug === DUBAI_PALACE_OUD_SERUM_SLUG ? null : (
+        ) : !isSerum ? (
           <PremiumPlaceholder alt={product.imageAlts.problemImage} caption={product.problem} />
-        )}
+        ) : null}
         {product.proofInsight ? (
-          <div className="mt-4 rounded-2xl border border-[var(--lp-border)] bg-[var(--lp-primary)] p-4 text-white shadow-md">
+          <div className={`rounded-2xl border border-[var(--lp-border)] bg-[var(--lp-primary)] p-4 text-white shadow-md ${isSerum ? "" : "mt-4"}`}>
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-3xl font-black text-[var(--lp-accent)]">{product.proofInsight.value}</p>
@@ -371,6 +393,11 @@ function ProblemBlock({ product }: { product: LandingProduct }) {
               </div>
               <Sparkles className="size-8 shrink-0 text-[var(--lp-accent)]" aria-hidden />
             </div>
+          </div>
+        ) : null}
+        {isSerum ? (
+          <div className="mt-6">
+            <SerumMerchantPhoto src={DUBAI_PALACE_OUD_SERUM_IMAGE_3_SRC} alt={product.imageAlts.heroProduct} />
           </div>
         ) : null}
         <h2 className="mt-8 text-xl font-black text-[var(--lp-primary)]">هل تعانين من هالنقاط؟</h2>
