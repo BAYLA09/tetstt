@@ -1,14 +1,20 @@
 /**
- * Dubai Palace Oud serum — one merchant image only (`public/products/dubai-palace-oud-serum.png`).
- * Replace that file on disk to change art; do not add alternate hero paths.
+ * Dubai Palace Oud serum — merchant PNGs under `public/products/` (exact filenames, no edits in code).
  */
 export const DUBAI_PALACE_OUD_SERUM_SLUG = "dubai-palace-oud-serum" as const;
 
-/** Bump when replacing `public/products/dubai-palace-oud-serum.png` so CDN/browser pick up the new bytes. */
-export const DUBAI_PALACE_OUD_SERUM_IMAGE_VERSION = "merchant-before-after-v1" as const;
+export const DUBAI_PALACE_OUD_SERUM_IMAGE_VERSION = "merchant-stack-v2" as const;
 
-export const DUBAI_PALACE_OUD_SERUM_PRIMARY_IMAGE_SRC =
-  `/products/dubai-palace-oud-serum.png?v=${DUBAI_PALACE_OUD_SERUM_IMAGE_VERSION}` as const;
+const v = `?v=${DUBAI_PALACE_OUD_SERUM_IMAGE_VERSION}`;
 
-/** PDP top (above offers), cards, OG/Twitter, preload. */
+/** Serum PDP stack top → bottom (user order). */
+export const DUBAI_PALACE_OUD_SERUM_PDP_IMAGE_SRCS = [
+  `/products/adskull-image-3b76093b-906d-4b09-aacb-43ddddbf92e1.png${v}`,
+  `/products/adskull-image-567929c2-6d4a-480a-b0ec-54eb2889257b.png${v}`,
+  `/products/dubai-palace-oud-serum.png${v}`,
+] as const;
+
+/** Cards, OG/Twitter, preload — first PDP image. */
+export const DUBAI_PALACE_OUD_SERUM_PRIMARY_IMAGE_SRC = DUBAI_PALACE_OUD_SERUM_PDP_IMAGE_SRCS[0];
+
 export const DUBAI_PALACE_OUD_SERUM_IMAGE_SRC = DUBAI_PALACE_OUD_SERUM_PRIMARY_IMAGE_SRC;

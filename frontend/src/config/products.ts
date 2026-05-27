@@ -102,8 +102,8 @@ export const landingProducts: LandingProduct[] = [
       subtitle: "لمسة مسك هادئة تكمل السلة إذا رغبتِ — السعر من إعدادات المنتج.",
     },
     images: {
-      /** Single asset: `public/products/dubai-palace-oud-serum.png` (PDP hero above offers). */
-      heroBeforeAfter: "/products/dubai-palace-oud-serum.png",
+      /** PDP stack: adskull 3b76… → adskull 5679… → dubai-palace-oud-serum.png (see dubai-palace-oud-serum-image.ts). */
+      heroBeforeAfter: "/products/adskull-image-3b76093b-906d-4b09-aacb-43ddddbf92e1.png",
       heroProduct: "",
       problemImage: "",
       ingredientImage: "",

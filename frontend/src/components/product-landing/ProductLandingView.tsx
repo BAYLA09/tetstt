@@ -22,25 +22,36 @@ import type { LandingOffer, LandingProduct } from "@/config/landing-types";
 import { getLandingProduct } from "@/config/products";
 import { formatPrice } from "@/lib/format-price";
 import { getProduct } from "@/lib/products";
-import { DUBAI_PALACE_OUD_SERUM_IMAGE_SRC, DUBAI_PALACE_OUD_SERUM_SLUG } from "@/lib/dubai-palace-oud-serum-image";
+import {
+  DUBAI_PALACE_OUD_SERUM_PDP_IMAGE_SRCS,
+  DUBAI_PALACE_OUD_SERUM_SLUG,
+} from "@/lib/dubai-palace-oud-serum-image";
 import { useCartStore } from "@/lib/cart-store";
 import { generateEventId, trackEvent, trackAddToCart } from "@/lib/events";
 import { PremiumImage, PremiumPlaceholder } from "./PremiumImage";
 
-/** Dubai Oud serum PDP: single `/public` raster above offers — native img, no Next/Image pipeline. */
+/** Dubai Oud serum PDP: three merchant PNGs stacked above offers — native img, no next/image. */
 function DubaiPalaceOudSerumProductMedia({ product }: { product: LandingProduct }) {
   return (
-    <div className="w-full bg-[var(--lp-bg)]">
-      {/* eslint-disable-next-line @next/next/no-img-element -- exact /public file bytes, no next/image */}
-      <img
-        src={DUBAI_PALACE_OUD_SERUM_IMAGE_SRC}
-        alt={product.imageAlts.heroBeforeAfter}
-        className="block h-auto w-full max-w-full object-contain object-center"
-        decoding="async"
-        fetchPriority="high"
-        width={1024}
-        height={1024}
-      />
+    <div className="flex w-full flex-col gap-0 bg-[var(--lp-bg)]">
+      {DUBAI_PALACE_OUD_SERUM_PDP_IMAGE_SRCS.map((src, index) => (
+        // eslint-disable-next-line @next/next/no-img-element -- exact /public file bytes
+        <img
+          key={src}
+          src={src}
+          alt={
+            index === 0
+              ? product.imageAlts.heroBeforeAfter
+              : index === 1
+                ? product.imageAlts.problemImage
+                : product.imageAlts.heroProduct
+          }
+          className="block h-auto w-full max-w-full object-contain object-center"
+          decoding="async"
+          fetchPriority={index === 0 ? "high" : "auto"}
+          loading={index === 0 ? "eager" : "lazy"}
+        />
+      ))}
     </div>
   );
 }
