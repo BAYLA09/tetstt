@@ -2,4 +2,4 @@
 # See docs/DEPLOY_CLEAN_REBUILD.md and deploy/PRODUCTION_FIX_V2.md
 easypanel_backend_branch=production-fix-v2
 last_updated_utc=2026-05-27T21:00:00Z
-cache_bust_hint=production-fix-v2-initial
+cache_bust_hint=production-fix-v2-strict-ok-json

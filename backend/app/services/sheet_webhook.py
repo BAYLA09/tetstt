@@ -25,20 +25,20 @@ def sheet_webhook_host() -> str | None:
 def interpret_apps_script_response(data: Any) -> tuple[bool, str | None]:
     """
     Layali Apps Script returns { ok: true|false, error?: string }.
-    Google redirect targets sometimes return { success: true } without appending a row.
+    Only ok:true counts as success — avoids false sent on HTML, {}, or {success:true}.
     """
     if not isinstance(data, dict):
+        return False, "Webhook response was not JSON object (wrong /exec URL or HTML error page)"
+    if data.get("ok") is True:
         return True, None
     if data.get("ok") is False:
         return False, str(data.get("error") or data)[:500]
-    if data.get("ok") is True:
-        return True, None
     if data.get("success") is True:
         return (
             False,
             "Webhook returned {success:true} but not {ok:true} — wrong /exec URL or stale deployment",
         )
-    return True, None
+    return False, f"Unexpected webhook JSON (need ok:true): {str(data)[:200]}"
 
 
 async def _post_sheet_webhook(
@@ -75,11 +75,17 @@ async def send_order_to_sheet(payload: dict) -> tuple[str, str | None]:
         ok, err = interpret_apps_script_response(data)
         if not ok:
             log.warning(
-                "sheet_webhook_app_script_error orderid=%r err=%s",
+                "sheet_webhook_app_script_error orderid=%r err=%s body=%r",
                 payload.get("orderid"),
                 (err or "")[:300],
+                str(data)[:200],
             )
             return "failed", err
+        log.info(
+            "sheet_webhook_sent orderid=%r appscript=%r",
+            payload.get("orderid"),
+            data,
+        )
         return "sent", None
     except httpx.HTTPStatusError as exc:
         detail = (exc.response.text or "")[:500]
