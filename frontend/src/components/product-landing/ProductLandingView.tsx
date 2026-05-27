@@ -337,12 +337,22 @@ export function ProductLandingView({ product }: { product: LandingProduct }) {
       <ProblemBlock product={product} />
 
       <MechanismBlock product={product} ingredients={ingredients} />
+
+      {serumSlug ? (
+        <section className="bg-white px-0 py-6" dir="rtl" aria-label={product.imageAlts.heroProduct}>
+          <div className="mx-auto max-w-lg">
+            <SerumMerchantPhoto src={DUBAI_PALACE_OUD_SERUM_IMAGE_3_SRC} alt={product.imageAlts.heroProduct} />
+          </div>
+        </section>
+      ) : null}
+
       <AuthorityBlock product={product} />
       <TimelineBlock product={product} />
       <TestimonialsBlock product={product} />
       <ComparisonBlock product={product} />
       <OfferRecapBlock product={product} selected={selected} b={b} onAdd={addOfferToCart} />
       <GuaranteeBlock b={b} steps={product.guaranteeSteps} />
+
       <HowToBlock product={product} />
       <CodBlock b={b} />
       <CitiesBlock product={product} b={b} />
@@ -395,12 +405,7 @@ function ProblemBlock({ product }: { product: LandingProduct }) {
             </div>
           </div>
         ) : null}
-        {isSerum ? (
-          <div className="mt-6">
-            <SerumMerchantPhoto src={DUBAI_PALACE_OUD_SERUM_IMAGE_3_SRC} alt={product.imageAlts.heroProduct} />
-          </div>
-        ) : null}
-        <h2 className="mt-8 text-xl font-black text-[var(--lp-primary)]">هل تعانين من هالنقاط؟</h2>
+        <h2 className={`text-xl font-black text-[var(--lp-primary)] ${isSerum ? "mt-0" : "mt-8"}`}>هل تعانين من هالنقاط؟</h2>
         <div className="mt-4 space-y-3">
           {product.problemAgitation.map((row) => (
             <div key={row.pain} className="overflow-hidden rounded-2xl border border-[var(--lp-border)] bg-[var(--lp-card)] shadow-sm">

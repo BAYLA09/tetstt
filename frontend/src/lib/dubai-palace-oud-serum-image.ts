@@ -3,7 +3,7 @@
  */
 export const DUBAI_PALACE_OUD_SERUM_SLUG = "dubai-palace-oud-serum" as const;
 
-export const DUBAI_PALACE_OUD_SERUM_IMAGE_VERSION = "merchant-stack-v3" as const;
+export const DUBAI_PALACE_OUD_SERUM_IMAGE_VERSION = "merchant-stack-v5" as const;
 
 const v = `?v=${DUBAI_PALACE_OUD_SERUM_IMAGE_VERSION}`;
 
@@ -15,8 +15,10 @@ export const DUBAI_PALACE_OUD_SERUM_IMAGE_1_SRC =
 export const DUBAI_PALACE_OUD_SERUM_IMAGE_2_SRC =
   `/products/adskull-image-567929c2-6d4a-480a-b0ec-54eb2889257b.png${v}` as const;
 
-/** 3 — lower on page (after problem section). */
+/** 3 — after «ليش الروتين…» paragraph, before mechanism cards («خطوة بعد المكيف») + home ProductCard. */
 export const DUBAI_PALACE_OUD_SERUM_IMAGE_3_SRC = `/products/dubai-palace-oud-serum.png${v}` as const;
+
+export const DUBAI_PALACE_OUD_SERUM_HOME_IMAGE_SRC = DUBAI_PALACE_OUD_SERUM_IMAGE_3_SRC;
 
 export const DUBAI_PALACE_OUD_SERUM_PDP_IMAGE_SRCS = [
   DUBAI_PALACE_OUD_SERUM_IMAGE_1_SRC,

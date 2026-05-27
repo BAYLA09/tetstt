@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ShoppingBag, Star } from "lucide-react";
 import { money, type Product } from "@/lib/products";
-import { DUBAI_PALACE_OUD_SERUM_IMAGE_SRC, DUBAI_PALACE_OUD_SERUM_SLUG } from "@/lib/dubai-palace-oud-serum-image";
+import { DUBAI_PALACE_OUD_SERUM_HOME_IMAGE_SRC, DUBAI_PALACE_OUD_SERUM_SLUG } from "@/lib/dubai-palace-oud-serum-image";
 import { useCartStore } from "@/lib/cart-store";
 
 export function ProductCard({
@@ -18,7 +18,7 @@ export function ProductCard({
 }) {
   const addItem = useCartStore((state) => state.addItem);
   const isSerum = product.slug === DUBAI_PALACE_OUD_SERUM_SLUG;
-  const cardSrc = isSerum ? DUBAI_PALACE_OUD_SERUM_IMAGE_SRC : (product.cardImage?.trim() ?? "");
+  const cardSrc = isSerum ? DUBAI_PALACE_OUD_SERUM_HOME_IMAGE_SRC : (product.cardImage?.trim() ?? "");
   const showPhoto = Boolean(cardSrc);
   /** Serum: full frame without crop (same file as PDP hero). Others: cover for consistent grid slots. */
   const cardImgClass = isSerum
