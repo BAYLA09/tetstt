@@ -236,6 +236,8 @@ async def create_order(
         status=order.status,
         total=float(order.total),
         currency=order.currency,
+        sheet_sync_status=order.sheet_sync_status,
+        sheet_sync_error=order.sheet_sync_error,
     )
 
 

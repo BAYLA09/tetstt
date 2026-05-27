@@ -64,7 +64,19 @@ curl -sS "https://api.layalibeauty.shop/version" | jq .
 
 Expect JSON: `commit_sha`, `build_time_utc`, `enable_ip_fraud_check`, `disable_order_security_checks`, `catalog_skus`, `lamp_bundle_prices_aed`, `sheet_webhook_configured`, `sheet_webhook_host`, `sheet_webhook_capabilities` (booleans only — no DB URLs or keys).
 
-**Sheet sync:** `commit_sha` must match latest `main` on GitHub (not a May 2026 stale SHA). If `sheet_webhook_configured` is true but orders never appear, open admin → `POST /admin/diagnostics/sheet-webhook` (Bearer token) — expect `verdict: ok` and JSON `{"ok":true}`. Wrong `/exec` URLs often return `{"success":true}` without appending rows.
+**Sheet sync:** `commit_sha` must match latest `main` on GitHub (not a May 2026 stale SHA). If `sheet_webhook_capabilities` is present but `commit_sha` is still old, the **image is new** but **`COMMIT_SHA` build arg / runtime env is stale** — bump `COMMIT_SHA` and `CACHE_BUST` on rebuild.
+
+If `sheet_webhook_configured` is true but orders never appear, open admin → `POST /admin/diagnostics/sheet-webhook` (Bearer token) — expect `verdict: ok` and JSON `{"ok":true}`. Wrong `/exec` URLs often return `{"success":true}` without appending rows; current API marks that as `sheet_sync_status=failed`.
+
+After `POST /orders`, the JSON response includes `sheet_sync_status` and `sheet_sync_error` for immediate debugging.
+
+**Force no-cache rebuild (backend):**
+```
+COMMIT_SHA=233383cf0e4f6ff8954dccb1a6f1136a3f884c64
+BUILD_TIME_UTC=2026-05-27T18:30:00Z
+CACHE_BUST=sheet-rebuild-20260527-1
+```
+Confirm build logs contain `backend_docker_build_clock_utc=` with **today’s** date, then `curl /version` shows the same `commit_sha` prefix.
 
 **If checkout says `Unknown SKU: LB-LAMP-OUD-379` or `LB-LAMP-TRIPLE-449`:** open **`/version`** and confirm **`catalog_skus`** contains those exact strings. If not, the **API container is still an old image** — on EasyPanel use **Rebuild** (not only Restart) on the **backend/API** service, branch **`main`**, and bump **`CACHE_BUST`**. The backend Dockerfile **fails the image build** if `app/products.py` is missing those SKUs, so a successful rebuild proves the new catalog is inside the image.
 

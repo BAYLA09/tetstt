@@ -48,6 +48,8 @@ class OrderResponse(BaseModel):
     total: float
     currency: str = "AED"
     upsell_added: bool = False
+    sheet_sync_status: str | None = None
+    sheet_sync_error: str | None = None
 
 
 class UpsellResponse(BaseModel):
