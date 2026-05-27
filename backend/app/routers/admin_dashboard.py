@@ -22,8 +22,10 @@ from app.schemas import (
     OrderAdminDetailOut,
     OrderAdminSummaryOut,
     OrderItemAdminOut,
+    SheetWebhookProbeOut,
 )
 from app.services.admin_jwt import admin_auth_configured, issue_admin_token, verify_admin_token
+from app.services.sheet_webhook import probe_sheet_webhook
 
 log = logging.getLogger(__name__)
 
@@ -276,3 +278,10 @@ async def admin_order_detail(
         sheet_sync_error=order.sheet_sync_error,
         items=items_out,
     )
+
+
+@router.post("/diagnostics/sheet-webhook", response_model=SheetWebhookProbeOut)
+async def diagnostics_sheet_webhook(_: None = Depends(require_admin)) -> SheetWebhookProbeOut:
+    """POST probe row to Google Sheets webhook; compare redirect vs follow behavior."""
+    result = await probe_sheet_webhook()
+    return SheetWebhookProbeOut(**result)

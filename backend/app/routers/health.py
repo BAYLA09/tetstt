@@ -6,6 +6,7 @@ from fastapi.responses import PlainTextResponse
 from app.config import settings
 from app.deployment import deploy_build_time_utc, deploy_commit_sha
 from app.products import PRODUCTS, lamp_bundle_prices
+from app.services.sheet_webhook import sheet_webhook_host
 
 router = APIRouter()
 
@@ -45,6 +46,13 @@ async def version() -> dict[str, Any]:
         "lamp_bundle_prices_aed": lamp_bundle_prices(),
         "sheet_webhook_configured": bool(settings.effective_sheet_webhook_url),
         "sheet_webhook_secret_configured": bool(settings.effective_sheet_webhook_secret),
+        "sheet_webhook_host": sheet_webhook_host(),
+        "sheet_webhook_capabilities": {
+            "follow_redirects": True,
+            "persist_sync_status_on_order": True,
+            "appscript_ok_json_check": True,
+            "reject_success_only_json": True,
+        },
     }
 
 

@@ -82,10 +82,11 @@ Expected commands:
 
 ### Sheet QA
 
-1. Deploy Google Apps Script from `assets/google_apps_script_orders_webhook.js`.
-2. Add the deployment URL to `SHEET_WEBHOOK_URL`.
-3. Submit a test order.
-4. Verify a new row in the sheet using `assets/layali_beauty_sheet_template.csv` columns.
+1. Paste `assets/google_apps_script_orders_webhook.js` into Apps Script, then **Deploy → New deployment → Web app** (Execute as: Me, Who has access: Anyone).
+2. Set `GOOGLE_SHEETS_WEBHOOK_URL` on the API to the `/exec` URL (no leading space after `=`).
+3. If the script uses `LAYALI_WEBHOOK_SECRET`, set the same value in `SHEETS_WEBHOOK_SECRET` on the API.
+4. Submit a test order; confirm `GET /version` shows `sheet_webhook_configured: true`.
+5. Verify a new row on the **`Orders`** tab (columns match `assets/layali_beauty_sheet_template.csv`, including **`url`**).
 
 ## Acceptance checklist
 

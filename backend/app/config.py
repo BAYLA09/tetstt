@@ -50,6 +50,30 @@ class Settings(BaseSettings):
     admin_password: str | None = None
     admin_jwt_secret: str | None = None
 
+    @staticmethod
+    def _strip_optional(value: str | None) -> str | None:
+        if value is None:
+            return None
+        stripped = value.strip()
+        return stripped or None
+
+    @model_validator(mode="after")
+    def normalize_sheet_webhook_env(self) -> Self:
+        """Trim whitespace from webhook URL/secret (common copy-paste mistake in .env)."""
+        object.__setattr__(
+            self,
+            "google_sheets_webhook_url",
+            self._strip_optional(self.google_sheets_webhook_url),
+        )
+        object.__setattr__(self, "sheet_webhook_url", self._strip_optional(self.sheet_webhook_url))
+        object.__setattr__(
+            self,
+            "sheets_webhook_secret",
+            self._strip_optional(self.sheets_webhook_secret),
+        )
+        object.__setattr__(self, "sheet_webhook_secret", self._strip_optional(self.sheet_webhook_secret))
+        return self
+
     @model_validator(mode="after")
     def apply_strict_bool_env(self) -> Self:
         """Re-read critical flags from os.environ so string 'false' is never truthy."""

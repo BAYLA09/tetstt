@@ -48,6 +48,8 @@ class OrderResponse(BaseModel):
     total: float
     currency: str = "AED"
     upsell_added: bool = False
+    sheet_sync_status: str | None = None
+    sheet_sync_error: str | None = None
 
 
 class UpsellResponse(BaseModel):
@@ -81,6 +83,18 @@ class AdminLoginResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     expires_in: int = 86400
+
+
+class SheetWebhookProbeOut(BaseModel):
+    configured: bool
+    host: str | None = None
+    secret_configured: bool = False
+    probe_orderid: str | None = None
+    follow_redirects: bool = True
+    without_redirect: dict | None = None
+    with_redirect: dict | None = None
+    verdict: str
+    error: str | None = None
 
 
 class AdminMetricsOut(BaseModel):

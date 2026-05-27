@@ -36,6 +36,10 @@ def test_version_ok() -> None:
     assert lamp["LB-LAMP-TRIPLE-449"] == "449"
     assert data["sheet_webhook_configured"] is False
     assert data["sheet_webhook_secret_configured"] is False
+    assert data["sheet_webhook_host"] is None
+    caps = data["sheet_webhook_capabilities"]
+    assert caps["follow_redirects"] is True
+    assert caps["reject_success_only_json"] is True
 
 
 def test_version_head() -> None:
