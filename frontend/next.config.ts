@@ -19,17 +19,16 @@ const nextConfig: NextConfig = {
     ];
   },
 
+  /**
+   * Avoid a global `no-store` on every path: it disables CDN and browser caching for
+   * HTML and `/_next/static` assets, which makes repeat visits feel slow and heavy.
+   * Keep no-store only for API and admin surfaces that must stay private.
+   */
   async headers() {
+    const noStore = "private, no-store, no-cache, must-revalidate, proxy-revalidate" as const;
     return [
-      {
-        source: "/:path*",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "no-store, no-cache, must-revalidate, proxy-revalidate",
-          },
-        ],
-      },
+      { source: "/api/:path*", headers: [{ key: "Cache-Control", value: noStore }] },
+      { source: "/admin/:path*", headers: [{ key: "Cache-Control", value: noStore }] },
     ];
   },
 };
