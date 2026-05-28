@@ -80,6 +80,13 @@ CREATE TABLE IF NOT EXISTS ad_clicks (
     landing_page TEXT,
     path VARCHAR(512),
     user_agent VARCHAR(512),
+    client_ip VARCHAR(45),
+    cf_country VARCHAR(2),
+    maxmind_country VARCHAR(2),
+    country_code VARCHAR(2),
+    geo_valid_uae BOOLEAN NOT NULL DEFAULT FALSE,
+    geo_reject_reason VARCHAR(64),
+    ad_platform VARCHAR(16),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -87,3 +94,5 @@ CREATE INDEX IF NOT EXISTS ix_ad_clicks_created_at ON ad_clicks (created_at);
 CREATE INDEX IF NOT EXISTS ix_ad_clicks_fbclid ON ad_clicks (fbclid);
 CREATE INDEX IF NOT EXISTS ix_ad_clicks_ttclid ON ad_clicks (ttclid);
 CREATE INDEX IF NOT EXISTS ix_ad_clicks_sc_click_id ON ad_clicks (sc_click_id);
+CREATE INDEX IF NOT EXISTS ix_ad_clicks_ad_platform ON ad_clicks (ad_platform);
+CREATE INDEX IF NOT EXISTS ix_ad_clicks_geo_valid_created ON ad_clicks (geo_valid_uae, created_at);

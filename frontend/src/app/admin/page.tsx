@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { ProfitCalculatorTab } from "@/components/admin/ProfitCalculatorTab";
 
 const TOKEN_KEY = "layali_admin_jwt_v1";
 
@@ -8,6 +9,9 @@ type Metrics = {
   date_from: string;
   date_to: string;
   clicks: number;
+  clicks_uae_valid: number;
+  clicks_rejected_geo: number;
+  clicks_by_platform: Record<string, number>;
   orders: number;
   revenue_aed: number;
   conversion_rate_percent: number | null;
@@ -97,7 +101,7 @@ export default function AdminDashboardPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState<string | null>(null);
-  const [tab, setTab] = useState<"overview" | "orders" | "setup">("overview");
+  const [tab, setTab] = useState<"overview" | "orders" | "profit" | "setup">("overview");
   const [dateFrom, setDateFrom] = useState(initialRange.from);
   const [dateTo, setDateTo] = useState(initialRange.to);
   const [metrics, setMetrics] = useState<Metrics | null>(null);
@@ -396,6 +400,7 @@ export default function AdminDashboardPage() {
             [
               ["overview", "Overview"],
               ["orders", "Orders"],
+              ["profit", "Profit calculator"],
               ["setup", "Setup"],
             ] as const
           ).map(([id, label]) => (
@@ -420,15 +425,42 @@ export default function AdminDashboardPage() {
         {tab === "overview" && (
           <section className="mt-8 space-y-6">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <MetricCard label="Paid ad clicks" value={metrics?.clicks ?? "—"} hint="fbclid / ttclid / sc_click_id beacons" />
+              <MetricCard
+                label="UAE-valid clicks"
+                value={metrics?.clicks_uae_valid ?? "—"}
+                hint={
+                  metrics
+                    ? `${metrics.clicks_rejected_geo} rejected geo · ${metrics.clicks} total beacons`
+                    : "Cloudflare + MaxMind · AE only"
+                }
+              />
               <MetricCard label="Orders" value={metrics?.orders ?? "—"} />
               <MetricCard label="Revenue (AED)" value={metrics != null ? metrics.revenue_aed.toFixed(2) : "—"} />
               <MetricCard
                 label="Conversion"
                 value={metrics?.conversion_rate_percent != null ? `${metrics.conversion_rate_percent.toFixed(2)}%` : "—"}
-                hint={metrics?.clicks === 0 ? "No clicks in range" : "Orders ÷ clicks"}
+                hint={metrics?.clicks_uae_valid === 0 ? "No UAE clicks in range" : "Orders ÷ UAE-valid clicks"}
               />
             </div>
+            {metrics && Object.keys(metrics.clicks_by_platform).length > 0 && (
+              <div className="rounded-2xl border bg-white p-5 shadow-sm" style={{ borderColor: "var(--border-gold)" }}>
+                <h2 className="text-sm font-black uppercase tracking-wide text-[var(--muted)]">Clicks by platform (UAE-valid)</h2>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {Object.entries(metrics.clicks_by_platform)
+                    .sort((a, b) => b[1] - a[1])
+                    .map(([platform, n]) => (
+                      <span
+                        key={platform}
+                        className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm font-bold capitalize"
+                        style={{ borderColor: "var(--border-gold)", background: "var(--cream-100)" }}
+                      >
+                        {platform}
+                        <span style={{ color: "var(--gold-500)" }}>{n}</span>
+                      </span>
+                    ))}
+                </div>
+              </div>
+            )}
             <div className="grid gap-4 lg:grid-cols-3">
               <MetricCard
                 label="Average order value"
@@ -468,9 +500,9 @@ export default function AdminDashboardPage() {
             <div className="rounded-2xl border bg-white p-5 text-sm leading-7 shadow-sm" style={{ borderColor: "var(--border-gold)" }}>
               <h2 className="text-sm font-black uppercase tracking-wide text-[var(--muted)]">How conversion is measured</h2>
               <ul className="mt-3 list-disc space-y-2 pl-5 text-[var(--muted)]">
-                <li>Clicks count only sessions where the storefront recorded a paid click id (Meta, TikTok, or Snap).</li>
-                <li>Organic visits without those parameters are excluded from the click denominator.</li>
-                <li>Orders are COD checkouts created in the same UTC date window.</li>
+                <li>Clicks require a paid id (Meta fbclid, TikTok ttclid, or Snap sc_click_id).</li>
+                <li>Only UAE-valid clicks count: Cloudflare country header and MaxMind must agree on AE (risky IPs blocked).</li>
+                <li>Conversion = orders ÷ UAE-valid clicks in the same UTC date window.</li>
               </ul>
             </div>
             {loading && <p className="text-center text-sm font-semibold text-[var(--muted)]">Loading metrics…</p>}
@@ -600,6 +632,8 @@ export default function AdminDashboardPage() {
             </div>
           </section>
         )}
+
+        {tab === "profit" && <ProfitCalculatorTab authHeader={authHeader()} />}
 
         {tab === "setup" && <SetupTab />}
       </div>
@@ -785,6 +819,14 @@ function SetupTab() {
 ADMIN_USERNAME=layali_ops
 ADMIN_PASSWORD=use_a_long_random_password_here
 ADMIN_JWT_SECRET=change_me_to_at_least_32_random_bytes_base64_or_hex
+
+# Optional: profit calculator AED→USD (default ≈ 0.272294)
+# AED_TO_USD_RATE=0.272294
+
+# MaxMind + Cloudflare (cf-ipcountry) for UAE-valid click metrics
+MAXMIND_ACCOUNT_ID=
+MAXMIND_LICENSE_KEY=
+ORDER_ALLOWED_COUNTRY=AE
 
 # Example (do not commit real secrets)
 # ADMIN_JWT_SECRET=$(openssl rand -hex 32)`}</pre>
