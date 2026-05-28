@@ -101,6 +101,9 @@ class AdminMetricsOut(BaseModel):
     date_from: str
     date_to: str
     clicks: int
+    clicks_uae_valid: int
+    clicks_rejected_geo: int
+    clicks_by_platform: dict[str, int] = Field(default_factory=dict)
     orders: int
     revenue_aed: float
     conversion_rate_percent: float | None
@@ -109,6 +112,18 @@ class AdminMetricsOut(BaseModel):
     pending_sheet_sync_count: int = 0
     orders_with_upsell: int = 0
     upsell_attach_rate_percent: float | None = None
+
+
+class AdminEconomicsOut(BaseModel):
+    """Lifetime store economics for COD profit calculator defaults."""
+
+    lifetime_orders: int
+    lifetime_revenue_aed: float
+    lifetime_average_order_value_aed: float | None
+    lifetime_avg_pieces_per_order: float | None
+    lifetime_average_order_value_usd: float | None
+    aed_to_usd_rate: float
+    cod_network_fee_percent: float = 5.0
 
 
 class OrderItemAdminOut(BaseModel):

@@ -49,6 +49,8 @@ class Settings(BaseSettings):
     admin_username: str | None = None
     admin_password: str | None = None
     admin_jwt_secret: str | None = None
+    # Admin profit calculator: AED → USD (default ≈ 1/3.6725).
+    aed_to_usd_rate: float = 0.272294
 
     @staticmethod
     def _strip_optional(value: str | None) -> str | None:
