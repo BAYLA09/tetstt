@@ -44,15 +44,15 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/**
+ * Default to normal scrolling — `scroll-behavior: smooth` on the root is known to add
+ * main-thread work on long pages (especially on mobile) and can feel “heavy”.
+ */
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
   .topbar-track {
     animation: none;
   }
@@ -79,6 +79,7 @@ html {
 
 .topbar-track {
   animation: topbar-scroll 28s linear infinite;
+  will-change: transform;
 }
 
 @keyframes topbar-scroll {
