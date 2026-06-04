@@ -4,7 +4,6 @@
 # Build context:
 # - **Context = this folder (`frontend/`)** → leave `FRONTEND_SOURCE_DIR` unset (default `.`).
 # - **Context = repo root** (`…/code/` with `-f …/frontend/Dockerfile`) → set build-arg **`FRONTEND_SOURCE_DIR=frontend`**
-#   or use **`Dockerfile.frontend`** at repo root instead.
 
 FROM node:20-alpine AS deps
 ARG FRONTEND_SOURCE_DIR=.
@@ -32,7 +31,6 @@ ENV NEXT_PUBLIC_DOCKER_CACHE_BUST=$CACHE_BUST
 COPY --from=deps /app/node_modules ./node_modules
 COPY ${FRONTEND_SOURCE_DIR}/ .
 
-# Build-time clock + proof EasyPanel ran `docker build` (see panel build logs).
 RUN echo "==== docker_build_clock_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ) ====" && \
     echo "builder FRONTEND_SOURCE_DIR=${FRONTEND_SOURCE_DIR}" && \
     echo "CACHE_BUST=${CACHE_BUST}" && \
@@ -42,7 +40,6 @@ RUN echo "==== docker_build_clock_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ) ====" && \
     echo "NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY=${NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY}" && \
     echo "NEXT_PUBLIC_GIT_COMMIT_ARG=${NEXT_PUBLIC_GIT_COMMIT}"
 
-# Bake commit + build time into .env.production for `next build` (NEXT_PUBLIC_*).
 RUN set -e; \
     CMT="${NEXT_PUBLIC_GIT_COMMIT}"; \
     if [ -z "$CMT" ] || [ "$CMT" = "unknown" ]; then CMT="${COMMIT_SHA}"; fi; \
@@ -61,14 +58,10 @@ RUN npm run build && \
     ls -la .next | head -25
 
 FROM node:20-alpine AS runner
-ARG FRONTEND_SOURCE_DIR=.
 WORKDIR /app
-
-RUN apk add --no-cache nginx
 
 ENV NODE_ENV=production
 ENV PORT=3000
-ENV INTERNAL_NEXT_PORT=3001
 
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/package-lock.json ./package-lock.json
@@ -76,9 +69,7 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/next.config.ts ./next.config.ts
-COPY ${FRONTEND_SOURCE_DIR}/nginx-storefront.conf /etc/nginx/http.d/default.conf
 
 EXPOSE 3000
 
-# nginx on :3000 serves /public and /_next/static; Next.js on 127.0.0.1:3001 for HTML/API routes.
-CMD ["sh", "-c", "echo nginx+next nginx=3000 next=127.0.0.1:${INTERNAL_NEXT_PORT:-3001} && ./node_modules/.bin/next start -H 127.0.0.1 -p ${INTERNAL_NEXT_PORT:-3001} & exec nginx -g 'daemon off;'"]
+CMD ["sh", "-c", "echo \"next_start bind=0.0.0.0 PORT=${PORT:-3000} commit=${COMMIT_SHA:-unknown}\" && exec ./node_modules/.bin/next start -H 0.0.0.0 -p ${PORT:-3000}"]

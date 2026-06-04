@@ -1,8 +1,5 @@
-# Next.js storefront — use when EasyPanel build **context** is the **repo root** (…/code/),
-# not the `frontend/` subfolder. For context=`frontend/`, use `frontend/Dockerfile` instead.
-#
-# Build:  docker build -f Dockerfile.frontend .
-# EasyPanel: Root directory = clone root · Dockerfile path = Dockerfile.frontend
+# Next.js storefront — EasyPanel build context = repo root (…/code/).
+# Dockerfile path = Dockerfile.frontend
 
 FROM node:20-alpine AS deps
 WORKDIR /app
@@ -32,10 +29,7 @@ RUN echo "==== docker_build_clock_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ) ====" && \
     echo "dockerfile=Dockerfile.frontend context=repo_root" && \
     echo "CACHE_BUST=${CACHE_BUST}" && \
     echo "COMMIT_SHA_ARG=${COMMIT_SHA}" && \
-    echo "BUILD_TIME_UTC_ARG=${BUILD_TIME_UTC}" && \
-    echo "NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}" && \
-    echo "NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY=${NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY}" && \
-    echo "NEXT_PUBLIC_GIT_COMMIT_ARG=${NEXT_PUBLIC_GIT_COMMIT}"
+    echo "BUILD_TIME_UTC_ARG=${BUILD_TIME_UTC}"
 
 RUN set -e; \
     CMT="${NEXT_PUBLIC_GIT_COMMIT}"; \
@@ -47,9 +41,6 @@ RUN set -e; \
     echo "NEXT_PUBLIC_BUILD_TIME=${BT}" >> .env.production; \
     echo "next_wrote_build_identity commit=${CMT} time=${BT}"
 
-RUN echo "next_build_env NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL" && \
-    echo "next_build_env NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY=$NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY"
-
 RUN npm run build && \
     echo "next_build_finished_ok" && \
     ls -la .next | head -25
@@ -57,11 +48,8 @@ RUN npm run build && \
 FROM node:20-alpine AS runner
 WORKDIR /app
 
-RUN apk add --no-cache nginx
-
 ENV NODE_ENV=production
 ENV PORT=3000
-ENV INTERNAL_NEXT_PORT=3001
 
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/package-lock.json ./package-lock.json
@@ -69,8 +57,7 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/next.config.ts ./next.config.ts
-COPY deploy/nginx-storefront.conf /etc/nginx/http.d/default.conf
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "echo nginx+next nginx=3000 next=127.0.0.1:${INTERNAL_NEXT_PORT:-3001} && ./node_modules/.bin/next start -H 127.0.0.1 -p ${INTERNAL_NEXT_PORT:-3001} & exec nginx -g 'daemon off;'"]
+CMD ["sh", "-c", "echo \"next_start bind=0.0.0.0 PORT=${PORT:-3000}\" && exec ./node_modules/.bin/next start -H 0.0.0.0 -p ${PORT:-3000}"]
