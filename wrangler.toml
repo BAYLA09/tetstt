@@ -1,0 +1,9 @@
+name = "layali-speed"
+main = "deploy/cloudflare-worker-fast-images.js"
+compatibility_date = "2024-06-04"
+
+[triggers]
+crons = ["*/5 * * * *"]
+
+# Route is configured in Cloudflare Dashboard or via:
+# wrangler deploy --routes layalibeauty.shop/*

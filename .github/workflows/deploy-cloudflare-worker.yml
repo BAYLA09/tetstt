@@ -1,0 +1,44 @@
+# Deploy speed Worker to Cloudflare — fixes live site WITHOUT EasyPanel.
+#
+# ONE-TIME setup (2 min):
+# 1. Cloudflare Dashboard → My Profile → API Tokens → Create Token
+#    Template: "Edit Cloudflare Workers" + Zone layalibeauty.shop
+# 2. GitHub repo → Settings → Secrets → Actions → New secret:
+#    CLOUDFLARE_API_TOKEN = <token>
+#    CLOUDFLARE_ACCOUNT_ID = <Account ID from Cloudflare dashboard right sidebar>
+#
+# After that, every push to main auto-deploys the Worker + route.
+
+name: Deploy Cloudflare Worker (speed fix)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "deploy/cloudflare-worker-fast-images.js"
+      - "wrangler.toml"
+      - ".github/workflows/deploy-cloudflare-worker.yml"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate worker syntax
+        run: node --check deploy/cloudflare-worker-fast-images.js
+
+      - name: Deploy Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy
+
+      - name: Missing Cloudflare secrets
+        if: failure()
+        run: |
+          echo "::error::Add CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID to GitHub repo secrets."
+          echo "See .github/workflows/deploy-cloudflare-worker.yml header for 2-min setup."
+          exit 1

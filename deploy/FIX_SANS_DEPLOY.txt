@@ -1,0 +1,51 @@
+# Fix speed — bla EasyPanel (1 action whda)
+
+Ana ma n9derch ndkhol l EasyPanel wla Cloudflare 3ndek.  
+Code fix ready f GitHub. Live site ma kaytbdlch 7ta t-deployi **wa7ed** mn had options:
+
+---
+
+## OPTION A — Cloudflare paste (2 min, ma khass EasyPanel)
+
+Worker kan **broken** (syntax error f comment) — **fixed daba** f `deploy/cloudflare-worker-fast-images.js`
+
+1. https://dash.cloudflare.com → layalibeauty.shop
+2. Workers → Create / Edit worker
+3. Paste **kol** file `deploy/cloudflare-worker-fast-images.js`
+4. Deploy
+5. Triggers → Route: **`layalibeauty.shop/*`**
+6. Caching → Purge Everything
+
+Test: https://layalibeauty.shop/products/dubai-palace-oud-serum?fbclid=test  
+Header: `X-Layali-Cache: HIT` (2e visit = instant)
+
+---
+
+## OPTION B — GitHub Secret (1x, auto-deploy forever)
+
+1. Cloudflare → Profile → API Tokens → Create → **Edit Cloudflare Workers**
+2. Copy **Account ID** (sidebar)
+3. GitHub → BAYLA09/tetstt → Settings → Secrets → Actions:
+   - `CLOUDFLARE_API_TOKEN`
+   - `CLOUDFLARE_ACCOUNT_ID`
+4. Actions → **Deploy Cloudflare Worker** → Run workflow
+
+Mn ba3d, kol push l main = auto fix live.
+
+---
+
+## OPTION C — EasyPanel (ila t9der)
+
+See `deploy/EASYPANEL_DEPLOY_NOW.txt` — branch `main`, Rebuild, replicas=1.
+
+---
+
+## 3lach site baqi t9ill
+
+| Live daba | Khass ykon |
+|-----------|------------|
+| commit `8477f88` May 2026 | `fb9eeb1` |
+| PNG 1 MB | WebP 67 KB |
+| Origin ~20s | Worker cache / jsDelivr |
+
+**Ma kayn hta tri9 nbeddel live site mn GitHub ghir** b Cloudflare Worker wla EasyPanel rebuild.

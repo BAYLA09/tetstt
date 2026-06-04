@@ -9,7 +9,7 @@
  * Cloudflare Dashboard → Workers → paste → Deploy
  * Route (ONE route covers all):  layalibeauty.shop/*
  *
- * Optional cron (keeps cache warm): Triggers → Cron → */5 * * * *
+ * Optional cron: Triggers → Cron → every 5 minutes (see scheduled() below)
  */
 const GITHUB_BRANCH = "main";
 const GITHUB_REPO = "BAYLA09/tetstt";
