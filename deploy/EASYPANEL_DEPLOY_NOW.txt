@@ -1,4 +1,12 @@
-# EasyPanel — DEPLOY FRONTEND (copy-paste)
+## URGENT — ila site kayban "Origin timeout" wla 404
+
+**3lach:** nginx f Docker kan kay9leb `/products/dubai-palace-oud-serum` b7al fichier static (404/timeout).
+
+**Fix sari3 (30s):** EasyPanel → Frontend → **Rollback** l deployment 9bel nginx (8477f88).
+
+**Fix permanent:** Rebuild branch `cursor/production-live-22b5` commit **`c5c2037+`** (nginx fix) + Cloudflare Worker updated.
+
+---
 
 **Branch production (kolchi):** `cursor/production-live-22b5`  
 **Commit:** `811e9f0`  

@@ -99,22 +99,30 @@ async function fetchOrigin(request, timeoutMs) {
 async function cacheHtmlResponse(request, ctx) {
   const cache = caches.default;
   const key = htmlCacheKey(request);
-  const hit = await cache.match(key);
-  if (hit) {
+
+  async function serveCached(hit, label) {
     const h = new Headers(hit.headers);
-    h.set("X-Layali-Cache", "HIT");
+    h.set("X-Layali-Cache", label);
     return new Response(hit.body, { status: hit.status, headers: h });
   }
+
+  const hit = await cache.match(key);
+  if (hit) return serveCached(hit, "HIT");
 
   let origin;
   try {
     origin = await fetchOrigin(request, ORIGIN_TIMEOUT_MS);
   } catch {
-    if (hit) return hit;
+    const stale = await cache.match(key);
+    if (stale) return serveCached(stale, "STALE");
     return new Response("Origin timeout — retry in a moment", { status: 504 });
   }
 
-  if (!origin.ok) return origin;
+  if (!origin.ok) {
+    const stale = await cache.match(key);
+    if (stale) return serveCached(stale, "STALE");
+    return origin;
+  }
 
   const body = await origin.arrayBuffer();
   const toStore = new Response(body, {
