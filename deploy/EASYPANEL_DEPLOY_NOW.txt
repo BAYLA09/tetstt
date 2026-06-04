@@ -1,7 +1,16 @@
-# EasyPanel — DEPLOY FRONTEND (copy-paste)
+## URGENT — ila site kayban "Origin timeout" wla 404
 
-**Commit li fih fix speed:** `13659cf`  
-**Live daba (qdim):** `8477f88` May 2026 — 3lach site t9ill
+**3lach:** nginx f Docker kan kay9leb `/products/dubai-palace-oud-serum` b7al fichier static (404/timeout).
+
+**Fix sari3 (30s):** EasyPanel → Frontend → **Rollback** l deployment 9bel nginx (8477f88).
+
+**Fix permanent:** Rebuild branch `cursor/production-live-22b5` commit **`c5c2037+`** (nginx fix) + Cloudflare Worker updated.
+
+---
+
+**Branch production (kolchi):** `cursor/production-live-22b5`  
+**Commit:** `811e9f0`  
+**Live origin daba (qdim):** `8477f88` — Worker v2 kay-maski; rebuild EasyPanel b had branch = fix permanent
 
 ---
 
@@ -9,21 +18,30 @@
 
 | Champ EasyPanel | Valeur |
 |-----------------|--------|
-| Git branch | `main` |
-| Build context / Root | `frontend` |
-| Dockerfile | `Dockerfile` |
+| Git branch | `cursor/production-live-22b5` |
+| Build context / Root | **repo root** (clone root — EasyPanel default) |
+| Dockerfile | `frontend/Dockerfile` |
 | Replicas | **1** (mohim — 2 replicas = 50% requests 20s) |
+
+**Build arg mohim** (context = repo root):
+
+```
+FRONTEND_SOURCE_DIR=frontend
+```
 
 ### Build args (copy-paste kol):
 
 ```
-COMMIT_SHA=13659cf
+FRONTEND_SOURCE_DIR=frontend
+COMMIT_SHA=811e9f0
 BUILD_TIME_UTC=2026-06-04T22:00:00Z
-CACHE_BUST=frontend-speed-13659cf-1
+CACHE_BUST=production-live-811e9f0-2
 NEXT_PUBLIC_API_BASE_URL=https://api.layalibeauty.shop
 NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY=false
 NEXT_PUBLIC_APP_BUILD_MARKER=layalibeauty-storefront
 ```
+
+**Alternative:** context = repo root · Dockerfile = `Dockerfile.frontend` (no `FRONTEND_SOURCE_DIR` needed)
 
 **Mohim:** Rebuild + **Disable build cache** / No cache  
 Deploy li kay-khlas f 0–2s = restart ghir, ma build-ach
@@ -39,15 +57,15 @@ Build logs khasshom ybanu fiha:
 
 | Champ | Valeur |
 |-------|--------|
-| Git branch | `main` |
+| Git branch | `cursor/production-live-22b5` |
 | Dockerfile | `Dockerfile` (repo root) |
 
 ### Build args:
 
 ```
-COMMIT_SHA=13659cf
+COMMIT_SHA=811e9f0
 BUILD_TIME_UTC=2026-06-04T22:00:00Z
-CACHE_BUST=backend-speed-13659cf-1
+CACHE_BUST=backend-production-live-811e9f0-1
 ```
 
 Rebuild + no cache.
@@ -57,7 +75,7 @@ Rebuild + no cache.
 ## Verify mn ba3d deploy
 
 1. Open: https://layalibeauty.shop/api/build-info  
-   → `commitSha` khass ybda b **`13659cf`** (machi `8477f88`)
+   → `commitSha` khass ybda b **`811e9f0`** (machi `8477f88`)
 
 2. Open: https://layalibeauty.shop/products/dubai-palace-oud-serum  
    → DevTools Network → images **webp** ~67 KB mn **cdn.jsdelivr.net**
@@ -66,7 +84,7 @@ Rebuild + no cache.
 
 ---
 
-## Chno tbeddel f code (13659cf)
+## Chno kayn f had branch (811e9f0)
 
 - Swar WebP 67 KB (machi PNG 1 MB)
 - Images mn jsDelivr CDN (sri3 bla ma tssena origin)
@@ -76,6 +94,8 @@ Rebuild + no cache.
 - AdClickBeacon deferred (ma kay-blockich page)
 - Redirect `/` → serum
 - Loading skeleton PDP
+- Serum PDP UI: 3 merchant images f scroll (store-ui-refresh)
+- Cloudflare Worker v2 (`deploy/cloudflare-worker-fast-images.js`) — deja deployed live
 
 ---
 
