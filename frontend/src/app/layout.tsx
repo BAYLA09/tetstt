@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans_Arabic, Inter, Dancing_Script } from "next/font/google";
+import { IBM_Plex_Sans_Arabic } from "next/font/google";
 import { AdClickBeacon } from "@/components/AdClickBeacon";
 import { CartProvider } from "@/components/CartProvider";
 import { Footer, SiteHeader } from "@/components/SiteChrome";
@@ -8,18 +8,8 @@ import "./globals.css";
 const arabic = IBM_Plex_Sans_Arabic({
   variable: "--font-arabic",
   subsets: ["arabic"],
-  weight: ["400", "500", "600", "700"],
-});
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-});
-
-const dancingScript = Dancing_Script({
-  variable: "--font-script",
-  subsets: ["latin"],
-  weight: ["700"],
+  weight: ["400", "600", "700"],
+  adjustFontFallback: true,
 });
 
 export const metadata: Metadata = {
@@ -42,7 +32,7 @@ export default function RootLayout({
     <html
       lang="ar"
       dir="rtl"
-      className={`${arabic.variable} ${inter.variable} ${dancingScript.variable} h-full scroll-smooth antialiased`}
+      className={`${arabic.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <AdClickBeacon />

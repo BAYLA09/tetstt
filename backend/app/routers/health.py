@@ -22,8 +22,12 @@ async def ping_head() -> Response:
 
 
 @router.get("/health")
-async def health() -> dict[str, str]:
-    return {"status": "ok"}
+async def health() -> Response:
+    return Response(
+        content='{"status":"ok"}',
+        media_type="application/json",
+        headers={"Cache-Control": "public, max-age=60"},
+    )
 
 
 @router.head("/health")
