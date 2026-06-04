@@ -1,7 +1,7 @@
 # Bump when forcing EasyPanel rebuild (backend + frontend).
-# Frontend live was stuck on commit 8477f88 until rebuild from production-fix-v2.
-easypanel_backend_branch=production-fix-v2
-easypanel_frontend_branch=production-fix-v2
-last_updated_utc=2026-06-04T20:30:00Z
-cache_bust_hint=frontend-perf-v7-nginx-webp
-frontend_verify=./scripts/verify-frontend-deploy.sh
+easypanel_frontend_branch=main
+easypanel_backend_branch=main
+deploy_commit=13659cf
+last_updated_utc=2026-06-04T22:00:00Z
+cache_bust_hint=frontend-speed-13659cf-1
+deploy_guide=deploy/EASYPANEL_DEPLOY_NOW.txt

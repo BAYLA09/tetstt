@@ -1,0 +1,86 @@
+# EasyPanel — DEPLOY FRONTEND (copy-paste)
+
+**Commit li fih fix speed:** `13659cf`  
+**Live daba (qdim):** `8477f88` May 2026 — 3lach site t9ill
+
+---
+
+## FRONTEND (layalibeauty.shop)
+
+| Champ EasyPanel | Valeur |
+|-----------------|--------|
+| Git branch | `main` |
+| Build context / Root | `frontend` |
+| Dockerfile | `Dockerfile` |
+| Replicas | **1** (mohim — 2 replicas = 50% requests 20s) |
+
+### Build args (copy-paste kol):
+
+```
+COMMIT_SHA=13659cf
+BUILD_TIME_UTC=2026-06-04T22:00:00Z
+CACHE_BUST=frontend-speed-13659cf-1
+NEXT_PUBLIC_API_BASE_URL=https://api.layalibeauty.shop
+NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY=false
+NEXT_PUBLIC_APP_BUILD_MARKER=layalibeauty-storefront
+```
+
+**Mohim:** Rebuild + **Disable build cache** / No cache  
+Deploy li kay-khlas f 0–2s = restart ghir, ma build-ach
+
+Build logs khasshom ybanu fiha:
+- `docker_build_clock_utc=` (date daba)
+- `next_build_finished_ok`
+- `nginx+next nginx=3000`
+
+---
+
+## BACKEND (api.layalibeauty.shop)
+
+| Champ | Valeur |
+|-------|--------|
+| Git branch | `main` |
+| Dockerfile | `Dockerfile` (repo root) |
+
+### Build args:
+
+```
+COMMIT_SHA=13659cf
+BUILD_TIME_UTC=2026-06-04T22:00:00Z
+CACHE_BUST=backend-speed-13659cf-1
+```
+
+Rebuild + no cache.
+
+---
+
+## Verify mn ba3d deploy
+
+1. Open: https://layalibeauty.shop/api/build-info  
+   → `commitSha` khass ybda b **`13659cf`** (machi `8477f88`)
+
+2. Open: https://layalibeauty.shop/products/dubai-palace-oud-serum  
+   → DevTools Network → images **webp** ~67 KB mn **cdn.jsdelivr.net**
+
+3. Page khassha t7ell f **< 3 secondes**
+
+---
+
+## Chno tbeddel f code (13659cf)
+
+- Swar WebP 67 KB (machi PNG 1 MB)
+- Images mn jsDelivr CDN (sri3 bla ma tssena origin)
+- nginx f Docker — static files direct
+- Cache headers s7a7
+- Font wa7ed (Arabic ghir)
+- AdClickBeacon deferred (ma kay-blockich page)
+- Redirect `/` → serum
+- Loading skeleton PDP
+
+---
+
+## Ila baqi t9ill mn ba3d deploy
+
+1. Frontend replicas = **1**
+2. Purge Cloudflare cache
+3. (Optional) Cloudflare Worker: `deploy/cloudflare-worker-fast-images.js` route `layalibeauty.shop/*`
