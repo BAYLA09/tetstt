@@ -18,7 +18,6 @@ const nextConfig: NextConfig = {
       "/products/serum-refill-set",
     ];
     return [
-      { source: "/", destination: MAIN_PRODUCT, permanent: false },
       ...legacyProductPaths.map((source) => ({
         source,
         destination: MAIN_PRODUCT,
