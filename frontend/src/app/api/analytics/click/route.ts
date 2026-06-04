@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     method: "POST",
     headers,
     body,
-    signal: AbortSignal.timeout(30_000),
+    signal: AbortSignal.timeout(4_000),
   });
 
   return new NextResponse(null, { status: res.status });

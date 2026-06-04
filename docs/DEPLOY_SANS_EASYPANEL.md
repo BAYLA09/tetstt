@@ -16,9 +16,9 @@ Ma khassak **EasyPanel rebuild**.
 2. **Workers & Pages** → **Create** → **Create Worker**
 3. Copy-paste **kol** `deploy/cloudflare-worker-fast-images.js` → **Save and deploy**
 4. **Settings** → **Triggers** → **Add route**:
-   - `layalibeauty.shop/products/*`
-   - `layalibeauty.shop/img-diffuser-card*`
-5. **Caching** → **Configuration** → **Purge Everything** (once)
+   - **`layalibeauty.shop/*`** (wa7ed route — HTML + images + ads)
+5. (Optional) **Triggers** → **Cron** → `*/5 * * * *` — keeps PDP cache warm
+6. **Caching** → **Configuration** → **Purge Everything** (once)
 
 ### Verify
 

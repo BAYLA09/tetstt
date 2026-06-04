@@ -34,6 +34,10 @@ export default function RootLayout({
       dir="rtl"
       className={`${arabic.variable} h-full antialiased`}
     >
+      <head>
+        <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
+      </head>
       <body className="min-h-full flex flex-col">
         <AdClickBeacon />
         <CartProvider>

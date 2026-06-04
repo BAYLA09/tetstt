@@ -185,7 +185,7 @@ const catalogProducts: Product[] = [
     story:
       "مو بس «فواحة»: نبني أجواء — أقل جفاف في الهوى حول الوجه، رائحة عود ناعمة، ونوم أعمق بعد يوم طويل تحت المكيف.",
     notes: ["ضباب بارد", "لجو المكيف", "رائحة عود", "دفع عند الاستلام"],
-    cardImage: "/img-diffuser-card.webp",
+    cardImage: "https://cdn.jsdelivr.net/gh/BAYLA09/tetstt@main/frontend/public/img-diffuser-card.webp?v=merchant-stack-v8-cdn",
     heroPromoLine: "اختاري الموقد وحده أو مع عود قصر دبي لروتين الجفاف الكامل",
     offerTiers: [
       {
