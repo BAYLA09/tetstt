@@ -63,8 +63,11 @@ RUN npm run build && \
 FROM node:20-alpine AS runner
 WORKDIR /app
 
+RUN apk add --no-cache nginx
+
 ENV NODE_ENV=production
 ENV PORT=3000
+ENV INTERNAL_NEXT_PORT=3001
 
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/package-lock.json ./package-lock.json
@@ -72,9 +75,9 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/next.config.ts ./next.config.ts
+COPY nginx-storefront.conf /etc/nginx/http.d/default.conf
 
 EXPOSE 3000
 
-# Bind 0.0.0.0 here so EasyPanel/reverse-proxy health checks work even if an old
-# image had `next start` without -H in package.json or the panel overrides npm scripts.
-CMD ["sh", "-c", "echo \"next_start bind=0.0.0.0 PORT=${PORT:-3000}\" && exec ./node_modules/.bin/next start -H 0.0.0.0 -p ${PORT:-3000}"]
+# nginx on :3000 serves /public and /_next/static; Next.js on 127.0.0.1:3001 for HTML/API routes.
+CMD ["sh", "-c", "echo nginx+next nginx=3000 next=127.0.0.1:${INTERNAL_NEXT_PORT:-3001} && ./node_modules/.bin/next start -H 127.0.0.1 -p ${INTERNAL_NEXT_PORT:-3001} & exec nginx -g 'daemon off;'"]

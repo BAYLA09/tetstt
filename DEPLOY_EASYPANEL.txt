@@ -1,6 +1,9 @@
 Layali Beauty API — EasyPanel (exact settings)
 ===============================================
 
+**STOREFRONT STILL SLOW?** Live site was on commit **`8477f88`** (May 2026) — Git push alone does not deploy.
+→ **`deploy/PRODUCTION_FIX_V2_FRONTEND.md`** — Rebuild **frontend** from branch **`production-fix-v2`**, then run **`./scripts/verify-frontend-deploy.sh`**.
+
 **Stale image / cache / wrong `commit_sha`:** use **`docs/DEPLOY_CLEAN_REBUILD.md`** (nuclear rebuild + `docker inspect` + in-container webhook probe).
 
 **Leave EasyPanel:** use **`docs/DEPLOY_HOSTING_MIGRATION.md`** (Railway, Render, Fly, Coolify, VPS Compose).

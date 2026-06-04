@@ -46,3 +46,13 @@ On the server:
 ## When stable
 
 You may point EasyPanel back to `main` later, or keep deploying from `production-fix-v2` and merge `main` into it periodically.
+
+## Frontend (layalibeauty.shop)
+
+The storefront must be rebuilt separately — see **`deploy/PRODUCTION_FIX_V2_FRONTEND.md`**.
+
+Verify after frontend rebuild:
+
+```bash
+./scripts/verify-frontend-deploy.sh https://layalibeauty.shop <commit-on-production-fix-v2>
+```
