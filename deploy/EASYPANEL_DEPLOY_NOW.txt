@@ -11,20 +11,29 @@
 | Champ EasyPanel | Valeur |
 |-----------------|--------|
 | Git branch | `cursor/production-live-22b5` |
-| Build context / Root | `frontend` |
-| Dockerfile | `Dockerfile` |
+| Build context / Root | **repo root** (clone root — EasyPanel default) |
+| Dockerfile | `frontend/Dockerfile` |
 | Replicas | **1** (mohim — 2 replicas = 50% requests 20s) |
+
+**Build arg mohim** (context = repo root):
+
+```
+FRONTEND_SOURCE_DIR=frontend
+```
 
 ### Build args (copy-paste kol):
 
 ```
+FRONTEND_SOURCE_DIR=frontend
 COMMIT_SHA=811e9f0
 BUILD_TIME_UTC=2026-06-04T22:00:00Z
-CACHE_BUST=production-live-811e9f0-1
+CACHE_BUST=production-live-811e9f0-2
 NEXT_PUBLIC_API_BASE_URL=https://api.layalibeauty.shop
 NEXT_PUBLIC_ORDER_USE_SAME_ORIGIN_PROXY=false
 NEXT_PUBLIC_APP_BUILD_MARKER=layalibeauty-storefront
 ```
+
+**Alternative:** context = repo root · Dockerfile = `Dockerfile.frontend` (no `FRONTEND_SOURCE_DIR` needed)
 
 **Mohim:** Rebuild + **Disable build cache** / No cache  
 Deploy li kay-khlas f 0–2s = restart ghir, ma build-ach

@@ -61,6 +61,7 @@ RUN npm run build && \
     ls -la .next | head -25
 
 FROM node:20-alpine AS runner
+ARG FRONTEND_SOURCE_DIR=.
 WORKDIR /app
 
 RUN apk add --no-cache nginx
@@ -75,7 +76,7 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/next.config.ts ./next.config.ts
-COPY nginx-storefront.conf /etc/nginx/http.d/default.conf
+COPY ${FRONTEND_SOURCE_DIR}/nginx-storefront.conf /etc/nginx/http.d/default.conf
 
 EXPOSE 3000
 
