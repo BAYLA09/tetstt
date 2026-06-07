@@ -20,7 +20,8 @@ run automatically in the Docker command.
 When `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and `ADMIN_JWT_SECRET` (16+ chars) are set:
 
 - `POST /admin/login` — JSON `{ "username", "password" }` → `{ "access_token", "token_type", "expires_in" }`.
-- `GET /admin/metrics?date_from=YYYY-MM-DD&date_to=YYYY-MM-DD` — Bearer token; returns clicks, orders, revenue, conversion (orders ÷ ad clicks), AOV, orders-by-status, sheet-sync pending count, upsell attach rate.
+- `GET /admin/metrics?date_from=YYYY-MM-DD&date_to=YYYY-MM-DD` — Bearer token; returns UAE-valid clicks (Cloudflare + MaxMind), platform breakdown, orders, revenue, conversion (orders ÷ UAE clicks), AOV, orders-by-status, sheet-sync pending, upsell attach rate.
+- `GET /admin/economics` — Bearer token; lifetime AOV (AED/USD), avg pieces per order for profit calculator defaults.
 - `GET /admin/orders?date_from=&date_to=&status=&limit=&offset=` — Bearer token; JSON `{ total, limit, offset, orders: [...] }` with optional `status` filter.
 - `GET /admin/orders/{public_order_id}` — Bearer token; full order + line items.
 

@@ -1,7 +1,7 @@
 from datetime import datetime
 from uuid import uuid4
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Numeric, String, Text, func
+from sqlalchemy import Boolean, DateTime, ForeignKey, Index, Numeric, String, Text, func
 from sqlalchemy import JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -66,7 +66,16 @@ class AdClick(Base):
     landing_page: Mapped[str | None] = mapped_column(Text, nullable=True)
     path: Mapped[str | None] = mapped_column(String(512), nullable=True)
     user_agent: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    client_ip: Mapped[str | None] = mapped_column(String(45), nullable=True)
+    cf_country: Mapped[str | None] = mapped_column(String(2), nullable=True)
+    maxmind_country: Mapped[str | None] = mapped_column(String(2), nullable=True)
+    country_code: Mapped[str | None] = mapped_column(String(2), nullable=True)
+    geo_valid_uae: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
+    geo_reject_reason: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    ad_platform: Mapped[str | None] = mapped_column(String(16), nullable=True, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
+
+    __table_args__ = (Index("ix_ad_clicks_geo_valid_created", "geo_valid_uae", "created_at"),)
 
 
 class TrackingEvent(Base):

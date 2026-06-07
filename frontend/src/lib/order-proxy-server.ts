@@ -12,7 +12,7 @@ export function resolveOrderBackendBaseUrl(): string {
 
 export function forwardClientIpHeaders(req: Request): Headers {
   const out = new Headers();
-  for (const name of ["x-forwarded-for", "x-real-ip", "cf-connecting-ip"] as const) {
+  for (const name of ["x-forwarded-for", "x-real-ip", "cf-connecting-ip", "cf-ipcountry"] as const) {
     const v = req.headers.get(name);
     if (v) out.set(name, v);
   }

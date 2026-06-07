@@ -13,8 +13,9 @@ from sqlalchemy.orm import selectinload
 
 from app.config import settings
 from app.db import get_session
-from app.models import AdClick, Order
+from app.models import AdClick, Order, OrderItem
 from app.schemas import (
+    AdminEconomicsOut,
     AdminLoginIn,
     AdminLoginResponse,
     AdminMetricsOut,
@@ -25,6 +26,7 @@ from app.schemas import (
     SheetWebhookProbeOut,
 )
 from app.services.admin_jwt import admin_auth_configured, issue_admin_token, verify_admin_token
+from app.services.cod_economics import DEFAULT_AED_TO_USD, aed_to_usd
 from app.services.sheet_webhook import probe_sheet_webhook
 
 log = logging.getLogger(__name__)
@@ -100,11 +102,29 @@ async def admin_metrics(
 ) -> AdminMetricsOut:
     start_dt, end_dt, ds, de = _parse_range(date_from, date_to)
 
-    clicks = int(
+    click_filters = [AdClick.created_at >= start_dt, AdClick.created_at < end_dt]
+    clicks = int((await session.execute(select(func.count()).select_from(AdClick).where(*click_filters))).scalar_one())
+    clicks_uae_valid = int(
         (
-            await session.execute(select(func.count()).select_from(AdClick).where(AdClick.created_at >= start_dt, AdClick.created_at < end_dt))
+            await session.execute(
+                select(func.count()).select_from(AdClick).where(*click_filters, AdClick.geo_valid_uae.is_(True)),
+            )
         ).scalar_one()
     )
+    clicks_rejected_geo = clicks - clicks_uae_valid
+
+    platform_rows = (
+        await session.execute(
+            select(AdClick.ad_platform, func.count())
+            .select_from(AdClick)
+            .where(*click_filters, AdClick.geo_valid_uae.is_(True))
+            .group_by(AdClick.ad_platform),
+        )
+    ).all()
+    clicks_by_platform: dict[str, int] = {}
+    for platform, count in platform_rows:
+        key = (platform or "unknown").lower()
+        clicks_by_platform[key] = int(count)
 
     orders_stmt = select(func.count()).select_from(Order).where(Order.created_at >= start_dt, Order.created_at < end_dt)
     orders_count = int((await session.execute(orders_stmt)).scalar_one())
@@ -118,7 +138,7 @@ async def admin_metrics(
     ).scalar_one()
     revenue = float(revenue_raw or 0)
 
-    conversion = (orders_count / clicks * 100.0) if clicks else None
+    conversion = (orders_count / clicks_uae_valid * 100.0) if clicks_uae_valid else None
     aov = (revenue / orders_count) if orders_count else None
 
     status_rows = (
@@ -164,6 +184,9 @@ async def admin_metrics(
         date_from=ds,
         date_to=de,
         clicks=clicks,
+        clicks_uae_valid=clicks_uae_valid,
+        clicks_rejected_geo=clicks_rejected_geo,
+        clicks_by_platform=clicks_by_platform,
         orders=orders_count,
         revenue_aed=round(revenue, 2),
         conversion_rate_percent=round(conversion, 2) if conversion is not None else None,
@@ -172,6 +195,43 @@ async def admin_metrics(
         pending_sheet_sync_count=pending_sheet,
         orders_with_upsell=with_upsell,
         upsell_attach_rate_percent=round(upsell_rate, 2) if upsell_rate is not None else None,
+    )
+
+
+@router.get("/economics", response_model=AdminEconomicsOut)
+async def admin_economics(
+    _: None = Depends(require_admin),
+    session: AsyncSession = Depends(get_session),
+) -> AdminEconomicsOut:
+    """Lifetime AOV and avg pieces for profit calculator defaults."""
+    rate = settings.aed_to_usd_rate if settings.aed_to_usd_rate > 0 else DEFAULT_AED_TO_USD
+
+    lifetime_orders = int((await session.execute(select(func.count()).select_from(Order))).scalar_one())
+    revenue_raw = (await session.execute(select(func.coalesce(func.sum(Order.total), 0)))).scalar_one()
+    lifetime_revenue = float(revenue_raw or 0)
+    lifetime_aov = (lifetime_revenue / lifetime_orders) if lifetime_orders else None
+
+    pieces_subq = (
+        select(
+            Order.id.label("order_id"),
+            func.coalesce(func.sum(OrderItem.quantity), 0).label("pieces"),
+        )
+        .join(OrderItem, OrderItem.order_id == Order.id)
+        .group_by(Order.id)
+    ).subquery()
+    avg_pieces_raw = (await session.execute(select(func.avg(pieces_subq.c.pieces)))).scalar_one()
+    lifetime_avg_pieces = float(avg_pieces_raw) if avg_pieces_raw is not None else None
+
+    lifetime_aov_usd = aed_to_usd(lifetime_aov, rate) if lifetime_aov is not None else None
+
+    return AdminEconomicsOut(
+        lifetime_orders=lifetime_orders,
+        lifetime_revenue_aed=round(lifetime_revenue, 2),
+        lifetime_average_order_value_aed=round(lifetime_aov, 2) if lifetime_aov is not None else None,
+        lifetime_avg_pieces_per_order=round(lifetime_avg_pieces, 2) if lifetime_avg_pieces is not None else None,
+        lifetime_average_order_value_usd=round(lifetime_aov_usd, 2) if lifetime_aov_usd is not None else None,
+        aed_to_usd_rate=rate,
+        cod_network_fee_percent=5.0,
     )
 
 
