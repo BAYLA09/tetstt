@@ -29,6 +29,7 @@ backend/    # Python FastAPI API, Postgres models, migrations, CAPI, webhook dis
 10. `10-deployment-easypanel.md` - Docker, env vars, domains, EasyPanel deployment.
 11. `11-testing-and-qa.md` - QA checklist and acceptance tests.
 12. `12-ai-coder-prompt.md` - copy/paste prompt for the implementation agent.
+13. `13-creative-ad-playbook.md` - 2026 paid-social creative playbook: 15 AI-generated video concept bibles (5 per product) with Arabic Khaleeji voiceover scripts, Sora/Veo shot prompts, Nano Banana Pro avatar prompts, hook/pacing framework, testing matrix, and compliance guardrails.
 
 ## Assets
 
